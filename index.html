@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Jonathan Meelo — Product Designer</title>
+<title>purple dev — Product Designer</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -98,14 +98,49 @@
 
   .wave-line{ stroke-dasharray: 400; stroke-dashoffset: 400; animation: draw 1.8s ease forwards; animation-delay:.9s; }
   @keyframes draw{ to { stroke-dashoffset: 0; } }
+
+  /* ---- twinkling sparkles on decorative doodles ---- */
+  @keyframes twinkle{ 0%,100%{ opacity:.35; transform:scale(.86) rotate(0deg); } 50%{ opacity:1; transform:scale(1.12) rotate(6deg); } }
+  .twinkle{ animation:twinkle 3.2s ease-in-out infinite; transform-origin:center; }
+  .twinkle-slow{ animation:twinkle 4.6s ease-in-out infinite; animation-delay:.6s; transform-origin:center; }
+
+  /* ---- gentle bob for floating doodles ---- */
+  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-9px); } }
+  .bob{ animation:bob 4.8s ease-in-out infinite; }
+  .bob-slow{ animation:bob 6.5s ease-in-out infinite; animation-delay:.4s; }
+
+  /* ---- soft sideways drift ---- */
+  @keyframes drift{ 0%,100%{ transform:translateX(0) rotate(0deg); } 50%{ transform:translateX(10px) rotate(4deg); } }
+  .drift{ animation:drift 7s ease-in-out infinite; }
+
+  /* ---- playful wiggle ---- */
+  @keyframes wiggle{ 0%,100%{ transform:rotate(-6deg); } 50%{ transform:rotate(6deg); } }
+  .wiggle{ animation:wiggle 2.6s ease-in-out infinite; transform-origin:center; }
+
+  /* ---- fine grain texture for a premium, non-flat surface ---- */
+  .grain-overlay{
+    position:fixed; inset:0; pointer-events:none; z-index:200; opacity:.035; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---- playful hover pop for primary CTAs (no gradients) ---- */
+  .pop-cta{ transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
+  .pop-cta:hover{ transform: translateY(-2px) scale(1.035) rotate(-1deg); }
+
+  /* ---- twinkling star field for the dark contact section ---- */
+  .star-dot{ position:absolute; border-radius:9999px; background:#fff; }
+
+  /* ---- cute decorative doodle sizing helper ---- */
+  .doodle{ position:absolute; pointer-events:none; select-none; z-index:0; }
 </style>
 </head>
 <body class="bg-white text-slate-900 antialiased selection:bg-purple-200">
+<div class="grain-overlay" aria-hidden="true"></div>
 
 <!-- ============ HEADER ============ -->
 <header class="w-full bg-white/90 backdrop-blur border-b border-gray-100/60 sticky top-0 z-50">
   <div class="max-w-[1240px] mx-auto px-5 sm:px-6 md:px-12 h-16 md:h-20 flex items-center justify-between">
-    <a class="text-xl md:text-[26px] font-bold tracking-tight text-black hover:opacity-90 transition" href="#home">Meelo</a>
+    <a class="text-xl md:text-[26px] font-bold tracking-tight text-black hover:opacity-90 transition" href="#home">purple dev</a>
 
     <nav class="hidden md:flex items-center space-x-7 text-[14.5px] font-medium text-gray-700">
       <a class="nav-link hover:text-black transition" data-nav href="#home">Home</a>
@@ -154,10 +189,31 @@
 
 <!-- ============ HERO ============ -->
 <section class="relative bg-[#E6E2F8] overflow-hidden border-b border-gray-200/50 pt-10 pb-0 md:pt-20" id="home">
-  <div class="max-w-[1240px] mx-auto px-5 sm:px-6 md:px-12 relative">
+  <!-- cute floating doodles -->
+  <svg class="doodle w-9 h-9 text-white left-[6%] top-[22%] bob" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
+  <svg class="doodle w-4 h-4 text-[#755BB4] left-[14%] top-[55%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-6 h-6 text-white left-[22%] top-[75%] twinkle-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z"></path></svg>
+  <svg class="doodle w-7 h-7 text-[#755BB4]/70 left-[3%] bottom-[8%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" aria-hidden="true"><path d="M4 8h4M6 6v4"></path><path d="M17 15h4M19 13v4"></path></svg>
+  <svg class="doodle w-10 h-10 text-white/80 right-[16%] top-[42%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" aria-hidden="true"><path d="M6 17a4 4 0 1 1 .9-7.9 5 5 0 0 1 9.8-1A4.5 4.5 0 0 1 18 17H6z"></path></svg>
+  <svg class="doodle w-6 h-6 text-[#F4A6C8] right-[28%] top-[14%] wiggle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z"></path></svg>
+  <svg class="doodle w-5 h-5 text-white left-[38%] top-[8%] twinkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-3 h-3 text-[#755BB4] right-[8%] bottom-[30%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+
+  <!-- bigger cute background pieces -->
+  <svg class="doodle w-32 h-32 sm:w-44 sm:h-44 text-white/60 -left-10 -top-10 bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
+  <svg class="doodle w-24 h-24 sm:w-32 sm:h-32 text-[#755BB4]/50 right-[4%] top-[6%] drift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" aria-hidden="true"><path d="M6 17a4 4 0 1 1 .9-7.9 5 5 0 0 1 9.8-1A4.5 4.5 0 0 1 18 17H6z"></path></svg>
+  <svg class="doodle w-20 h-20 sm:w-28 sm:h-28 text-white/70 left-[8%] bottom-[-2%] sm:bottom-[4%] wiggle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z"></path></svg>
+  <svg class="doodle w-16 h-16 sm:w-20 sm:h-20 text-[#8F76BE]/40 right-[26%] bottom-[2%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="3"></circle><circle cx="19" cy="12" r="3"></circle><circle cx="12" cy="19" r="3"></circle><circle cx="5" cy="12" r="3"></circle><circle cx="12" cy="12" r="3.6" fill="#E6E2F8"></circle></svg>
+  <svg class="doodle w-14 h-14 sm:w-20 sm:h-20 text-white/60 left-[42%] -top-4 sm:top-[-6%] twinkle-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-24 h-24 sm:w-28 sm:h-28 text-[#755BB4]/30 right-[-3%] bottom-[-4%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
+
+  <div class="max-w-[1240px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
     <div class="absolute right-6 md:right-10 top-2 text-slate-800 pointer-events-none select-none hidden sm:block">
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
-      <svg class="w-4 h-4 ml-6 -mt-1" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+      <svg class="w-8 h-8 twinkle" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+      <svg class="w-4 h-4 ml-6 -mt-1 twinkle-slow" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+    </div>
+    <div class="absolute left-2 sm:left-8 bottom-10 text-[#755BB4] pointer-events-none select-none hidden sm:block bob">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
@@ -167,28 +223,28 @@
         </div>
 
         <h1 class="hero-rise text-[34px] sm:text-5xl md:text-[54px] font-bold text-black tracking-tight leading-[1.18] mb-5 md:mb-6" data-d="2">
-          I'm Jonathan Meelo,<br>
+          We're purple dev,<br>
           a <span class="relative inline-block">
             product
             <svg class="absolute -bottom-2.5 left-0 w-[108%] h-4 text-[#755BB4] pointer-events-none" fill="none" preserveAspectRatio="none" viewBox="0 0 160 18">
               <path class="wave-line" d="M3 13C25 8 50 16 80 10C110 4 135 14 157 9M18 16C45 13 80 18 115 12C130 10 148 14 155 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
             </svg>
-          </span> designer.
+          </span> design team.
         </h1>
 
         <p class="hero-rise text-[15px] sm:text-[15.5px] leading-relaxed text-gray-700 max-w-md mb-8 md:mb-9 font-normal" data-d="3">
-          I'm a freelance product designer based in London. I'm very passionate about the work that I do.
+          We're a product design team based in London. We're very passionate about the work that we do.
         </p>
 
         <div class="hero-rise flex flex-wrap items-center gap-3" data-d="4">
-          <a class="inline-block px-6 py-2.5 bg-white border-[1.5px] border-black rounded-lg text-sm font-semibold text-black retro-shadow" href="#portfolio">See My Works</a>
+          <a class="pop-cta inline-block px-6 py-2.5 bg-white border-[1.5px] border-black rounded-lg text-sm font-semibold text-black retro-shadow" href="#portfolio">See Our Work</a>
           <a class="inline-block px-6 py-2.5 bg-transparent border-[1.5px] border-black/0 rounded-lg text-sm font-semibold text-black hover:border-black/60 transition" href="#contact">Let's talk →</a>
         </div>
       </div>
 
       <div class="lg:col-span-6 relative flex justify-center lg:justify-end items-end">
         <div class="hero-rise relative w-[280px] sm:w-[340px] md:w-[420px] aspect-[4/4.9] bg-[#8F76BE] rounded-t-full border-[1.5px] border-black overflow-hidden flex items-end justify-center" data-d="3">
-          <img alt="Jonathan Meelo - Product Designer" class="w-full h-full object-cover object-top pointer-events-none select-none" src="https://i.ibb.co/8n7nRvZf/1782298421436.png"/>
+          <img alt="purple dev - Product Designer" class="w-full h-full object-cover object-top pointer-events-none select-none" src="https://i.ibb.co/8n7nRvZf/1782298421436.png"/>
         </div>
 
         <button id="availBadge" aria-label="Availability info" class="badge-pop absolute -top-4 sm:-top-6 left-1 sm:left-6 md:left-12 w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-full border border-black flex items-center justify-center shadow-sm z-20 cursor-pointer">
@@ -196,7 +252,7 @@
             <svg class="w-full h-full p-1.5" viewBox="0 0 100 100">
               <path d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="transparent" id="badge-path"></path>
               <text class="text-[8.8px] font-bold uppercase tracking-[0.23em] fill-black">
-                <textPath href="#badge-path" startOffset="0%">✦ FOR FREELANCE ✦ I AM AVAILABLE</textPath>
+                <textPath href="#badge-path" startOffset="0%">✦ FOR FREELANCE ✦ WE ARE AVAILABLE</textPath>
               </text>
             </svg>
           </div>
@@ -205,12 +261,15 @@
           </div>
         </button>
 
-        <div class="absolute -right-2 sm:-right-6 bottom-16 sm:bottom-24 text-slate-800 pointer-events-none select-none hidden sm:block">
+        <div class="absolute -right-2 sm:-right-6 bottom-16 sm:bottom-24 text-slate-800 pointer-events-none select-none hidden sm:block bob">
           <svg class="w-16 h-8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7" viewBox="0 0 60 28">
             <path d="M2 5C10 5 15 1 25 1C35 1 42 7 55 7"></path>
             <path d="M5 14C13 14 18 10 28 10C38 10 45 16 58 16"></path>
             <path d="M1 23C9 23 14 19 24 19C34 19 41 25 54 25"></path>
           </svg>
+        </div>
+        <div class="absolute left-0 top-6 sm:top-10 text-white pointer-events-none select-none hidden sm:block twinkle-slow">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
         </div>
       </div>
     </div>
@@ -219,62 +278,72 @@
 
 <!-- ============ SERVICES ============ -->
 <section class="relative bg-white py-16 sm:py-20 md:py-28 overflow-hidden" id="services">
-  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 relative">
-    <div class="absolute left-6 md:left-14 top-14 text-slate-800 pointer-events-none select-none hidden sm:block">
+  <svg class="doodle w-5 h-5 text-[#8F76BE] left-[8%] top-[12%] bob-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-3 h-3 text-[#F4A6C8] left-[15%] bottom-[18%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-8 h-8 text-[#8F76BE] right-[6%] bottom-[10%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" transform="rotate(12 12 12)"></rect></svg>
+  <svg class="doodle w-8 h-8 text-[#755BB4] right-[18%] top-[8%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 18l1.4-8.6L9 13l3-7 3 7 4.6-3.6L21 18H3z"></path></svg>
+  <svg class="doodle w-5 h-5 text-[#F4A6C8] left-[46%] top-[6%] twinkle-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-4 h-4 text-[#8F76BE] left-[4%] bottom-[38%] drift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
+    <div class="absolute left-6 md:left-14 top-14 text-slate-800 pointer-events-none select-none hidden sm:block bob">
       <svg class="w-6 h-10 -rotate-12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 36"><path d="M14 2L2 19H12L10 34L22 17H12L14 2Z"></path></svg>
     </div>
     <div class="absolute right-6 md:right-16 top-10 text-slate-800 pointer-events-none select-none hidden sm:block">
-      <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
-      <svg class="w-4 h-4 ml-5 -mt-1" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+      <svg class="w-7 h-7 twinkle" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+      <svg class="w-4 h-4 ml-5 -mt-1 twinkle-slow" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
     </div>
 
     <div class="reveal text-center max-w-2xl mx-auto mb-12 md:mb-16">
       <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
-        <span class="text-xs">✦</span><span>MY SERVICES</span>
+        <span class="text-xs">✦</span><span>OUR SERVICES</span>
       </div>
       <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
-        The service I offer is specifically<br class="hidden sm:inline"> designed to meet your needs.
+        The service we offer is specifically<br class="hidden sm:inline"> designed to meet your needs.
       </h2>
     </div>
 
-    <div class="reveal grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 max-w-[1040px] mx-auto">
-      <button data-service="strategy" class="service-card text-left bg-[#E4E1F8] border border-black rounded-2xl p-6 sm:p-8 flex items-start gap-5 transition hover:shadow-md hover:-translate-y-0.5">
-        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-3 text-black">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><path d="M19.439 7.85c0-1.57.8-2.35 1.561-2.85v-.01A2.5 2.5 0 0 0 18.5 2h-3.01c-.5 0-1.04.42-1.39 1.15-.37.78-.97 1.35-1.6 1.35s-1.23-.57-1.6-1.35C10.55 2.42 10.01 2 9.51 2H6.5A2.5 2.5 0 0 0 4 4.5v3.01c0 .5.42 1.04 1.15 1.39.78.37 1.35.97 1.35 1.6s-.57 1.23-1.35 1.6C4.42 12.45 4 12.99 4 13.49v3.01A2.5 2.5 0 0 0 6.5 19h3.01c.5 0 1.04-.42 1.39-1.15.37-.78.97-1.35 1.6-1.35s1.23.57 1.6 1.35c.35.73.89 1.15 1.39 1.15h3.01A2.5 2.5 0 0 0 21 16.5v-3.01c0-.5-.42-1.04-1.15-1.39-.78-.37-1.35-.97-1.35-1.6s.57-1.23 1.35-1.6c.72-.34 1.14-.87 1.14-1.05z"></path></svg>
+    <div class="reveal grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 max-w-[1040px] mx-auto">
+      <button data-service="strategy" class="service-card group relative text-left bg-[#E4E1F8] border border-black rounded-2xl p-4 sm:p-8 flex items-start gap-3 sm:gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="relative flex-shrink-0 w-9 h-9 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-2 sm:p-3 text-black">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><path d="M19.439 7.85c0-1.57.8-2.35 1.561-2.85v-.01A2.5 2.5 0 0 0 18.5 2h-3.01c-.5 0-1.04.42-1.39 1.15-.37.78-.97 1.35-1.6 1.35s-1.23-.57-1.6-1.35C10.55 2.42 10.01 2 9.51 2H6.5A2.5 2.5 0 0 0 4 4.5v3.01c0 .5.42 1.04 1.15 1.39.78.37 1.35.97 1.35 1.6s-.57 1.23-1.35 1.6C4.42 12.45 4 12.99 4 13.49v3.01A2.5 2.5 0 0 0 6.5 19h3.01c.5 0 1.04-.42 1.39-1.15.37-.78.97-1.35 1.6-1.35s1.23.57 1.6 1.35c.35.73.89 1.15 1.39 1.15h3.01A2.5 2.5 0 0 0 21 16.5v-3.01c0-.5-.42-1.04-1.15-1.39-.78-.37-1.35-.97-1.35-1.6s.57-1.23 1.35-1.6c.72-.34 1.14-.87 1.14-1.05z"></path></svg>
+          <svg class="absolute -top-1.5 -right-1.5 w-4 h-4 text-[#755BB4] opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
         </div>
         <div>
-          <h3 class="text-base sm:text-[17px] font-bold text-slate-900 mb-2">Strategy &amp; Planning</h3>
-          <p class="text-xs sm:text-[13.5px] leading-relaxed text-gray-700">Streamline your campaigns with tools that improve engagement, boost visibility, and help you connect with your audience.</p>
+          <h3 class="text-sm sm:text-[17px] font-bold text-slate-900 mb-1 sm:mb-2">Strategy &amp; Planning</h3>
+          <p class="text-[11px] sm:text-[13.5px] leading-snug sm:leading-relaxed text-gray-700">Streamline your campaigns with tools that improve engagement, boost visibility, and help you connect with your audience.</p>
         </div>
       </button>
 
-      <button data-service="research" class="service-card text-left bg-[#EDF8E5] border border-black rounded-2xl p-6 sm:p-8 flex items-start gap-5 transition hover:shadow-md hover:-translate-y-0.5">
-        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-3 text-black">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" x2="16" y1="21" y2="16"></line><circle cx="11" cy="11" r="2.5"></circle></svg>
+      <button data-service="research" class="service-card group relative text-left bg-[#EDF8E5] border border-black rounded-2xl p-4 sm:p-8 flex items-start gap-3 sm:gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="relative flex-shrink-0 w-9 h-9 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-2 sm:p-3 text-black">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" x2="16" y1="21" y2="16"></line><circle cx="11" cy="11" r="2.5"></circle></svg>
+          <svg class="absolute -top-1.5 -right-1.5 w-4 h-4 text-[#8F76BE] opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
         </div>
         <div>
-          <h3 class="text-base sm:text-[17px] font-bold text-slate-900 mb-2">User Research</h3>
-          <p class="text-xs sm:text-[13.5px] leading-relaxed text-gray-700">Simplify project workflows with organized tools and strategies designed to keep your team aligned and your goals on track.</p>
+          <h3 class="text-sm sm:text-[17px] font-bold text-slate-900 mb-1 sm:mb-2">User Research</h3>
+          <p class="text-[11px] sm:text-[13.5px] leading-snug sm:leading-relaxed text-gray-700">Simplify project workflows with organized tools and strategies designed to keep your team aligned and your goals on track.</p>
         </div>
       </button>
 
-      <button data-service="web" class="service-card text-left bg-[#FBE4EE] border border-black rounded-2xl p-6 sm:p-8 flex items-start gap-5 transition hover:shadow-md hover:-translate-y-0.5">
-        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-3 text-black">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><rect height="16" rx="3" width="18" x="3" y="4"></rect><line x1="3" x2="21" y1="9" y2="9"></line><line x1="6" x2="6.01" y1="6.5" y2="6.5"></line><line x1="9" x2="9.01" y1="6.5" y2="6.5"></line></svg>
+      <button data-service="web" class="service-card group relative text-left bg-[#FBE4EE] border border-black rounded-2xl p-4 sm:p-8 flex items-start gap-3 sm:gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="relative flex-shrink-0 w-9 h-9 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-2 sm:p-3 text-black">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><rect height="16" rx="3" width="18" x="3" y="4"></rect><line x1="3" x2="21" y1="9" y2="9"></line><line x1="6" x2="6.01" y1="6.5" y2="6.5"></line><line x1="9" x2="9.01" y1="6.5" y2="6.5"></line></svg>
+          <svg class="absolute -top-1.5 -right-1.5 w-4 h-4 text-[#F4A6C8] opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
         </div>
         <div>
-          <h3 class="text-base sm:text-[17px] font-bold text-slate-900 mb-2">Web Design</h3>
-          <p class="text-xs sm:text-[13.5px] leading-relaxed text-gray-700">Gain valuable insights into user behavior, website performance, and key business metrics to optimize your digital presence.</p>
+          <h3 class="text-sm sm:text-[17px] font-bold text-slate-900 mb-1 sm:mb-2">Web Design</h3>
+          <p class="text-[11px] sm:text-[13.5px] leading-snug sm:leading-relaxed text-gray-700">Gain valuable insights into user behavior, website performance, and key business metrics to optimize your digital presence.</p>
         </div>
       </button>
 
-      <button data-service="brand" class="service-card text-left bg-[#E5F1FC] border border-black rounded-2xl p-6 sm:p-8 flex items-start gap-5 transition hover:shadow-md hover:-translate-y-0.5">
-        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-3 text-black">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 4v4m0 8v4M4 12h4m8 0h4"></path><circle cx="12" cy="12" r="3"></circle><circle cx="12" cy="3" r="1.5"></circle><circle cx="12" cy="21" r="1.5"></circle><circle cx="3" cy="12" r="1.5"></circle><circle cx="21" cy="12" r="1.5"></circle></svg>
+      <button data-service="brand" class="service-card group relative text-left bg-[#E5F1FC] border border-black rounded-2xl p-4 sm:p-8 flex items-start gap-3 sm:gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="relative flex-shrink-0 w-9 h-9 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-2 sm:p-3 text-black">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 4v4m0 8v4M4 12h4m8 0h4"></path><circle cx="12" cy="12" r="3"></circle><circle cx="12" cy="3" r="1.5"></circle><circle cx="12" cy="21" r="1.5"></circle><circle cx="3" cy="12" r="1.5"></circle><circle cx="21" cy="12" r="1.5"></circle></svg>
+          <svg class="absolute -top-1.5 -right-1.5 w-4 h-4 text-[#7EA9D6] opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
         </div>
         <div>
-          <h3 class="text-base sm:text-[17px] font-bold text-slate-900 mb-2">Brand Design</h3>
-          <p class="text-xs sm:text-[13.5px] leading-relaxed text-gray-700">Understand your market with precise data analysis and deep customer insights that guide your decision-making processes.</p>
+          <h3 class="text-sm sm:text-[17px] font-bold text-slate-900 mb-1 sm:mb-2">Brand Design</h3>
+          <p class="text-[11px] sm:text-[13.5px] leading-snug sm:leading-relaxed text-gray-700">Understand your market with precise data analysis and deep customer insights that guide your decision-making processes.</p>
         </div>
       </button>
     </div>
@@ -282,46 +351,56 @@
 </section>
 
 <!-- ============ ABOUT ============ -->
-<section class="relative bg-[#FAFAFA] py-16 sm:py-20 md:py-28 border-y border-gray-100" id="about">
-  <div class="max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12">
-    <div class="reveal grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
-      <div class="md:col-span-5">
-        <div class="relative w-full max-w-[320px] mx-auto md:mx-0 aspect-square bg-[#E4E1F8] rounded-3xl border-[1.5px] border-black overflow-hidden">
-          <img alt="Jonathan Meelo at his desk" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIzG7Q57K9eBkNvvQ0yBm8Qqxw9w2FjAuf36xFa7f4RirCwR68iUKTGPfv3yewO57bO_tQCKxYbmLLMLcsojOAuVPT9-N9jwDG5jB7PqRrJVXpjxgMRLg4nnVHgKlosZ0cvzLoAC2KMrgIP1FhlCGNpzVPcjcUjKTxZpoxbLEEJLvRINAw1E7pEwsguiezomqJC1nR1U5bpR3yJz_WhaCCUWwUH3i8x-2zeTYqNbsX5sNm7H3c5scDrBLOLyegY4k067A">
-        </div>
+<section class="relative bg-[#FAFAFA] py-16 sm:py-20 md:py-28 border-y border-gray-100 overflow-hidden" id="about">
+  <svg class="doodle w-6 h-6 text-[#8F76BE] left-[4%] top-[20%] bob" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
+  <svg class="doodle w-3 h-3 text-[#8F76BE] left-[10%] bottom-[24%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-7 h-7 text-[#F4A6C8] right-[10%] top-[14%] wiggle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z"></path></svg>
+  <svg class="doodle w-5 h-5 text-[#755BB4] right-[6%] bottom-[18%] bob-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-8 h-8 text-[#8F76BE]/70 left-[18%] top-[68%] drift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" aria-hidden="true"><path d="M6 17a4 4 0 1 1 .9-7.9 5 5 0 0 1 9.8-1A4.5 4.5 0 0 1 18 17H6z"></path></svg>
+  <div class="reveal max-w-[720px] mx-auto px-5 sm:px-6 md:px-12 relative z-10 text-center">
+    <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+      <span class="text-xs">✦</span><span>ABOUT US</span>
+    </div>
+    <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug mb-4">
+      Eight years into product design, still chasing the clean version of a hard problem.
+    </h2>
+    <p class="text-[14.5px] sm:text-[15.5px] leading-relaxed text-gray-700 mb-8 max-w-lg mx-auto">
+      We work with founders and small teams to take fuzzy product ideas into interfaces people actually enjoy using — from early research through to shipped, polished screens. Based in London, working with clients worldwide.
+    </p>
+
+    <div class="flex items-center justify-center gap-3 mb-9" aria-hidden="true">
+      <svg class="w-4 h-4 text-[#8F76BE] twinkle" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+      <span class="w-10 h-px bg-black/15"></span>
+      <svg class="w-3 h-3 text-[#F4A6C8]" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"></circle></svg>
+      <span class="w-10 h-px bg-black/15"></span>
+      <svg class="w-4 h-4 text-[#755BB4] twinkle-slow" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 max-w-md mx-auto">
+      <div class="text-center">
+        <p class="text-2xl sm:text-3xl font-bold text-black" data-counter data-target="8">0</p>
+        <p class="text-[11px] sm:text-xs text-gray-600 mt-1">Years experience</p>
       </div>
-      <div class="md:col-span-7">
-        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
-          <span class="text-xs">✦</span><span>ABOUT ME</span>
-        </div>
-        <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug mb-4">
-          Eight years into product design, still chasing the clean version of a hard problem.
-        </h2>
-        <p class="text-[14.5px] sm:text-[15.5px] leading-relaxed text-gray-700 mb-6 max-w-lg">
-          I work with founders and small teams to take fuzzy product ideas into interfaces people actually enjoy using — from early research through to shipped, polished screens. Based in London, working with clients worldwide.
-        </p>
-        <div class="grid grid-cols-3 gap-4 max-w-md">
-          <div class="text-center sm:text-left">
-            <p class="text-2xl sm:text-3xl font-bold text-black" data-counter data-target="8">0</p>
-            <p class="text-[11px] sm:text-xs text-gray-600 mt-1">Years experience</p>
-          </div>
-          <div class="text-center sm:text-left">
-            <p class="text-2xl sm:text-3xl font-bold text-black" data-counter data-target="64">0</p>
-            <p class="text-[11px] sm:text-xs text-gray-600 mt-1">Projects shipped</p>
-          </div>
-          <div class="text-center sm:text-left">
-            <p class="text-2xl sm:text-3xl font-bold text-black" data-counter data-target="38">0</p>
-            <p class="text-[11px] sm:text-xs text-gray-600 mt-1">Happy clients</p>
-          </div>
-        </div>
+      <div class="text-center">
+        <p class="text-2xl sm:text-3xl font-bold text-black" data-counter data-target="64">0</p>
+        <p class="text-[11px] sm:text-xs text-gray-600 mt-1">Projects shipped</p>
+      </div>
+      <div class="text-center">
+        <p class="text-2xl sm:text-3xl font-bold text-black" data-counter data-target="38">0</p>
+        <p class="text-[11px] sm:text-xs text-gray-600 mt-1">Happy clients</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ============ PORTFOLIO ============ -->
-<section class="relative bg-white py-16 sm:py-20 md:py-28" id="portfolio">
-  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12">
+<section class="relative bg-white py-16 sm:py-20 md:py-28 overflow-hidden" id="portfolio">
+  <svg class="doodle w-5 h-5 text-[#F4A6C8] right-[6%] top-[10%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-3 h-3 text-[#8F76BE] right-[13%] top-[22%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-6 h-6 text-[#8F76BE] left-[5%] bottom-[8%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+  <svg class="doodle w-8 h-8 text-[#755BB4] left-[3%] top-[45%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="9" r="7"></circle><path d="M12 16v5M9 21h6" stroke-linecap="round"></path></svg>
+  <svg class="doodle w-4 h-4 text-[#F4A6C8] right-[3%] bottom-[30%] twinkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
     <div class="reveal text-center max-w-2xl mx-auto mb-10 md:mb-14">
       <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
         <span class="text-xs">✦</span><span>PORTFOLIO</span>
@@ -367,8 +446,12 @@
 </div>
 
 <!-- ============ PROCESS ============ -->
-<section class="relative bg-[#FAFAFA] py-16 sm:py-20 md:py-28 border-y border-gray-100" id="process">
-  <div class="max-w-[1000px] mx-auto px-5 sm:px-6 md:px-12">
+<section class="relative bg-[#FAFAFA] py-16 sm:py-20 md:py-28 border-y border-gray-100 overflow-hidden" id="process">
+  <svg class="doodle w-7 h-7 text-[#8F76BE] right-[8%] bottom-[12%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
+  <svg class="doodle w-4 h-4 text-[#755BB4] left-[7%] top-[16%] twinkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-9 h-9 text-[#F4A6C8]/80 right-[16%] top-[10%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="3"></circle><circle cx="19" cy="12" r="3"></circle><circle cx="12" cy="19" r="3"></circle><circle cx="5" cy="12" r="3"></circle><circle cx="12" cy="12" r="3.4" fill="#755BB4"></circle></svg>
+  <svg class="doodle w-3 h-3 text-[#8F76BE] left-[16%] bottom-[10%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <div class="max-w-[1000px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
     <div class="reveal text-center max-w-2xl mx-auto mb-12 md:mb-16">
       <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
         <span class="text-xs">✦</span><span>HOW IT WORKS</span>
@@ -403,8 +486,13 @@
 </section>
 
 <!-- ============ PRICING ============ -->
-<section class="relative bg-white py-16 sm:py-20 md:py-28" id="pricing">
-  <div class="max-w-[1000px] mx-auto px-5 sm:px-6 md:px-12">
+<section class="relative bg-white py-16 sm:py-20 md:py-28 overflow-hidden" id="pricing">
+  <svg class="doodle w-6 h-6 text-[#8F76BE] left-[8%] top-[14%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" transform="rotate(10 12 12)"></rect></svg>
+  <svg class="doodle w-3 h-3 text-[#F4A6C8] right-[10%] top-[20%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-4 h-4 text-[#755BB4] right-[16%] bottom-[10%] twinkle-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-8 h-8 text-[#8F76BE] left-[4%] bottom-[16%] bob-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 18l1.4-8.6L9 13l3-7 3 7 4.6-3.6L21 18H3z"></path></svg>
+  <svg class="doodle w-3 h-3 text-[#8F76BE] left-[14%] top-[8%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <div class="max-w-[1000px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
     <div class="reveal text-center max-w-2xl mx-auto mb-8">
       <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
         <span class="text-xs">✦</span><span>PRICING</span>
@@ -433,14 +521,17 @@
         <button data-plan="Starter" class="choose-plan px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow bg-white">Choose Starter</button>
       </div>
       <div class="border-[1.5px] border-black rounded-2xl p-6 sm:p-7 bg-[#E4E1F8] flex flex-col relative sm:scale-105 shadow-md">
-        <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-black text-white text-[10px] font-bold uppercase">Most popular</span>
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-black text-white text-[10px] font-bold uppercase flex items-center gap-1">
+          <svg class="w-2.5 h-2.5 twinkle" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+          Most popular
+        </span>
         <h3 class="font-bold text-lg mb-1">Studio</h3>
         <p class="text-xs text-gray-600 mb-4">For an ongoing product partnership</p>
         <p class="mb-5"><span class="price text-3xl font-bold" data-monthly="1400" data-yearly="1120">$1,400</span><span class="text-sm text-gray-600">/mo</span></p>
         <ul class="text-xs text-gray-700 space-y-2 mb-6 flex-1">
           <li>✓ 3 active projects</li><li>✓ Unlimited revisions</li><li>✓ Weekly check-ins</li>
         </ul>
-        <button data-plan="Studio" class="choose-plan px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow bg-black text-white">Choose Studio</button>
+        <button data-plan="Studio" class="pop-cta choose-plan px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow bg-black text-white">Choose Studio</button>
       </div>
       <div class="border border-black rounded-2xl p-6 sm:p-7 bg-[#EDF8E5] flex flex-col">
         <h3 class="font-bold text-lg mb-1">Enterprise</h3>
@@ -459,7 +550,7 @@
       <div class="space-y-2.5" id="faqList">
         <div class="border border-black rounded-xl overflow-hidden">
           <button class="acc-btn w-full flex items-center justify-between px-4 py-3 text-left text-sm font-semibold" aria-expanded="false">
-            Can I switch plans later?
+            Can we switch plans later?
             <svg class="acc-chevron w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
           <div class="acc-panel px-4 text-xs text-gray-700 leading-relaxed"><p class="pb-4">Yes — upgrade or downgrade anytime, and changes apply from your next billing cycle.</p></div>
@@ -476,7 +567,7 @@
             What's not included?
             <svg class="acc-chevron w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
-          <div class="acc-panel px-4 text-xs text-gray-700 leading-relaxed"><p class="pb-4">Development and copywriting are handled separately, though I can recommend trusted partners.</p></div>
+          <div class="acc-panel px-4 text-xs text-gray-700 leading-relaxed"><p class="pb-4">Development and copywriting are handled separately, though we can recommend trusted partners.</p></div>
         </div>
       </div>
     </div>
@@ -484,14 +575,29 @@
 </section>
 
 <!-- ============ CONTACT ============ -->
-<section class="relative bg-[#1a1a1a] text-white py-16 sm:py-20 md:py-28" id="contact">
-  <div class="max-w-[900px] mx-auto px-5 sm:px-6 md:px-12">
+<section class="relative bg-[#1a1a1a] text-white py-16 sm:py-20 md:py-28 overflow-hidden" id="contact">
+  <svg class="doodle w-10 h-10 text-white/90 right-[10%] top-[12%] bob-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 12.5A8.5 8.5 0 1 1 11.5 4a7 7 0 0 0 8.5 8.5z"></path></svg>
+  <div class="star-dot twinkle" style="width:3px;height:3px;left:8%;top:18%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:2px;height:2px;left:16%;top:62%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle" style="width:2px;height:2px;left:28%;top:30%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:3px;height:3px;left:82%;top:20%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle" style="width:2px;height:2px;left:90%;top:55%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:2px;height:2px;left:70%;top:75%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle" style="width:3px;height:3px;left:50%;top:12%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:2px;height:2px;left:38%;top:82%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle" style="width:2px;height:2px;left:60%;top:40%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:2px;height:2px;left:5%;top:45%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle" style="width:3px;height:3px;left:95%;top:35%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:2px;height:2px;left:44%;top:68%;" aria-hidden="true"></div>
+  <svg class="doodle w-5 h-5 text-[#8F76BE] left-[12%] top-[70%] wiggle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-4 h-4 text-[#F4A6C8]/80 right-[14%] bottom-[16%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <div class="max-w-[900px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
     <div class="reveal text-center max-w-2xl mx-auto mb-10">
       <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-white bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
         <span class="text-xs">✦</span><span>GET IN TOUCH</span>
       </div>
       <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold tracking-tight leading-snug">
-        Have a project in mind? Tell me about it.
+        Have a project in mind? Tell us about it.
       </h2>
     </div>
 
@@ -506,16 +612,16 @@
       </div>
       <div class="sm:col-span-2">
         <label class="block text-xs font-medium mb-1.5 text-gray-300" for="cf-message">Message</label>
-        <textarea required id="cf-message" name="message" rows="4" class="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/25 text-sm placeholder-gray-400 focus:outline-none focus:border-white resize-none" placeholder="Tell me a bit about your project..."></textarea>
+        <textarea required id="cf-message" name="message" rows="4" class="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/25 text-sm placeholder-gray-400 focus:outline-none focus:border-white resize-none" placeholder="Tell us a bit about your project..."></textarea>
       </div>
       <div class="sm:col-span-2 flex items-center justify-between flex-wrap gap-3">
         <p id="formError" class="text-xs text-red-400 hidden">Please fill in every field with a valid email.</p>
-        <button type="submit" class="ml-auto px-6 py-2.5 bg-white text-black border-[1.5px] border-white rounded-lg text-sm font-semibold retro-shadow">Send message</button>
+        <button type="submit" class="pop-cta ml-auto px-6 py-2.5 bg-white text-black border-[1.5px] border-white rounded-lg text-sm font-semibold retro-shadow">Send message</button>
       </div>
     </form>
 
     <div class="reveal flex flex-wrap justify-center gap-x-8 gap-y-3 mt-12 text-sm text-gray-300">
-      <a href="mailto:hello@jonathanmeelo.com" class="hover:text-white transition">hello@jonathanmeelo.com</a>
+      <a href="mailto:hello@purpledev.com" class="hover:text-white transition">hello@purpledev.com</a>
       <span class="hidden sm:inline text-gray-600">·</span>
       <span>London, UK</span>
       <span class="hidden sm:inline text-gray-600">·</span>
@@ -659,7 +765,7 @@
 
   /* ---------- service cards ---------- */
   var serviceDetails = {
-    strategy: "Strategy & Planning: I'll help define the roadmap, prioritize features, and align your team before any pixels get pushed.",
+    strategy: "Strategy & Planning: we'll help define the roadmap, prioritize features, and align your team before any pixels get pushed.",
     research: "User Research: interviews, surveys and usability testing to make sure decisions are based on real user behavior, not guesses.",
     web: "Web Design: responsive, accessible websites built to convert — from landing pages to full product sites.",
     brand: "Brand Design: logos, color systems and visual identity that make your product instantly recognizable."
@@ -784,12 +890,12 @@
   document.querySelectorAll('.choose-plan').forEach(function(btn){
     btn.addEventListener('click', function(){
       var plan = btn.getAttribute('data-plan');
-      showToast('"'+plan+'" selected — scroll down to send a message and I\'ll follow up.');
+      showToast('"'+plan+'" selected — scroll down to send a message and we\'ll follow up.');
       var target = document.getElementById('contact');
       var top = target.getBoundingClientRect().top + window.pageYOffset - 72;
       window.scrollTo({top: top, behavior:'smooth'});
       var msg = document.getElementById('cf-message');
-      if(msg && !msg.value){ msg.value = "Hi, I'm interested in the " + plan + " plan. "; }
+      if(msg && !msg.value){ msg.value = "Hi, we're interested in the " + plan + " plan. "; }
     });
   });
 
@@ -822,7 +928,7 @@
       return;
     }
     formError.classList.add('hidden');
-    showToast('Thanks '+name.split(' ')[0]+' — your message is sent. I\'ll reply within a day.');
+    showToast('Thanks '+name.split(' ')[0]+' — your message is sent. We\'ll reply within a day.');
     form.reset();
   });
 
