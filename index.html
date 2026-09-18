@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,10 +8,10 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500..700&display=swap" rel="stylesheet"/>
 <style>
   :root{
-    --lilac:#E6E2F8;
+    --lilac:#E4DBF8;
     --lilac-deep:#8F76BE;
     --violet:#755BB4;
     --ink:#1a1a1a;
@@ -19,6 +20,7 @@
     --sky:#E5F1FC;
   }
   html{scroll-behavior:smooth;}
+  .font-display{ font-family: 'Fraunces', 'Plus Jakarta Sans', serif; font-optical-sizing:auto; }
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     color: var(--ink);
@@ -59,6 +61,12 @@
   .proj-card:hover .proj-img { transform: scale(1.06); }
   .proj-card:hover .proj-arrow { transform: translate(3px,-3px); }
   .proj-arrow { transition: transform .25s ease; }
+  .proj-card{ transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
+  .proj-card:hover{ transform: translateY(-4px); }
+
+  /* ---- all-projects grid: staggered entrance ---- */
+  @keyframes projCardIn{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:translateY(0); } }
+  .proj-card-in{ opacity:0; animation: projCardIn .5s cubic-bezier(.22,1,.36,1) forwards; }
 
   /* ---- nav underline ---- */
   .nav-link{position:relative;}
@@ -69,8 +77,20 @@
   .nav-link:hover::after, .nav-link.active::after{ width:100%; }
 
   /* ---- mobile menu ---- */
-  #mobileMenu{ max-height:0; overflow:hidden; transition: max-height .35s ease; }
-  #mobileMenu.open{ max-height:480px; }
+  /* overlay panel: sits over the page instead of pushing it down, so scroll targets never shift */
+  #mobileMenu{
+    position:absolute; top:100%; left:0; right:0; background:#fff;
+    max-height:0; overflow:hidden; visibility:hidden;
+    transition: max-height .35s ease, visibility 0s linear .35s;
+  }
+  #mobileMenu.open{
+    max-height:480px; visibility:visible;
+    border-bottom:1px solid #f3f4f6; box-shadow:0 14px 24px -14px rgba(0,0,0,.18);
+    transition: max-height .35s ease, visibility 0s;
+  }
+  /* keeps anchors clear of the sticky header (h-16 mobile / h-20 desktop) */
+  section[id]{ scroll-margin-top:64px; }
+  @media (min-width:768px){ section[id]{ scroll-margin-top:80px; } }
 
   /* ---- accordion ---- */
   .acc-panel{ max-height:0; overflow:hidden; transition:max-height .35s ease; }
@@ -153,6 +173,35 @@
   }
   .cursor-loop{ animation:cursorLoop 9s ease-in-out infinite; }
 
+  /* ---- projects: fanned card stack, settles into place on reveal ---- */
+  .card-fan-item{
+    transform: translateX(var(--x)) rotate(var(--rot)) translateY(30px);
+    opacity:0;
+    transition: transform .8s cubic-bezier(.22,1,.36,1), opacity .6s ease;
+  }
+  .reveal.in-view .card-fan-item{ transform: translateX(var(--x)) rotate(var(--rot)) translateY(0); opacity:1; }
+  .reveal.in-view .card-fan-item:nth-child(1){ transition-delay:.05s; }
+  .reveal.in-view .card-fan-item:nth-child(2){ transition-delay:.13s; }
+  .reveal.in-view .card-fan-item:nth-child(3){ transition-delay:.21s; }
+  .reveal.in-view .card-fan-item:nth-child(4){ transition-delay:.29s; }
+
+  /* ---- big attention-grabbing CTA glow ---- */
+  @keyframes ctaGlow{
+    0%,100%{ box-shadow: 2.5px 2.5px 0px #1a1a1a, 0 0 0 0 rgba(117,91,180,.45); }
+    50%{ box-shadow: 2.5px 2.5px 0px #1a1a1a, 0 0 0 14px rgba(117,91,180,0); }
+  }
+  .cta-glow{ animation: ctaGlow 2.2s ease-out infinite; }
+  .cta-glow:hover{ animation-play-state: paused; }
+
+  /* ---- shine sweep across the CTA button ---- */
+  .shine-btn{ position:relative; overflow:hidden; isolation:isolate; }
+  .shine-btn::after{
+    content:''; position:absolute; top:0; left:-60%; width:45%; height:100%;
+    background:linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.85) 50%, rgba(255,255,255,0) 100%);
+    transform:skewX(-18deg); animation:shineSweep 2.8s ease-in-out infinite; z-index:1; pointer-events:none;
+  }
+  @keyframes shineSweep{ 0%{ left:-60%; } 45%{ left:130%; } 100%{ left:130%; } }
+
   /* ---- team: slow infinite marquee, right to left ---- */
   @keyframes teamScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
   .team-track{ animation: teamScroll 38s linear infinite; width:max-content; }
@@ -169,21 +218,20 @@
 <!-- ============ HEADER ============ -->
 <header class="w-full bg-white/90 backdrop-blur border-b border-gray-100/60 sticky top-0 z-50">
   <div class="max-w-[1240px] mx-auto px-5 sm:px-6 md:px-12 h-16 md:h-20 flex items-center justify-between">
-    <a class="text-xl md:text-[26px] font-bold tracking-tight text-black hover:opacity-90 transition" href="#home">purple dev</a>
+    <a class="text-xl md:text-[26px] font-bold tracking-tight text-black hover:opacity-90 transition" data-nav href="#home">purple dev</a>
 
-    <nav class="hidden md:flex items-center space-x-7 text-[14.5px] font-medium text-gray-700">
+    <nav class="hidden md:flex items-center space-x-4 lg:space-x-7 text-[13.5px] lg:text-[14.5px] font-medium text-gray-700 whitespace-nowrap">
       <a class="nav-link hover:text-black transition" data-nav href="#home">Home</a>
       <a class="nav-link hover:text-black transition" data-nav href="#team">Team</a>
       <a class="nav-link hover:text-black transition" data-nav href="#services">Services</a>
       <a class="nav-link hover:text-black transition" data-nav href="#about">About</a>
-      <a class="nav-link hover:text-black transition" data-nav href="#portfolio">Portfolio</a>
-      <a class="nav-link hover:text-black transition" data-nav href="#process">Process</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#portfolio">Our Projects</a>
       <a class="nav-link hover:text-black transition" data-nav href="#pricing">Pricing</a>
       <a class="nav-link hover:text-black transition" data-nav href="#contact">Contact</a>
     </nav>
 
     <div class="flex items-center gap-2.5">
-      <div class="hidden sm:flex items-center space-x-2.5">
+      <div class="hidden sm:flex md:hidden lg:flex items-center space-x-2.5">
         <a aria-label="X (Twitter)" class="social-btn w-9 h-8 rounded-lg border border-black flex items-center justify-center text-slate-900 hover:bg-gray-50 transition" href="https://x.com" target="_blank" rel="noopener">
           <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
         </a>
@@ -204,14 +252,13 @@
   </div>
 
   <!-- mobile nav panel -->
-  <div id="mobileMenu" class="md:hidden border-b border-gray-100">
+  <div id="mobileMenu" class="md:hidden">
     <nav class="flex flex-col px-5 py-3 text-[15px] font-medium text-gray-800">
       <a class="py-2.5 border-b border-gray-100" data-nav href="#home">Home</a>
       <a class="py-2.5 border-b border-gray-100" data-nav href="#team">Team</a>
       <a class="py-2.5 border-b border-gray-100" data-nav href="#services">Services</a>
       <a class="py-2.5 border-b border-gray-100" data-nav href="#about">About</a>
-      <a class="py-2.5 border-b border-gray-100" data-nav href="#portfolio">Portfolio</a>
-      <a class="py-2.5 border-b border-gray-100" data-nav href="#process">Process</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#portfolio">Our Projects</a>
       <a class="py-2.5 border-b border-gray-100" data-nav href="#pricing">Pricing</a>
       <a class="py-2.5" data-nav href="#contact">Contact</a>
     </nav>
@@ -219,7 +266,7 @@
 </header>
 
 <!-- ============ HERO ============ -->
-<section class="relative bg-[#E6E2F8] overflow-hidden border-b border-gray-200/50 pt-10 pb-0 md:pt-20" id="home">
+<section class="relative bg-[#E4DBF8] overflow-hidden border-b border-gray-200/50 pt-10 pb-0 md:pt-20" id="home">
   <!-- cute floating doodles -->
   <svg class="doodle w-9 h-9 text-white left-[6%] top-[22%] bob" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
   <svg class="doodle w-4 h-4 text-[#755BB4] left-[14%] top-[55%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
@@ -234,7 +281,7 @@
   <svg class="doodle w-32 h-32 sm:w-44 sm:h-44 text-white/60 -left-10 -top-10 bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
   <svg class="doodle w-24 h-24 sm:w-32 sm:h-32 text-[#755BB4]/50 right-[4%] top-[6%] drift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" aria-hidden="true"><path d="M6 17a4 4 0 1 1 .9-7.9 5 5 0 0 1 9.8-1A4.5 4.5 0 0 1 18 17H6z"></path></svg>
   <svg class="doodle w-20 h-20 sm:w-28 sm:h-28 text-white/70 left-[8%] bottom-[-2%] sm:bottom-[4%] wiggle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z"></path></svg>
-  <svg class="doodle w-16 h-16 sm:w-20 sm:h-20 text-[#8F76BE]/40 right-[26%] bottom-[2%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="3"></circle><circle cx="19" cy="12" r="3"></circle><circle cx="12" cy="19" r="3"></circle><circle cx="5" cy="12" r="3"></circle><circle cx="12" cy="12" r="3.6" fill="#E6E2F8"></circle></svg>
+  <svg class="doodle w-16 h-16 sm:w-20 sm:h-20 text-[#8F76BE]/40 right-[26%] bottom-[2%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="3"></circle><circle cx="19" cy="12" r="3"></circle><circle cx="12" cy="19" r="3"></circle><circle cx="5" cy="12" r="3"></circle><circle cx="12" cy="12" r="3.6" fill="#C9BBEE"></circle></svg>
   <svg class="doodle w-14 h-14 sm:w-20 sm:h-20 text-white/60 left-[42%] -top-4 sm:top-[-6%] twinkle-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
   <svg class="doodle w-24 h-24 sm:w-28 sm:h-28 text-[#755BB4]/30 right-[-3%] bottom-[-4%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
 
@@ -264,12 +311,12 @@
         </h1>
 
         <p class="hero-rise text-[15px] sm:text-[15.5px] leading-relaxed text-gray-700 max-w-md mb-8 md:mb-9 font-normal" data-d="3">
-          We're a product design team based in London. We're very passionate about the work that we do.
+          We're a product design team based in India. We're very passionate about the work that we do.
         </p>
 
         <div class="hero-rise flex flex-wrap items-center gap-3" data-d="4">
-          <a class="pop-cta inline-block px-6 py-2.5 bg-white border-[1.5px] border-black rounded-lg text-sm font-semibold text-black retro-shadow" href="#portfolio">See Our Work</a>
-          <a class="inline-block px-6 py-2.5 bg-transparent border-[1.5px] border-black/0 rounded-lg text-sm font-semibold text-black hover:border-black/60 transition" href="#contact">Let's talk →</a>
+          <a class="pop-cta inline-block px-6 py-2.5 bg-white border-[1.5px] border-black rounded-lg text-sm font-semibold text-black retro-shadow" data-nav href="#portfolio">See Our Work</a>
+          <a class="inline-block px-6 py-2.5 bg-transparent border-[1.5px] border-black/0 rounded-lg text-sm font-semibold text-black hover:border-black/60 transition" data-nav href="#contact">Let's talk →</a>
         </div>
       </div>
 
@@ -525,7 +572,7 @@
       Eight years into product design, still chasing the clean version of a hard problem.
     </h2>
     <p class="text-[14.5px] sm:text-[15.5px] leading-relaxed text-gray-700 mb-8 max-w-lg mx-auto">
-      We work with founders and small teams to take fuzzy product ideas into interfaces people actually enjoy using — from early research through to shipped, polished screens. Based in London, working with clients worldwide.
+      We work with founders and small teams to take fuzzy product ideas into interfaces people actually enjoy using — from early research through to shipped, polished screens. Based in India, working with clients worldwide.
     </p>
 
     <div class="flex items-center justify-center gap-3 mb-9" aria-hidden="true">
@@ -554,38 +601,98 @@
 </section>
 
 <!-- ============ PORTFOLIO ============ -->
-<section class="relative bg-white py-16 sm:py-20 md:py-28 overflow-hidden" id="portfolio">
+<section class="relative bg-[#F7F5FC] py-16 sm:py-20 md:py-28 overflow-hidden" id="portfolio">
   <svg class="doodle w-5 h-5 text-[#F4A6C8] right-[6%] top-[10%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
   <svg class="doodle w-3 h-3 text-[#8F76BE] right-[13%] top-[22%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
   <svg class="doodle w-6 h-6 text-[#8F76BE] left-[5%] bottom-[8%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
   <svg class="doodle w-8 h-8 text-[#755BB4] left-[3%] top-[45%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="9" r="7"></circle><path d="M12 16v5M9 21h6" stroke-linecap="round"></path></svg>
   <svg class="doodle w-4 h-4 text-[#F4A6C8] right-[3%] bottom-[30%] twinkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
-  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
-    <div class="reveal text-center max-w-2xl mx-auto mb-10 md:mb-14">
-      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
-        <span class="text-xs">✦</span><span>PORTFOLIO</span>
-      </div>
-      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
-        Selected work, filtered by what you're curious about.
+  <svg class="doodle w-16 h-16 text-[#8F76BE]/25 -left-4 top-[6%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
+  <svg class="doodle w-20 h-20 text-[#F4A6C8]/25 -right-6 bottom-[4%] drift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5" transform="rotate(8 12 12)"></rect></svg>
+
+  <div class="max-w-[880px] mx-auto px-5 sm:px-6 md:px-12 relative z-10 text-center">
+    <div class="reveal">
+      <h2 class="font-display text-5xl sm:text-6xl md:text-7xl font-semibold text-slate-900 tracking-tight leading-none mb-10 md:mb-14">
+        Our Projects
       </h2>
+
+      <button id="viewAllProjectsBtn" class="cta-glow shine-btn pop-cta relative inline-flex items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-black text-white border-[1.5px] border-black rounded-2xl text-base sm:text-lg font-bold retro-shadow">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6 twinkle" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+        View all projects
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
     </div>
+  </div>
+</section>
+
+<!-- ============ ALL PROJECTS (full listing, opens like its own dedicated page) ============ -->
+<section class="hidden fixed inset-0 z-[85] bg-[#FAFAFA] overflow-y-auto" id="all-projects">
+
+  <!-- sticky sub-header, feels like its own page rather than a modal -->
+  <div class="sticky top-0 z-20 bg-[#1a1a1a] text-white border-b border-black">
+    <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 h-16 md:h-[72px] flex items-center justify-between">
+      <button id="backToHomeBtn" class="inline-flex items-center gap-2 text-sm font-semibold hover:opacity-70 transition shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span class="hidden sm:inline">Back to home</span>
+      </button>
+      <span class="text-sm font-bold tracking-tight">purple dev — projects</span>
+      <a href="#contact" id="allProjectsTalkLink" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full border border-white/30 hover:border-white transition">
+        Let's talk →
+      </a>
+    </div>
+  </div>
+
+  <!-- page hero -->
+  <div class="relative bg-[#EDEAF8] border-b border-black/10 overflow-hidden">
+    <svg class="doodle w-10 h-10 text-[#755BB4]/30 right-[8%] top-[20%] bob-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+    <svg class="doodle w-6 h-6 text-[#F4A6C8]/50 left-[10%] bottom-[16%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+    <svg class="doodle w-16 h-16 text-white/60 -right-4 -bottom-6 wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
+    <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 pt-10 pb-9 md:pt-14 md:pb-12 relative z-10">
+      <div class="max-w-2xl">
+        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-white/70 text-[11px] font-bold tracking-wider uppercase mb-5">
+          <span class="text-xs twinkle">✦</span><span>ALL PROJECTS</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-[44px] font-bold text-slate-900 tracking-tight leading-[1.15] mb-4">
+          Every project,<br>filtered by what<br>you're curious about.
+        </h1>
+        <p class="text-[15px] text-gray-700 max-w-md leading-relaxed">
+          <span id="allProjectCount">6</span> case studies across web, app and brand work — pick a category or open one to read the story behind it.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 py-10 md:py-14">
 
     <!-- filter buttons -->
-    <div class="reveal flex flex-wrap justify-center gap-2.5 mb-10">
-      <button class="filter-btn active px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="all">All</button>
-      <button class="filter-btn px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="web">Web</button>
-      <button class="filter-btn px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="app">App</button>
-      <button class="filter-btn px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="brand">Brand</button>
+    <div class="flex flex-wrap items-center gap-2.5 mb-10">
+      <span class="text-xs font-semibold text-gray-500 mr-1">Filter:</span>
+      <button class="filter-btn-all active px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="all">All</button>
+      <button class="filter-btn-all px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="web">Web</button>
+      <button class="filter-btn-all px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="app">App</button>
+      <button class="filter-btn-all px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="brand">Brand</button>
     </div>
 
-    <div id="projectGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- injected by JS -->
+    <div id="allProjectGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
+      <!-- injected by JS: full list -->
+    </div>
+
+    <!-- closing CTA, makes the page feel complete rather than cut off -->
+    <div class="mt-12 md:mt-16 border-[1.5px] border-black rounded-2xl bg-[#1a1a1a] text-white p-8 sm:p-10 text-center relative overflow-hidden">
+      <svg class="doodle w-8 h-8 text-white/20 left-[6%] top-[16%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+      <svg class="doodle w-6 h-6 text-white/20 right-[8%] bottom-[18%] twinkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+      <h3 class="text-xl sm:text-2xl font-bold mb-2 relative z-10">Like what you see?</h3>
+      <p class="text-sm text-white/70 mb-6 relative z-10">Let's talk about what we could build for you next.</p>
+      <a href="#contact" class="pop-cta relative z-10 inline-flex items-center gap-2 px-6 py-2.5 bg-white text-black rounded-lg text-sm font-semibold">
+        Start a project
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
     </div>
   </div>
 </section>
 
 <!-- project modal -->
-<div id="projectModal" class="fixed inset-0 z-[80] hidden items-center justify-center p-4">
+<div id="projectModal" class="fixed inset-0 z-[95] hidden items-center justify-center p-4">
   <div id="modalOverlay" class="absolute inset-0 bg-black/50"></div>
   <div class="relative bg-white border-[1.5px] border-black rounded-2xl max-w-lg w-full p-6 sm:p-8 max-h-[85vh] overflow-y-auto">
     <button id="modalClose" aria-label="Close" class="absolute top-4 right-4 w-8 h-8 rounded-full border border-black flex items-center justify-center hover:bg-gray-50">
@@ -600,50 +707,10 @@
         <svg id="modalHeart" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
         <span id="modalLikeCount">12</span>
       </button>
-      <a id="modalVisit" href="#contact" class="px-4 py-2 rounded-lg bg-black text-white text-sm font-semibold hover:bg-gray-800 transition">Discuss a project like this</a>
+      <a id="modalVisit" data-nav href="#contact" class="px-4 py-2 rounded-lg bg-black text-white text-sm font-semibold hover:bg-gray-800 transition">Discuss a project like this</a>
     </div>
   </div>
 </div>
-
-<!-- ============ PROCESS ============ -->
-<section class="relative bg-[#FAFAFA] py-16 sm:py-20 md:py-28 border-y border-gray-100 overflow-hidden" id="process">
-  <svg class="doodle w-7 h-7 text-[#8F76BE] right-[8%] bottom-[12%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
-  <svg class="doodle w-4 h-4 text-[#755BB4] left-[7%] top-[16%] twinkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
-  <svg class="doodle w-9 h-9 text-[#F4A6C8]/80 right-[16%] top-[10%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="3"></circle><circle cx="19" cy="12" r="3"></circle><circle cx="12" cy="19" r="3"></circle><circle cx="5" cy="12" r="3"></circle><circle cx="12" cy="12" r="3.4" fill="#755BB4"></circle></svg>
-  <svg class="doodle w-3 h-3 text-[#8F76BE] left-[16%] bottom-[10%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
-  <div class="max-w-[1000px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
-    <div class="reveal text-center max-w-2xl mx-auto mb-12 md:mb-16">
-      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
-        <span class="text-xs">✦</span><span>HOW IT WORKS</span>
-      </div>
-      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
-        Four steps from a rough idea to a shipped product.
-      </h2>
-    </div>
-
-    <div class="reveal relative">
-      <div class="hidden sm:block absolute top-6 left-6 right-6 h-0.5 bg-black/10"></div>
-      <div class="grid grid-cols-1 sm:grid-cols-4 gap-8 sm:gap-4">
-        <div class="relative flex sm:flex-col items-center sm:text-center gap-4 sm:gap-3">
-          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-white border-[1.5px] border-black flex items-center justify-center font-bold z-10">1</div>
-          <div><h3 class="font-bold text-sm mb-1">Discovery call</h3><p class="text-xs text-gray-600 leading-relaxed">We talk through goals, users, and constraints.</p></div>
-        </div>
-        <div class="relative flex sm:flex-col items-center sm:text-center gap-4 sm:gap-3">
-          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-white border-[1.5px] border-black flex items-center justify-center font-bold z-10">2</div>
-          <div><h3 class="font-bold text-sm mb-1">Research &amp; wireframes</h3><p class="text-xs text-gray-600 leading-relaxed">Structure before style — we map the flows first.</p></div>
-        </div>
-        <div class="relative flex sm:flex-col items-center sm:text-center gap-4 sm:gap-3">
-          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-white border-[1.5px] border-black flex items-center justify-center font-bold z-10">3</div>
-          <div><h3 class="font-bold text-sm mb-1">Visual design</h3><p class="text-xs text-gray-600 leading-relaxed">High-fidelity screens, refined through review rounds.</p></div>
-        </div>
-        <div class="relative flex sm:flex-col items-center sm:text-center gap-4 sm:gap-3">
-          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-white border-[1.5px] border-black flex items-center justify-center font-bold z-10">4</div>
-          <div><h3 class="font-bold text-sm mb-1">Handoff &amp; support</h3><p class="text-xs text-gray-600 leading-relaxed">Dev-ready files, plus support through launch.</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ============ PRICING ============ -->
 <section class="relative bg-white py-16 sm:py-20 md:py-28 overflow-hidden" id="pricing">
@@ -783,7 +850,7 @@
     <div class="reveal flex flex-wrap justify-center gap-x-8 gap-y-3 mt-12 text-sm text-gray-300">
       <a href="mailto:hello@purpledev.com" class="hover:text-white transition">hello@purpledev.com</a>
       <span class="hidden sm:inline text-gray-600">·</span>
-      <span>London, UK</span>
+      <span>India</span>
       <span class="hidden sm:inline text-gray-600">·</span>
       <a href="#" data-nav="#home" class="hover:text-white transition">Back to top ↑</a>
     </div>
@@ -833,21 +900,52 @@
 
   /* ---------- nav links (smooth scroll + close mobile menu + active state) ---------- */
   var navLinks = document.querySelectorAll('[data-nav]');
-  var sections = ['home','services','about','portfolio','process','pricing','contact'].map(function(id){return document.getElementById(id);});
+  var sections = ['home','team','services','about','portfolio','pricing','contact'].map(function(id){return document.getElementById(id);});
+  var siteHeader = document.querySelector('header');
+  var scrollFixTimer;
+
+  // scroll so the section's top edge sits just under the sticky header (real header height, not a guess)
+  function scrollToTarget(target){
+    if(!target) return;
+    function targetTop(){
+      var h = siteHeader ? siteHeader.offsetHeight : 72;
+      return Math.max(0, target.getBoundingClientRect().top + window.pageYOffset - h);
+    }
+    window.scrollTo({top: targetTop(), behavior:'smooth'});
+    // once the smooth scroll has settled, correct any drift caused by late layout changes (fonts, images)
+    clearTimeout(scrollFixTimer);
+    scrollFixTimer = setTimeout(function(){
+      if(Math.abs(targetTop() - window.pageYOffset) > 3){
+        window.scrollTo({top: targetTop(), behavior:'instant'});
+      }
+    }, 900);
+  }
+  // don't fight the user if they start scrolling themselves
+  ['wheel','touchstart','keydown'].forEach(function(evt){
+    window.addEventListener(evt, function(){ clearTimeout(scrollFixTimer); }, {passive:true});
+  });
+
+  // data-nav="#x" wins over href="#" (e.g. the "Back to top" link)
+  function navHash(a){
+    var h = a.getAttribute('data-nav');
+    if(!h || h.charAt(0) !== '#') h = a.getAttribute('href');
+    return (h && h.length > 1 && h.charAt(0) === '#') ? h : '#home';
+  }
 
   navLinks.forEach(function(a){
     a.addEventListener('click', function(e){
-      var href = a.getAttribute('href') || a.getAttribute('data-nav');
-      if(href && href.startsWith('#')){
-        e.preventDefault();
-        var target = document.querySelector(href);
-        if(target){
-          var offset = 72;
-          var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
-          window.scrollTo({top: top, behavior:'smooth'});
-        }
-        closeMenu();
+      e.preventDefault();
+      var hash = navHash(a);
+      // close overlays first so the page is in its final layout before we measure
+      closeMenu();
+      var allProjectsEl = document.getElementById('all-projects');
+      if(allProjectsEl && !allProjectsEl.classList.contains('hidden')){
+        allProjectsEl.classList.add('hidden');
       }
+      if(typeof closeModal === 'function') closeModal();
+      document.body.style.overflow = '';
+      scrollToTarget(document.querySelector(hash));
+      try{ history.replaceState(null, '', hash); }catch(err){}
     });
   });
 
@@ -947,43 +1045,92 @@
     {title:"Halo Wellness Brand", cat:"brand", tag:"Brand", img:"https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80", desc:"Warm, approachable branding for a wellness app aimed at reducing the clinical feel typical of health products."}
   ];
   var likes = {};
-  var grid = document.getElementById('projectGrid');
+  var allGrid = document.getElementById('allProjectGrid');
 
-  function renderProjects(filter){
-    grid.innerHTML = '';
+  function buildProjectCard(p, i, order){
+    var card = document.createElement('button');
+    card.className = 'proj-card proj-card-in text-left border border-black rounded-2xl overflow-hidden bg-white group retro-shadow';
+    card.style.animationDelay = (Math.min(order||0, 8) * 0.06) + 's';
+    card.setAttribute('data-index', i);
+    card.innerHTML =
+      '<div class="overflow-hidden aspect-[4/3]">' +
+        '<img src="'+p.img+'" alt="'+p.title+'" class="proj-img w-full h-full object-cover">' +
+      '</div>' +
+      '<div class="p-4 flex items-center justify-between gap-2">' +
+        '<div>' +
+          '<span class="inline-block px-2.5 py-0.5 rounded-full border border-black text-[9.5px] font-bold uppercase tracking-wider mb-1.5">'+p.tag+'</span>' +
+          '<h3 class="font-bold text-sm">'+p.title+'</h3>' +
+        '</div>' +
+        '<svg class="proj-arrow w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>' +
+      '</div>';
+    card.addEventListener('click', function(){ openModal(i); });
+    return card;
+  }
+
+  function renderProjects(filter, gridEl, limit){
+    if(!gridEl) return;
+    gridEl.innerHTML = '';
+    var count = 0;
     projects.forEach(function(p, i){
       if(filter !== 'all' && p.cat !== filter) return;
-      var card = document.createElement('button');
-      card.className = 'proj-card text-left border border-black rounded-2xl overflow-hidden bg-white group';
-      card.setAttribute('data-index', i);
-      card.innerHTML =
-        '<div class="overflow-hidden aspect-[4/3]">' +
-          '<img src="'+p.img+'" alt="'+p.title+'" class="proj-img w-full h-full object-cover">' +
-        '</div>' +
-        '<div class="p-4 flex items-center justify-between gap-2">' +
-          '<div>' +
-            '<span class="inline-block px-2.5 py-0.5 rounded-full border border-black text-[9.5px] font-bold uppercase tracking-wider mb-1.5">'+p.tag+'</span>' +
-            '<h3 class="font-bold text-sm">'+p.title+'</h3>' +
-          '</div>' +
-          '<svg class="proj-arrow w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>' +
-        '</div>';
-      card.addEventListener('click', function(){ openModal(i); });
-      grid.appendChild(card);
+      if(limit && count >= limit) return;
+      gridEl.appendChild(buildProjectCard(p, i, count));
+      count++;
     });
+    var countLabel = document.getElementById('allProjectCount');
+    if(countLabel && gridEl.id === 'allProjectGrid') countLabel.textContent = count;
   }
-  renderProjects('all');
 
-  document.querySelectorAll('.filter-btn').forEach(function(btn){
+  renderProjects('all', allGrid);
+
+  document.querySelectorAll('.filter-btn-all').forEach(function(btn){
     btn.addEventListener('click', function(){
-      document.querySelectorAll('.filter-btn').forEach(function(b){
+      document.querySelectorAll('.filter-btn-all').forEach(function(b){
         b.classList.remove('active','bg-black','text-white');
       });
       btn.classList.add('active','bg-black','text-white');
-      renderProjects(btn.getAttribute('data-filter'));
+      renderProjects(btn.getAttribute('data-filter'), allGrid);
     });
   });
   // style active filter initially
-  document.querySelector('.filter-btn.active').classList.add('bg-black','text-white');
+  var initialAllFilter = document.querySelector('.filter-btn-all.active');
+  if(initialAllFilter) initialAllFilter.classList.add('bg-black','text-white');
+
+  /* ---------- "all projects" page-like overlay ---------- */
+  var allProjectsSection = document.getElementById('all-projects');
+  var viewAllBtn = document.getElementById('viewAllProjectsBtn');
+  var backHomeBtn = document.getElementById('backToHomeBtn');
+
+  function showAllProjects(){
+    allProjectsSection.classList.remove('hidden');
+    allProjectsSection.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+    history.pushState(null, '', '#all-projects');
+  }
+  function hideAllProjects(){
+    allProjectsSection.classList.add('hidden');
+    document.body.style.overflow = '';
+    if(location.hash === '#all-projects'){
+      history.pushState(null, '', '#portfolio');
+    }
+  }
+  if(viewAllBtn) viewAllBtn.addEventListener('click', showAllProjects);
+  if(backHomeBtn) backHomeBtn.addEventListener('click', hideAllProjects);
+  if(location.hash === '#all-projects') showAllProjects();
+
+  // links inside the all-projects page that jump back to a homepage section
+  allProjectsSection.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var href = a.getAttribute('href');
+      if(href === '#all-projects') return;
+      e.preventDefault();
+      hideAllProjects();
+      var target = document.querySelector(href);
+      if(target){
+        setTimeout(function(){ scrollToTarget(target); }, 50);
+      }
+    });
+  });
 
   /* ---------- project modal ---------- */
   var modal = document.getElementById('projectModal');
@@ -1052,8 +1199,7 @@
       var plan = btn.getAttribute('data-plan');
       showToast('"'+plan+'" selected — scroll down to send a message and we\'ll follow up.');
       var target = document.getElementById('contact');
-      var top = target.getBoundingClientRect().top + window.pageYOffset - 72;
-      window.scrollTo({top: top, behavior:'smooth'});
+      scrollToTarget(target);
       var msg = document.getElementById('cf-message');
       if(msg && !msg.value){ msg.value = "Hi, we're interested in the " + plan + " plan. "; }
     });
