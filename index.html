@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Jonathan Meelo — Product Designer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --lilac:#E6E2F8;
+    --lilac-deep:#8F76BE;
+    --violet:#755BB4;
+    --ink:#1a1a1a;
+    --mint:#EDF8E5;
+    --blush:#FBE4EE;
+    --sky:#E5F1FC;
+  }
+  html{scroll-behavior:smooth;}
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* ---- retro hard-shadow button ---- */
+  .retro-shadow { box-shadow: 2.5px 2.5px 0px #1a1a1a; transition: all .15s ease-in-out; }
+  .retro-shadow:hover { box-shadow: 1px 1px 0px #1a1a1a; transform: translate(1.5px, 1.5px); }
+  .retro-shadow:active { box-shadow: 0px 0px 0px #1a1a1a; transform: translate(2.5px, 2.5px); }
+
+  /* ---- rotating badge ---- */
+  @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .animate-spin-slow { animation: spin-slow 22s linear infinite; }
+
+  /* ---- hero load-in sequence (the one orchestrated moment) ---- */
+  @keyframes riseIn { from { opacity:0; transform: translateY(18px);} to {opacity:1; transform:translateY(0);} }
+  .hero-rise { opacity:0; animation: riseIn .7s cubic-bezier(.22,1,.36,1) forwards; }
+  .hero-rise[data-d="1"]{animation-delay:.05s}
+  .hero-rise[data-d="2"]{animation-delay:.18s}
+  .hero-rise[data-d="3"]{animation-delay:.32s}
+  .hero-rise[data-d="4"]{animation-delay:.46s}
+  .hero-rise[data-d="5"]{animation-delay:.6s}
+
+  @keyframes popIn { from {opacity:0; transform: scale(.6) rotate(-8deg);} to {opacity:1; transform: scale(1) rotate(0);} }
+  .badge-pop { opacity:0; animation: popIn .6s cubic-bezier(.22,1.4,.36,1) forwards; animation-delay:.75s; }
+
+  /* ---- scroll reveal (used once per section entrance, not per-card) ---- */
+  .reveal { opacity:0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1); }
+  .reveal.in-view { opacity:1; transform: translateY(0); }
+
+  /* ---- portfolio card image zoom on hover ---- */
+  .proj-img { transition: transform .5s cubic-bezier(.22,1,.36,1); }
+  .proj-card:hover .proj-img { transform: scale(1.06); }
+  .proj-card:hover .proj-arrow { transform: translate(3px,-3px); }
+  .proj-arrow { transition: transform .25s ease; }
+
+  /* ---- nav underline ---- */
+  .nav-link{position:relative;}
+  .nav-link::after{
+    content:''; position:absolute; left:0; bottom:-4px; height:2px; width:0%;
+    background:var(--ink); transition: width .25s ease;
+  }
+  .nav-link:hover::after, .nav-link.active::after{ width:100%; }
+
+  /* ---- mobile menu ---- */
+  #mobileMenu{ max-height:0; overflow:hidden; transition: max-height .35s ease; }
+  #mobileMenu.open{ max-height:480px; }
+
+  /* ---- accordion ---- */
+  .acc-panel{ max-height:0; overflow:hidden; transition:max-height .35s ease; }
+  .acc-panel.open{ max-height:300px; }
+  .acc-chevron{ transition: transform .25s ease; }
+  .acc-btn[aria-expanded="true"] .acc-chevron{ transform: rotate(180deg); }
+
+  /* ---- toast ---- */
+  #toast{
+    position:fixed; left:50%; bottom:28px; transform:translate(-50%,20px);
+    opacity:0; pointer-events:none; transition: all .35s cubic-bezier(.22,1,.36,1); z-index:100;
+  }
+  #toast.show{ opacity:1; transform:translate(-50%,0); pointer-events:auto; }
+
+  /* ---- like button pulse ---- */
+  @keyframes pulseHeart { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 100%{transform:scale(1)} }
+  .liked { animation: pulseHeart .35s ease; }
+
+  /* ---- pricing toggle knob ---- */
+  #billingKnob{ transition: transform .25s ease; }
+
+  /* ---- back to top ---- */
+  #backToTop{ opacity:0; pointer-events:none; transition: opacity .3s ease, transform .3s ease; transform:translateY(8px); }
+  #backToTop.show{ opacity:1; pointer-events:auto; transform:translateY(0); }
+
+  .wave-line{ stroke-dasharray: 400; stroke-dashoffset: 400; animation: draw 1.8s ease forwards; animation-delay:.9s; }
+  @keyframes draw{ to { stroke-dashoffset: 0; } }
+</style>
+</head>
+<body class="bg-white text-slate-900 antialiased selection:bg-purple-200">
+
+<!-- ============ HEADER ============ -->
+<header class="w-full bg-white/90 backdrop-blur border-b border-gray-100/60 sticky top-0 z-50">
+  <div class="max-w-[1240px] mx-auto px-5 sm:px-6 md:px-12 h-16 md:h-20 flex items-center justify-between">
+    <a class="text-xl md:text-[26px] font-bold tracking-tight text-black hover:opacity-90 transition" href="#home">Meelo</a>
+
+    <nav class="hidden md:flex items-center space-x-7 text-[14.5px] font-medium text-gray-700">
+      <a class="nav-link hover:text-black transition" data-nav href="#home">Home</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#services">Services</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#about">About</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#portfolio">Portfolio</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#process">Process</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#pricing">Pricing</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#contact">Contact</a>
+    </nav>
+
+    <div class="flex items-center gap-2.5">
+      <div class="hidden sm:flex items-center space-x-2.5">
+        <a aria-label="X (Twitter)" class="social-btn w-9 h-8 rounded-lg border border-black flex items-center justify-center text-slate-900 hover:bg-gray-50 transition" href="https://x.com" target="_blank" rel="noopener">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+        </a>
+        <a aria-label="Dribbble" class="social-btn w-9 h-8 rounded-lg border border-black flex items-center justify-center text-slate-900 hover:bg-gray-50 transition" href="https://dribbble.com" target="_blank" rel="noopener">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.93 4.93l2.12 2.12m9.9 9.9l2.12 2.12M4.93 19.07l2.12-2.12m9.9-9.9l2.12-2.12"></path></svg>
+        </a>
+        <a aria-label="Instagram" class="social-btn w-9 h-8 rounded-lg border border-black flex items-center justify-center text-slate-900 hover:bg-gray-50 transition" href="https://instagram.com" target="_blank" rel="noopener">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><rect height="20" rx="5" ry="5" width="20" x="2" y="2"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
+        </a>
+      </div>
+
+      <!-- mobile menu button -->
+      <button id="menuBtn" aria-label="Open menu" aria-expanded="false" class="md:hidden w-10 h-9 rounded-lg border border-black flex items-center justify-center">
+        <svg id="menuIconOpen" class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg id="menuIconClose" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- mobile nav panel -->
+  <div id="mobileMenu" class="md:hidden border-b border-gray-100">
+    <nav class="flex flex-col px-5 py-3 text-[15px] font-medium text-gray-800">
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#home">Home</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#services">Services</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#about">About</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#portfolio">Portfolio</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#process">Process</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#pricing">Pricing</a>
+      <a class="py-2.5" data-nav href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="relative bg-[#E6E2F8] overflow-hidden border-b border-gray-200/50 pt-10 pb-0 md:pt-20" id="home">
+  <div class="max-w-[1240px] mx-auto px-5 sm:px-6 md:px-12 relative">
+    <div class="absolute right-6 md:right-10 top-2 text-slate-800 pointer-events-none select-none hidden sm:block">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+      <svg class="w-4 h-4 ml-6 -mt-1" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+      <div class="lg:col-span-6 pb-12 md:pb-24 pt-2 md:pt-4 z-10">
+        <div class="hero-rise inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-6 md:mb-7" data-d="1">
+          <span class="text-xs">✦</span><span>HELLO!</span>
+        </div>
+
+        <h1 class="hero-rise text-[34px] sm:text-5xl md:text-[54px] font-bold text-black tracking-tight leading-[1.18] mb-5 md:mb-6" data-d="2">
+          I'm Jonathan Meelo,<br>
+          a <span class="relative inline-block">
+            product
+            <svg class="absolute -bottom-2.5 left-0 w-[108%] h-4 text-[#755BB4] pointer-events-none" fill="none" preserveAspectRatio="none" viewBox="0 0 160 18">
+              <path class="wave-line" d="M3 13C25 8 50 16 80 10C110 4 135 14 157 9M18 16C45 13 80 18 115 12C130 10 148 14 155 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+            </svg>
+          </span> designer.
+        </h1>
+
+        <p class="hero-rise text-[15px] sm:text-[15.5px] leading-relaxed text-gray-700 max-w-md mb-8 md:mb-9 font-normal" data-d="3">
+          I'm a freelance product designer based in London. I'm very passionate about the work that I do.
+        </p>
+
+        <div class="hero-rise flex flex-wrap items-center gap-3" data-d="4">
+          <a class="inline-block px-6 py-2.5 bg-white border-[1.5px] border-black rounded-lg text-sm font-semibold text-black retro-shadow" href="#portfolio">See My Works</a>
+          <a class="inline-block px-6 py-2.5 bg-transparent border-[1.5px] border-black/0 rounded-lg text-sm font-semibold text-black hover:border-black/60 transition" href="#contact">Let's talk →</a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-6 relative flex justify-center lg:justify-end items-end">
+        <div class="hero-rise relative w-[280px] sm:w-[340px] md:w-[420px] aspect-[4/4.9] bg-[#8F76BE] rounded-t-full border-[1.5px] border-black overflow-hidden flex items-end justify-center" data-d="3">
+          <img alt="Jonathan Meelo - Product Designer" class="w-full h-full object-cover object-top pointer-events-none select-none" src="https://i.ibb.co/8n7nRvZf/1782298421436.png"/>
+        </div>
+
+        <button id="availBadge" aria-label="Availability info" class="badge-pop absolute -top-4 sm:-top-6 left-1 sm:left-6 md:left-12 w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-full border border-black flex items-center justify-center shadow-sm z-20 cursor-pointer">
+          <div class="absolute inset-0 flex items-center justify-center animate-spin-slow pointer-events-none">
+            <svg class="w-full h-full p-1.5" viewBox="0 0 100 100">
+              <path d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="transparent" id="badge-path"></path>
+              <text class="text-[8.8px] font-bold uppercase tracking-[0.23em] fill-black">
+                <textPath href="#badge-path" startOffset="0%">✦ FOR FREELANCE ✦ I AM AVAILABLE</textPath>
+              </text>
+            </svg>
+          </div>
+          <div class="z-10 text-black">
+            <svg class="w-5 h-5 -rotate-45" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24"><line x1="5" x2="19" y1="12" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </div>
+        </button>
+
+        <div class="absolute -right-2 sm:-right-6 bottom-16 sm:bottom-24 text-slate-800 pointer-events-none select-none hidden sm:block">
+          <svg class="w-16 h-8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7" viewBox="0 0 60 28">
+            <path d="M2 5C10 5 15 1 25 1C35 1 42 7 55 7"></path>
+            <path d="M5 14C13 14 18 10 28 10C38 10 45 16 58 16"></path>
+            <path d="M1 23C9 23 14 19 24 19C34 19 41 25 54 25"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section class="relative bg-white py-16 sm:py-20 md:py-28 overflow-hidden" id="services">
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 relative">
+    <div class="absolute left-6 md:left-14 top-14 text-slate-800 pointer-events-none select-none hidden sm:block">
+      <svg class="w-6 h-10 -rotate-12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 36"><path d="M14 2L2 19H12L10 34L22 17H12L14 2Z"></path></svg>
+    </div>
+    <div class="absolute right-6 md:right-16 top-10 text-slate-800 pointer-events-none select-none hidden sm:block">
+      <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+      <svg class="w-4 h-4 ml-5 -mt-1" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+    </div>
+
+    <div class="reveal text-center max-w-2xl mx-auto mb-12 md:mb-16">
+      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+        <span class="text-xs">✦</span><span>MY SERVICES</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
+        The service I offer is specifically<br class="hidden sm:inline"> designed to meet your needs.
+      </h2>
+    </div>
+
+    <div class="reveal grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 max-w-[1040px] mx-auto">
+      <button data-service="strategy" class="service-card text-left bg-[#E4E1F8] border border-black rounded-2xl p-6 sm:p-8 flex items-start gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-3 text-black">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><path d="M19.439 7.85c0-1.57.8-2.35 1.561-2.85v-.01A2.5 2.5 0 0 0 18.5 2h-3.01c-.5 0-1.04.42-1.39 1.15-.37.78-.97 1.35-1.6 1.35s-1.23-.57-1.6-1.35C10.55 2.42 10.01 2 9.51 2H6.5A2.5 2.5 0 0 0 4 4.5v3.01c0 .5.42 1.04 1.15 1.39.78.37 1.35.97 1.35 1.6s-.57 1.23-1.35 1.6C4.42 12.45 4 12.99 4 13.49v3.01A2.5 2.5 0 0 0 6.5 19h3.01c.5 0 1.04-.42 1.39-1.15.37-.78.97-1.35 1.6-1.35s1.23.57 1.6 1.35c.35.73.89 1.15 1.39 1.15h3.01A2.5 2.5 0 0 0 21 16.5v-3.01c0-.5-.42-1.04-1.15-1.39-.78-.37-1.35-.97-1.35-1.6s.57-1.23 1.35-1.6c.72-.34 1.14-.87 1.14-1.05z"></path></svg>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-[17px] font-bold text-slate-900 mb-2">Strategy &amp; Planning</h3>
+          <p class="text-xs sm:text-[13.5px] leading-relaxed text-gray-700">Streamline your campaigns with tools that improve engagement, boost visibility, and help you connect with your audience.</p>
+        </div>
+      </button>
+
+      <button data-service="research" class="service-card text-left bg-[#EDF8E5] border border-black rounded-2xl p-6 sm:p-8 flex items-start gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-3 text-black">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" x2="16" y1="21" y2="16"></line><circle cx="11" cy="11" r="2.5"></circle></svg>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-[17px] font-bold text-slate-900 mb-2">User Research</h3>
+          <p class="text-xs sm:text-[13.5px] leading-relaxed text-gray-700">Simplify project workflows with organized tools and strategies designed to keep your team aligned and your goals on track.</p>
+        </div>
+      </button>
+
+      <button data-service="web" class="service-card text-left bg-[#FBE4EE] border border-black rounded-2xl p-6 sm:p-8 flex items-start gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-3 text-black">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><rect height="16" rx="3" width="18" x="3" y="4"></rect><line x1="3" x2="21" y1="9" y2="9"></line><line x1="6" x2="6.01" y1="6.5" y2="6.5"></line><line x1="9" x2="9.01" y1="6.5" y2="6.5"></line></svg>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-[17px] font-bold text-slate-900 mb-2">Web Design</h3>
+          <p class="text-xs sm:text-[13.5px] leading-relaxed text-gray-700">Gain valuable insights into user behavior, website performance, and key business metrics to optimize your digital presence.</p>
+        </div>
+      </button>
+
+      <button data-service="brand" class="service-card text-left bg-[#E5F1FC] border border-black rounded-2xl p-6 sm:p-8 flex items-start gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-3 text-black">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 4v4m0 8v4M4 12h4m8 0h4"></path><circle cx="12" cy="12" r="3"></circle><circle cx="12" cy="3" r="1.5"></circle><circle cx="12" cy="21" r="1.5"></circle><circle cx="3" cy="12" r="1.5"></circle><circle cx="21" cy="12" r="1.5"></circle></svg>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-[17px] font-bold text-slate-900 mb-2">Brand Design</h3>
+          <p class="text-xs sm:text-[13.5px] leading-relaxed text-gray-700">Understand your market with precise data analysis and deep customer insights that guide your decision-making processes.</p>
+        </div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="relative bg-[#FAFAFA] py-16 sm:py-20 md:py-28 border-y border-gray-100" id="about">
+  <div class="max-w-[1100px] mx-auto px-5 sm:px-6 md:px-12">
+    <div class="reveal grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
+      <div class="md:col-span-5">
+        <div class="relative w-full max-w-[320px] mx-auto md:mx-0 aspect-square bg-[#E4E1F8] rounded-3xl border-[1.5px] border-black overflow-hidden">
+          <img alt="Jonathan Meelo at his desk" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIzG7Q57K9eBkNvvQ0yBm8Qqxw9w2FjAuf36xFa7f4RirCwR68iUKTGPfv3yewO57bO_tQCKxYbmLLMLcsojOAuVPT9-N9jwDG5jB7PqRrJVXpjxgMRLg4nnVHgKlosZ0cvzLoAC2KMrgIP1FhlCGNpzVPcjcUjKTxZpoxbLEEJLvRINAw1E7pEwsguiezomqJC1nR1U5bpR3yJz_WhaCCUWwUH3i8x-2zeTYqNbsX5sNm7H3c5scDrBLOLyegY4k067A">
+        </div>
+      </div>
+      <div class="md:col-span-7">
+        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+          <span class="text-xs">✦</span><span>ABOUT ME</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug mb-4">
+          Eight years into product design, still chasing the clean version of a hard problem.
+        </h2>
+        <p class="text-[14.5px] sm:text-[15.5px] leading-relaxed text-gray-700 mb-6 max-w-lg">
+          I work with founders and small teams to take fuzzy product ideas into interfaces people actually enjoy using — from early research through to shipped, polished screens. Based in London, working with clients worldwide.
+        </p>
+        <div class="grid grid-cols-3 gap-4 max-w-md">
+          <div class="text-center sm:text-left">
+            <p class="text-2xl sm:text-3xl font-bold text-black" data-counter data-target="8">0</p>
+            <p class="text-[11px] sm:text-xs text-gray-600 mt-1">Years experience</p>
+          </div>
+          <div class="text-center sm:text-left">
+            <p class="text-2xl sm:text-3xl font-bold text-black" data-counter data-target="64">0</p>
+            <p class="text-[11px] sm:text-xs text-gray-600 mt-1">Projects shipped</p>
+          </div>
+          <div class="text-center sm:text-left">
+            <p class="text-2xl sm:text-3xl font-bold text-black" data-counter data-target="38">0</p>
+            <p class="text-[11px] sm:text-xs text-gray-600 mt-1">Happy clients</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PORTFOLIO ============ -->
+<section class="relative bg-white py-16 sm:py-20 md:py-28" id="portfolio">
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12">
+    <div class="reveal text-center max-w-2xl mx-auto mb-10 md:mb-14">
+      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+        <span class="text-xs">✦</span><span>PORTFOLIO</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
+        Selected work, filtered by what you're curious about.
+      </h2>
+    </div>
+
+    <!-- filter buttons -->
+    <div class="reveal flex flex-wrap justify-center gap-2.5 mb-10">
+      <button class="filter-btn active px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="all">All</button>
+      <button class="filter-btn px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="web">Web</button>
+      <button class="filter-btn px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="app">App</button>
+      <button class="filter-btn px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="brand">Brand</button>
+    </div>
+
+    <div id="projectGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- project modal -->
+<div id="projectModal" class="fixed inset-0 z-[80] hidden items-center justify-center p-4">
+  <div id="modalOverlay" class="absolute inset-0 bg-black/50"></div>
+  <div class="relative bg-white border-[1.5px] border-black rounded-2xl max-w-lg w-full p-6 sm:p-8 max-h-[85vh] overflow-y-auto">
+    <button id="modalClose" aria-label="Close" class="absolute top-4 right-4 w-8 h-8 rounded-full border border-black flex items-center justify-center hover:bg-gray-50">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    <img id="modalImg" class="w-full aspect-[16/10] object-cover rounded-xl border border-black mb-5" src="" alt="">
+    <span id="modalTag" class="inline-block px-3 py-1 rounded-full border border-black text-[10px] font-bold uppercase tracking-wider mb-3"></span>
+    <h3 id="modalTitle" class="text-xl font-bold mb-2"></h3>
+    <p id="modalDesc" class="text-[14px] text-gray-700 leading-relaxed mb-5"></p>
+    <div class="flex items-center gap-3">
+      <button id="modalLike" class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-black text-sm font-semibold retro-shadow">
+        <svg id="modalHeart" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+        <span id="modalLikeCount">12</span>
+      </button>
+      <a id="modalVisit" href="#contact" class="px-4 py-2 rounded-lg bg-black text-white text-sm font-semibold hover:bg-gray-800 transition">Discuss a project like this</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PROCESS ============ -->
+<section class="relative bg-[#FAFAFA] py-16 sm:py-20 md:py-28 border-y border-gray-100" id="process">
+  <div class="max-w-[1000px] mx-auto px-5 sm:px-6 md:px-12">
+    <div class="reveal text-center max-w-2xl mx-auto mb-12 md:mb-16">
+      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+        <span class="text-xs">✦</span><span>HOW IT WORKS</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
+        Four steps from a rough idea to a shipped product.
+      </h2>
+    </div>
+
+    <div class="reveal relative">
+      <div class="hidden sm:block absolute top-6 left-6 right-6 h-0.5 bg-black/10"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-8 sm:gap-4">
+        <div class="relative flex sm:flex-col items-center sm:text-center gap-4 sm:gap-3">
+          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-white border-[1.5px] border-black flex items-center justify-center font-bold z-10">1</div>
+          <div><h3 class="font-bold text-sm mb-1">Discovery call</h3><p class="text-xs text-gray-600 leading-relaxed">We talk through goals, users, and constraints.</p></div>
+        </div>
+        <div class="relative flex sm:flex-col items-center sm:text-center gap-4 sm:gap-3">
+          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-white border-[1.5px] border-black flex items-center justify-center font-bold z-10">2</div>
+          <div><h3 class="font-bold text-sm mb-1">Research &amp; wireframes</h3><p class="text-xs text-gray-600 leading-relaxed">Structure before style — we map the flows first.</p></div>
+        </div>
+        <div class="relative flex sm:flex-col items-center sm:text-center gap-4 sm:gap-3">
+          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-white border-[1.5px] border-black flex items-center justify-center font-bold z-10">3</div>
+          <div><h3 class="font-bold text-sm mb-1">Visual design</h3><p class="text-xs text-gray-600 leading-relaxed">High-fidelity screens, refined through review rounds.</p></div>
+        </div>
+        <div class="relative flex sm:flex-col items-center sm:text-center gap-4 sm:gap-3">
+          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-white border-[1.5px] border-black flex items-center justify-center font-bold z-10">4</div>
+          <div><h3 class="font-bold text-sm mb-1">Handoff &amp; support</h3><p class="text-xs text-gray-600 leading-relaxed">Dev-ready files, plus support through launch.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section class="relative bg-white py-16 sm:py-20 md:py-28" id="pricing">
+  <div class="max-w-[1000px] mx-auto px-5 sm:px-6 md:px-12">
+    <div class="reveal text-center max-w-2xl mx-auto mb-8">
+      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+        <span class="text-xs">✦</span><span>PRICING</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
+        Simple pricing, no surprises.
+      </h2>
+    </div>
+
+    <div class="reveal flex items-center justify-center gap-3 mb-10">
+      <span class="text-sm font-medium">Monthly</span>
+      <button id="billingToggle" class="w-14 h-8 rounded-full border-[1.5px] border-black bg-white relative" aria-pressed="false" aria-label="Toggle yearly billing">
+        <span id="billingKnob" class="absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-black"></span>
+      </button>
+      <span class="text-sm font-medium">Yearly <span class="text-[11px] text-green-700 font-bold">(save 20%)</span></span>
+    </div>
+
+    <div class="reveal grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="border border-black rounded-2xl p-6 sm:p-7 bg-[#E5F1FC] flex flex-col">
+        <h3 class="font-bold text-lg mb-1">Starter</h3>
+        <p class="text-xs text-gray-600 mb-4">For a single focused screen or flow</p>
+        <p class="mb-5"><span class="price text-3xl font-bold" data-monthly="600" data-yearly="480">$600</span><span class="text-sm text-gray-600">/mo</span></p>
+        <ul class="text-xs text-gray-700 space-y-2 mb-6 flex-1">
+          <li>✓ 1 active project</li><li>✓ 2 revision rounds</li><li>✓ Figma source files</li>
+        </ul>
+        <button data-plan="Starter" class="choose-plan px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow bg-white">Choose Starter</button>
+      </div>
+      <div class="border-[1.5px] border-black rounded-2xl p-6 sm:p-7 bg-[#E4E1F8] flex flex-col relative sm:scale-105 shadow-md">
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-black text-white text-[10px] font-bold uppercase">Most popular</span>
+        <h3 class="font-bold text-lg mb-1">Studio</h3>
+        <p class="text-xs text-gray-600 mb-4">For an ongoing product partnership</p>
+        <p class="mb-5"><span class="price text-3xl font-bold" data-monthly="1400" data-yearly="1120">$1,400</span><span class="text-sm text-gray-600">/mo</span></p>
+        <ul class="text-xs text-gray-700 space-y-2 mb-6 flex-1">
+          <li>✓ 3 active projects</li><li>✓ Unlimited revisions</li><li>✓ Weekly check-ins</li>
+        </ul>
+        <button data-plan="Studio" class="choose-plan px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow bg-black text-white">Choose Studio</button>
+      </div>
+      <div class="border border-black rounded-2xl p-6 sm:p-7 bg-[#EDF8E5] flex flex-col">
+        <h3 class="font-bold text-lg mb-1">Enterprise</h3>
+        <p class="text-xs text-gray-600 mb-4">For teams needing full-time design</p>
+        <p class="mb-5"><span class="text-3xl font-bold">Custom</span></p>
+        <ul class="text-xs text-gray-700 space-y-2 mb-6 flex-1">
+          <li>✓ Unlimited projects</li><li>✓ Dedicated designer</li><li>✓ Priority support</li>
+        </ul>
+        <button data-plan="Enterprise" class="choose-plan px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow bg-white">Contact sales</button>
+      </div>
+    </div>
+
+    <!-- FAQ accordion -->
+    <div class="reveal max-w-2xl mx-auto mt-16">
+      <h3 class="text-lg font-bold mb-4 text-center">Common questions</h3>
+      <div class="space-y-2.5" id="faqList">
+        <div class="border border-black rounded-xl overflow-hidden">
+          <button class="acc-btn w-full flex items-center justify-between px-4 py-3 text-left text-sm font-semibold" aria-expanded="false">
+            Can I switch plans later?
+            <svg class="acc-chevron w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="acc-panel px-4 text-xs text-gray-700 leading-relaxed"><p class="pb-4">Yes — upgrade or downgrade anytime, and changes apply from your next billing cycle.</p></div>
+        </div>
+        <div class="border border-black rounded-xl overflow-hidden">
+          <button class="acc-btn w-full flex items-center justify-between px-4 py-3 text-left text-sm font-semibold" aria-expanded="false">
+            Do you work with startups?
+            <svg class="acc-chevron w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="acc-panel px-4 text-xs text-gray-700 leading-relaxed"><p class="pb-4">Regularly — the Starter plan is built for early-stage teams shipping their first version.</p></div>
+        </div>
+        <div class="border border-black rounded-xl overflow-hidden">
+          <button class="acc-btn w-full flex items-center justify-between px-4 py-3 text-left text-sm font-semibold" aria-expanded="false">
+            What's not included?
+            <svg class="acc-chevron w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="acc-panel px-4 text-xs text-gray-700 leading-relaxed"><p class="pb-4">Development and copywriting are handled separately, though I can recommend trusted partners.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="relative bg-[#1a1a1a] text-white py-16 sm:py-20 md:py-28" id="contact">
+  <div class="max-w-[900px] mx-auto px-5 sm:px-6 md:px-12">
+    <div class="reveal text-center max-w-2xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-white bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+        <span class="text-xs">✦</span><span>GET IN TOUCH</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold tracking-tight leading-snug">
+        Have a project in mind? Tell me about it.
+      </h2>
+    </div>
+
+    <form id="contactForm" class="reveal grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+      <div class="sm:col-span-1">
+        <label class="block text-xs font-medium mb-1.5 text-gray-300" for="cf-name">Name</label>
+        <input required id="cf-name" name="name" type="text" class="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/25 text-sm placeholder-gray-400 focus:outline-none focus:border-white" placeholder="Your name">
+      </div>
+      <div class="sm:col-span-1">
+        <label class="block text-xs font-medium mb-1.5 text-gray-300" for="cf-email">Email</label>
+        <input required id="cf-email" name="email" type="email" class="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/25 text-sm placeholder-gray-400 focus:outline-none focus:border-white" placeholder="you@email.com">
+      </div>
+      <div class="sm:col-span-2">
+        <label class="block text-xs font-medium mb-1.5 text-gray-300" for="cf-message">Message</label>
+        <textarea required id="cf-message" name="message" rows="4" class="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/25 text-sm placeholder-gray-400 focus:outline-none focus:border-white resize-none" placeholder="Tell me a bit about your project..."></textarea>
+      </div>
+      <div class="sm:col-span-2 flex items-center justify-between flex-wrap gap-3">
+        <p id="formError" class="text-xs text-red-400 hidden">Please fill in every field with a valid email.</p>
+        <button type="submit" class="ml-auto px-6 py-2.5 bg-white text-black border-[1.5px] border-white rounded-lg text-sm font-semibold retro-shadow">Send message</button>
+      </div>
+    </form>
+
+    <div class="reveal flex flex-wrap justify-center gap-x-8 gap-y-3 mt-12 text-sm text-gray-300">
+      <a href="mailto:hello@jonathanmeelo.com" class="hover:text-white transition">hello@jonathanmeelo.com</a>
+      <span class="hidden sm:inline text-gray-600">·</span>
+      <span>London, UK</span>
+      <span class="hidden sm:inline text-gray-600">·</span>
+      <a href="#" data-nav="#home" class="hover:text-white transition">Back to top ↑</a>
+    </div>
+  </div>
+</section>
+
+<!-- toast -->
+<div id="toast" class="bg-black text-white text-sm font-medium px-5 py-3 rounded-full shadow-lg"></div>
+
+<!-- back to top -->
+<button id="backToTop" aria-label="Back to top" class="fixed bottom-6 right-5 sm:right-8 w-11 h-11 rounded-full bg-black text-white border-[1.5px] border-black flex items-center justify-center z-40 retro-shadow">
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+</button>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- toast helper ---------- */
+  var toastEl = document.getElementById('toast');
+  var toastTimer;
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2600);
+  }
+
+  /* ---------- mobile menu ---------- */
+  var menuBtn = document.getElementById('menuBtn');
+  var mobileMenu = document.getElementById('mobileMenu');
+  var iconOpen = document.getElementById('menuIconOpen');
+  var iconClose = document.getElementById('menuIconClose');
+  function closeMenu(){
+    mobileMenu.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded','false');
+    iconOpen.classList.remove('hidden');
+    iconClose.classList.add('hidden');
+  }
+  function toggleMenu(){
+    var isOpen = mobileMenu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', isOpen ? 'true':'false');
+    iconOpen.classList.toggle('hidden', isOpen);
+    iconClose.classList.toggle('hidden', !isOpen);
+  }
+  menuBtn.addEventListener('click', toggleMenu);
+
+  /* ---------- nav links (smooth scroll + close mobile menu + active state) ---------- */
+  var navLinks = document.querySelectorAll('[data-nav]');
+  var sections = ['home','services','about','portfolio','process','pricing','contact'].map(function(id){return document.getElementById(id);});
+
+  navLinks.forEach(function(a){
+    a.addEventListener('click', function(e){
+      var href = a.getAttribute('href') || a.getAttribute('data-nav');
+      if(href && href.startsWith('#')){
+        e.preventDefault();
+        var target = document.querySelector(href);
+        if(target){
+          var offset = 72;
+          var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({top: top, behavior:'smooth'});
+        }
+        closeMenu();
+      }
+    });
+  });
+
+  function updateActiveNav(){
+    var scrollPos = window.scrollY + 110;
+    var current = sections[0];
+    sections.forEach(function(sec){
+      if(sec && sec.offsetTop <= scrollPos) current = sec;
+    });
+    document.querySelectorAll('.nav-link').forEach(function(link){
+      link.classList.toggle('active', current && link.getAttribute('href') === '#'+current.id);
+    });
+  }
+
+  /* ---------- back to top button ---------- */
+  var backToTop = document.getElementById('backToTop');
+  backToTop.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  window.addEventListener('scroll', function(){
+    backToTop.classList.toggle('show', window.scrollY > 500);
+    updateActiveNav();
+  });
+
+  /* ---------- scroll reveal ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.15});
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in-view'); });
+  }
+
+  /* ---------- animated counters (about section) ---------- */
+  var counters = document.querySelectorAll('[data-counter]');
+  function animateCounter(el){
+    var target = parseInt(el.getAttribute('data-target'),10);
+    var current = 0;
+    var duration = 1200;
+    var startTime = null;
+    function step(ts){
+      if(!startTime) startTime = ts;
+      var progress = Math.min((ts-startTime)/duration, 1);
+      current = Math.floor(progress * target);
+      el.textContent = current + (progress>=1 ? '+' : '');
+      if(progress < 1) requestAnimationFrame(step);
+      else el.textContent = target + '+';
+    }
+    requestAnimationFrame(step);
+  }
+  if('IntersectionObserver' in window && counters.length){
+    var counterIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          animateCounter(entry.target);
+          counterIO.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.5});
+    counters.forEach(function(c){ counterIO.observe(c); });
+  }
+
+  /* ---------- availability badge ---------- */
+  document.getElementById('availBadge').addEventListener('click', function(){
+    showToast("Available for new projects — starting next month ✦");
+  });
+
+  /* ---------- service cards ---------- */
+  var serviceDetails = {
+    strategy: "Strategy & Planning: I'll help define the roadmap, prioritize features, and align your team before any pixels get pushed.",
+    research: "User Research: interviews, surveys and usability testing to make sure decisions are based on real user behavior, not guesses.",
+    web: "Web Design: responsive, accessible websites built to convert — from landing pages to full product sites.",
+    brand: "Brand Design: logos, color systems and visual identity that make your product instantly recognizable."
+  };
+  document.querySelectorAll('.service-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      var key = card.getAttribute('data-service');
+      showToast(serviceDetails[key] || "Thanks for your interest!");
+    });
+  });
+
+  /* ---------- portfolio data + rendering ---------- */
+  var projects = [
+    {title:"Fintra Banking App", cat:"app", tag:"App", img:"https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80", desc:"A mobile-first banking experience focused on clarity for first-time investors, redesigned end-to-end across onboarding, transfers and insights."},
+    {title:"Loop Studio Website", cat:"web", tag:"Web", img:"https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&q=80", desc:"Marketing site for a creative studio, built around bold typography and a case-study-first navigation model."},
+    {title:"Nova Identity System", cat:"brand", tag:"Brand", img:"https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&q=80", desc:"Full brand identity for a climate-tech startup: logo, type system, and a flexible color palette used across print and digital."},
+    {title:"Orbit Dashboard", cat:"app", tag:"App", img:"https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80", desc:"An analytics dashboard redesign that cut time-to-insight by simplifying dense tables into scannable visual summaries."},
+    {title:"Marlin Ecommerce", cat:"web", tag:"Web", img:"https://images.unsplash.com/photo-1557821552-17105176677c?w=800&q=80", desc:"A conversion-focused ecommerce storefront with a streamlined checkout that reduced cart abandonment significantly."},
+    {title:"Halo Wellness Brand", cat:"brand", tag:"Brand", img:"https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80", desc:"Warm, approachable branding for a wellness app aimed at reducing the clinical feel typical of health products."}
+  ];
+  var likes = {};
+  var grid = document.getElementById('projectGrid');
+
+  function renderProjects(filter){
+    grid.innerHTML = '';
+    projects.forEach(function(p, i){
+      if(filter !== 'all' && p.cat !== filter) return;
+      var card = document.createElement('button');
+      card.className = 'proj-card text-left border border-black rounded-2xl overflow-hidden bg-white group';
+      card.setAttribute('data-index', i);
+      card.innerHTML =
+        '<div class="overflow-hidden aspect-[4/3]">' +
+          '<img src="'+p.img+'" alt="'+p.title+'" class="proj-img w-full h-full object-cover">' +
+        '</div>' +
+        '<div class="p-4 flex items-center justify-between gap-2">' +
+          '<div>' +
+            '<span class="inline-block px-2.5 py-0.5 rounded-full border border-black text-[9.5px] font-bold uppercase tracking-wider mb-1.5">'+p.tag+'</span>' +
+            '<h3 class="font-bold text-sm">'+p.title+'</h3>' +
+          '</div>' +
+          '<svg class="proj-arrow w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>' +
+        '</div>';
+      card.addEventListener('click', function(){ openModal(i); });
+      grid.appendChild(card);
+    });
+  }
+  renderProjects('all');
+
+  document.querySelectorAll('.filter-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.filter-btn').forEach(function(b){
+        b.classList.remove('active','bg-black','text-white');
+      });
+      btn.classList.add('active','bg-black','text-white');
+      renderProjects(btn.getAttribute('data-filter'));
+    });
+  });
+  // style active filter initially
+  document.querySelector('.filter-btn.active').classList.add('bg-black','text-white');
+
+  /* ---------- project modal ---------- */
+  var modal = document.getElementById('projectModal');
+  var modalImg = document.getElementById('modalImg');
+  var modalTag = document.getElementById('modalTag');
+  var modalTitle = document.getElementById('modalTitle');
+  var modalDesc = document.getElementById('modalDesc');
+  var modalLike = document.getElementById('modalLike');
+  var modalHeart = document.getElementById('modalHeart');
+  var modalLikeCount = document.getElementById('modalLikeCount');
+  var currentProjectIndex = null;
+
+  function openModal(i){
+    currentProjectIndex = i;
+    var p = projects[i];
+    modalImg.src = p.img; modalImg.alt = p.title;
+    modalTag.textContent = p.tag;
+    modalTitle.textContent = p.title;
+    modalDesc.textContent = p.desc;
+    var baseLikes = 8 + i*3;
+    var liked = !!likes[i];
+    modalLikeCount.textContent = baseLikes + (liked?1:0);
+    modalHeart.setAttribute('fill', liked ? 'currentColor':'none');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').addEventListener('click', closeModal);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
+
+  modalLike.addEventListener('click', function(){
+    var i = currentProjectIndex;
+    likes[i] = !likes[i];
+    var baseLikes = 8 + i*3;
+    modalLikeCount.textContent = baseLikes + (likes[i]?1:0);
+    modalHeart.setAttribute('fill', likes[i] ? 'currentColor':'none');
+    if(likes[i]){
+      modalHeart.classList.add('liked');
+      setTimeout(function(){ modalHeart.classList.remove('liked'); }, 350);
+    }
+  });
+
+  /* ---------- pricing toggle ---------- */
+  var billingToggle = document.getElementById('billingToggle');
+  var billingKnob = document.getElementById('billingKnob');
+  var yearly = false;
+  billingToggle.addEventListener('click', function(){
+    yearly = !yearly;
+    billingToggle.setAttribute('aria-pressed', yearly);
+    billingKnob.style.transform = yearly ? 'translateX(24px)' : 'translateX(0)';
+    document.querySelectorAll('.price').forEach(function(p){
+      var val = yearly ? p.getAttribute('data-yearly') : p.getAttribute('data-monthly');
+      p.textContent = '$' + Number(val).toLocaleString();
+    });
+  });
+
+  /* ---------- choose plan buttons ---------- */
+  document.querySelectorAll('.choose-plan').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var plan = btn.getAttribute('data-plan');
+      showToast('"'+plan+'" selected — scroll down to send a message and I\'ll follow up.');
+      var target = document.getElementById('contact');
+      var top = target.getBoundingClientRect().top + window.pageYOffset - 72;
+      window.scrollTo({top: top, behavior:'smooth'});
+      var msg = document.getElementById('cf-message');
+      if(msg && !msg.value){ msg.value = "Hi, I'm interested in the " + plan + " plan. "; }
+    });
+  });
+
+  /* ---------- FAQ accordion ---------- */
+  document.querySelectorAll('.acc-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var panel = btn.nextElementSibling;
+      var isOpen = panel.classList.contains('open');
+      // close all others
+      document.querySelectorAll('.acc-panel').forEach(function(p){ p.classList.remove('open'); });
+      document.querySelectorAll('.acc-btn').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+      if(!isOpen){
+        panel.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+      }
+    });
+  });
+
+  /* ---------- contact form ---------- */
+  var form = document.getElementById('contactForm');
+  var formError = document.getElementById('formError');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = document.getElementById('cf-name').value.trim();
+    var email = document.getElementById('cf-email').value.trim();
+    var message = document.getElementById('cf-message').value.trim();
+    var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if(!name || !emailOk || !message){
+      formError.classList.remove('hidden');
+      return;
+    }
+    formError.classList.add('hidden');
+    showToast('Thanks '+name.split(' ')[0]+' — your message is sent. I\'ll reply within a day.');
+    form.reset();
+  });
+
+  /* ---------- social icon feedback (placeholder targets) ---------- */
+  document.querySelectorAll('.social-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      if(btn.getAttribute('href') === '#') e.preventDefault();
+    });
+  });
+
+  updateActiveNav();
+})();
+</script>
+</body>
+</html>
