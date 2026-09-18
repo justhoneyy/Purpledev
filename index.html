@@ -132,6 +132,26 @@
 
   /* ---- cute decorative doodle sizing helper ---- */
   .doodle{ position:absolute; pointer-events:none; select-none; z-index:0; }
+
+  /* ---- animated "website design" demo panel (replaces a video) ---- */
+  @keyframes shimmerBar{ 0%,100%{ opacity:.35; } 50%{ opacity:.9; } }
+  .shimmer-bar{ animation:shimmerBar 2.2s ease-in-out infinite; }
+
+  @keyframes barGrow{ 0%,100%{ transform:scaleY(.42); } 50%{ transform:scaleY(1); } }
+  .chart-bar{ transform-origin:bottom; animation:barGrow 1.8s ease-in-out infinite; }
+
+  @keyframes breathe{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.025); } }
+  .breathe{ animation:breathe 3.6s ease-in-out infinite; }
+
+  @keyframes cursorLoop{
+    0%{ transform:translate(14px,18px); }
+    22%{ transform:translate(78%,14px); }
+    45%{ transform:translate(82%,62%); }
+    68%{ transform:translate(38%,78%); }
+    86%{ transform:translate(16px,46%); }
+    100%{ transform:translate(14px,18px); }
+  }
+  .cursor-loop{ animation:cursorLoop 9s ease-in-out infinite; }
 </style>
 </head>
 <body class="bg-white text-slate-900 antialiased selection:bg-purple-200">
@@ -242,9 +262,50 @@
         </div>
       </div>
 
-      <div class="lg:col-span-6 relative flex justify-center lg:justify-end items-end">
-        <div class="hero-rise relative w-[280px] sm:w-[340px] md:w-[420px] aspect-[4/4.9] bg-[#8F76BE] rounded-t-full border-[1.5px] border-black overflow-hidden flex items-end justify-center" data-d="3">
-          <img alt="purple dev - Product Designer" class="w-full h-full object-cover object-top pointer-events-none select-none" src="https://i.ibb.co/8n7nRvZf/1782298421436.png"/>
+      <div class="lg:col-span-6 relative flex justify-center lg:justify-end items-center pb-10 sm:pb-14 md:pb-20">
+        <div class="hero-rise relative w-[280px] sm:w-[360px] md:w-[440px] aspect-[4/3] bg-white rounded-2xl border-[1.5px] border-black overflow-hidden flex flex-col retro-shadow" data-d="3">
+          <!-- browser chrome -->
+          <div class="h-7 sm:h-9 shrink-0 bg-[#F4F2FB] border-b border-black/10 flex items-center gap-3 px-3 sm:px-4">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FF5F57]"></span>
+              <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FEBC2E]"></span>
+              <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#28C840]"></span>
+            </div>
+            <div class="flex-1 h-4 sm:h-5 rounded-full bg-white border border-black/10 flex items-center justify-center">
+              <span class="text-[8px] sm:text-[10px] text-gray-500 font-medium tracking-wide">purpledevs.qd.je</span>
+            </div>
+          </div>
+          <!-- animated website-design canvas, in place of a video -->
+          <div class="relative flex-1 bg-[#F7F5FC] overflow-hidden">
+            <div class="flex items-center justify-between px-4 sm:px-5 pt-3 sm:pt-4">
+              <div class="w-10 sm:w-14 h-2.5 sm:h-3 rounded-full bg-[#755BB4] shimmer-bar"></div>
+              <div class="flex gap-1.5">
+                <div class="w-4 sm:w-5 h-2 rounded-full bg-black/15 shimmer-bar" style="animation-delay:.15s"></div>
+                <div class="w-4 sm:w-5 h-2 rounded-full bg-black/15 shimmer-bar" style="animation-delay:.35s"></div>
+                <div class="w-4 sm:w-5 h-2 rounded-full bg-black/15 shimmer-bar" style="animation-delay:.55s"></div>
+              </div>
+            </div>
+
+            <div class="breathe mx-4 sm:mx-5 mt-3 sm:mt-4 rounded-xl border border-black/15 bg-white p-3 sm:p-4">
+              <div class="w-2/3 h-3 sm:h-3.5 rounded-full bg-[#8F76BE] mb-2"></div>
+              <div class="w-1/2 h-2 rounded-full bg-black/10 mb-1.5"></div>
+              <div class="w-1/3 h-2 rounded-full bg-black/10"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 sm:gap-2.5 mx-4 sm:mx-5 mt-2.5 sm:mt-3.5">
+              <div class="rounded-lg border border-black/15 bg-white h-9 sm:h-14 flex items-end p-1 sm:p-1.5 overflow-hidden">
+                <span class="chart-bar block w-full rounded bg-[#8F76BE] h-full" style="animation-delay:0s"></span>
+              </div>
+              <div class="rounded-lg border border-black/15 bg-white h-9 sm:h-14 flex items-end p-1 sm:p-1.5 overflow-hidden">
+                <span class="chart-bar block w-full rounded bg-[#F4A6C8] h-full" style="animation-delay:.3s"></span>
+              </div>
+              <div class="rounded-lg border border-black/15 bg-white h-9 sm:h-14 flex items-end p-1 sm:p-1.5 overflow-hidden">
+                <span class="chart-bar block w-full rounded bg-[#755BB4] h-full" style="animation-delay:.6s"></span>
+              </div>
+            </div>
+
+            <svg class="cursor-loop absolute left-0 top-0 w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="#1a1a1a" aria-hidden="true"><path d="M4 2l16 6.5-6.2 2.2L11.5 17z"></path></svg>
+          </div>
         </div>
 
         <button id="availBadge" aria-label="Availability info" class="badge-pop absolute -top-4 sm:-top-6 left-1 sm:left-6 md:left-12 w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-full border border-black flex items-center justify-center shadow-sm z-20 cursor-pointer">
@@ -261,7 +322,7 @@
           </div>
         </button>
 
-        <div class="absolute -right-2 sm:-right-6 bottom-16 sm:bottom-24 text-slate-800 pointer-events-none select-none hidden sm:block bob">
+        <div class="absolute -right-2 sm:-right-6 bottom-2 sm:bottom-6 text-slate-800 pointer-events-none select-none hidden sm:block bob">
           <svg class="w-16 h-8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7" viewBox="0 0 60 28">
             <path d="M2 5C10 5 15 1 25 1C35 1 42 7 55 7"></path>
             <path d="M5 14C13 14 18 10 28 10C38 10 45 16 58 16"></path>
