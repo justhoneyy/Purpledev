@@ -1,0 +1,2430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffffff">
+<title>Admin — purple dev</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E✦%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500..700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+/* =====================================================================
+   Same design language as the main site: white pages, lilac hero bands,
+   black outlines, hard retro shadows, pastel accents and cute doodles.
+   ===================================================================== */
+:root {
+  --lilac: #E4DBF8; --lilac-deep: #8F76BE; --violet: #755BB4; --ink: #1a1a1a;
+  --mint: #EDF8E5; --blush: #FBE4EE; --sky: #E5F1FC; --pink: #F4A6C8; --sun: #FFF3D6;
+  --paper: #FAFAFA; --soft: #F7F5FC; --hero2: #EDEAF8;
+  --muted: #5B5B66; --faint: #8A8A96; --line: rgba(26,26,26,.12);
+  --hard: 2.5px 2.5px 0 var(--ink);
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --display: 'Fraunces', 'Plus Jakarta Sans', Georgia, serif;
+  --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px);
+  --tab: 64px;
+}
+
+/* ============ base ============ */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { width: 100%; font-family: var(--font); background: var(--paper); color: var(--ink); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; min-height: 100vh; min-height: 100dvh; overflow-x: hidden; }
+body.noscroll { overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+a { color: inherit; text-decoration: none; }
+img, video { max-width: 100%; display: block; }
+[hidden] { display: none !important; }
+::selection { background: #E9D5FF; }
+:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; border-radius: 6px; }
+.ic { width: 18px; height: 18px; flex: none; }
+.ic.sm { width: 15px; height: 15px; }
+.muted { color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.only-desk { display: none !important; }
+.only-touch { display: none; }
+@media (min-width: 1024px) { .only-desk { display: inline-flex !important; } .only-mob { display: none !important; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; } }
+
+/* fine grain, like the main site */
+.grain-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 300; opacity: .035; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* ============ cute motion (same set as the main site) ============ */
+@keyframes riseIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes popIn { from { opacity: 0; transform: scale(.6) rotate(-8deg); } to { opacity: 1; transform: none; } }
+@keyframes twinkle { 0%, 100% { opacity: .35; transform: scale(.86) rotate(0deg); } 50% { opacity: 1; transform: scale(1.12) rotate(6deg); } }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes drift { 0%, 100% { transform: translateX(0) rotate(0deg); } 50% { transform: translateX(10px) rotate(4deg); } }
+@keyframes wiggle { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes shimmerBar { 0%, 100% { opacity: .35; } 50% { opacity: .9; } }
+@keyframes barGrow { 0%, 100% { transform: scaleY(.42); } 50% { transform: scaleY(1); } }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+@keyframes cursorLoop { 0% { transform: translate(14px, 18px); } 22% { transform: translate(78%, 14px); } 45% { transform: translate(82%, 62%); } 68% { transform: translate(38%, 78%); } 86% { transform: translate(16px, 46%); } 100% { transform: translate(14px, 18px); } }
+@keyframes ctaGlow { 0%, 100% { box-shadow: 2.5px 2.5px 0 var(--ink), 0 0 0 0 rgba(117,91,180,.45); } 50% { box-shadow: 2.5px 2.5px 0 var(--ink), 0 0 0 12px rgba(117,91,180,0); } }
+@keyframes shineSweep { 0% { left: -60%; } 45% { left: 130%; } 100% { left: 130%; } }
+@keyframes fade { from { opacity: 0; } }
+@keyframes fadeOut { to { opacity: 0; } }
+@keyframes slideIn { from { transform: translateX(40px); opacity: 0; } }
+@keyframes slideOut { to { transform: translateX(30px); opacity: 0; } }
+@keyframes sheetUp { from { transform: translateY(40px); opacity: 0; } }
+@keyframes sheetDown { to { transform: translateY(40px); opacity: 0; } }
+@keyframes pop { from { opacity: 0; transform: translate(-50%, -46%) scale(.96); } }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 16px) scale(.96); } }
+@keyframes toastOut { to { opacity: 0; transform: translate(-50%, 8px); } }
+@keyframes sk { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+.rise { opacity: 0; animation: riseIn .7s cubic-bezier(.22,1,.36,1) forwards; }
+.rise.d1 { animation-delay: .05s; } .rise.d2 { animation-delay: .18s; } .rise.d3 { animation-delay: .32s; } .rise.d4 { animation-delay: .46s; }
+.pop-in { opacity: 0; animation: popIn .6s cubic-bezier(.22,1.4,.36,1) forwards; animation-delay: .75s; }
+.twinkle { animation: twinkle 3.2s ease-in-out infinite; transform-origin: center; }
+.twinkle-slow { animation: twinkle 4.6s ease-in-out infinite; animation-delay: .6s; transform-origin: center; }
+.bob { animation: bob 4.8s ease-in-out infinite; }
+.bob-slow { animation: bob 6.5s ease-in-out infinite; animation-delay: .4s; }
+.drift { animation: drift 7s ease-in-out infinite; }
+.wiggle { animation: wiggle 2.6s ease-in-out infinite; transform-origin: center; }
+.doodle { position: absolute; pointer-events: none; z-index: 0; }
+.star-dot { position: absolute; border-radius: 9999px; background: #fff; }
+
+/* floating background doodles behind every page */
+.bg-doodles { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+#app, .login { position: relative; z-index: 1; }
+
+/* ============ buttons ============ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 18px; border-radius: 10px; border: 1.5px solid var(--ink); background: #fff; color: var(--ink); font-weight: 600; font-size: 13.5px; white-space: nowrap; box-shadow: var(--hard); transition: all .15s ease-in-out; }
+.btn:hover { box-shadow: 1px 1px 0 var(--ink); transform: translate(1.5px, 1.5px); }
+.btn:active { box-shadow: 0 0 0 var(--ink); transform: translate(2.5px, 2.5px); }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.lilac { background: var(--lilac); }
+.btn.danger { color: #B12F4A; }
+.btn.danger:hover { background: var(--blush); }
+.btn.danger-fill { background: #C23B57; color: #fff; }
+.btn.ghost { border-color: transparent; background: transparent; box-shadow: none; }
+.btn.ghost:hover { background: rgba(26,26,26,.06); transform: none; box-shadow: none; }
+.btn.sm { min-height: 34px; padding: 0 13px; font-size: 12.5px; border-radius: 8px; box-shadow: 2px 2px 0 var(--ink); }
+.btn.sm.ghost { box-shadow: none; }
+.btn.icon { width: 40px; padding: 0; }
+.btn.sm.icon { width: 34px; }
+.btn[disabled], .btn.busy { opacity: .55; pointer-events: none; }
+.cta-glow { animation: ctaGlow 2.2s ease-out infinite; }
+.cta-glow:hover { animation-play-state: paused; }
+.shine-btn { position: relative; overflow: hidden; isolation: isolate; }
+.shine-btn::after { content: ''; position: absolute; top: 0; left: -60%; width: 45%; height: 100%; background: linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.6) 50%, rgba(255,255,255,0) 100%); transform: skewX(-18deg); animation: shineSweep 2.8s ease-in-out infinite; z-index: 1; pointer-events: none; }
+
+/* ============ form controls ============ */
+.field { display: grid; gap: 6px; align-content: start; min-width: 0; }
+.field > label, .lbl { font-weight: 700; font-size: 12.5px; }
+.hint { font-size: 12px; color: var(--muted); }
+.input, .select, .textarea { width: 100%; background: #fff; border: 1.5px solid var(--ink); border-radius: 10px; padding: 0 12px; min-height: 42px; transition: box-shadow .15s, border-color .15s; }
+.textarea { padding: 10px 12px; resize: vertical; line-height: 1.55; min-height: 96px; }
+.select { appearance: none; padding-right: 34px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231a1a1a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+.input::placeholder, .textarea::placeholder { color: #9a9aa5; }
+.input:focus, .select:focus, .textarea:focus { outline: none; box-shadow: 2.5px 2.5px 0 var(--violet); }
+.input.err, .textarea.err { border-color: #C23B57; box-shadow: 2.5px 2.5px 0 #C23B57; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.row > .input { flex: 1; min-width: 160px; }
+.spacer { flex: 1; }
+
+.switch { position: relative; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; font-size: 13px; min-height: 34px; }
+.switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.switch i { width: 44px; height: 26px; border-radius: 99px; background: #fff; border: 1.5px solid var(--ink); position: relative; transition: background .2s; flex: none; }
+.switch i::after { content: ''; position: absolute; top: 3px; left: 3px; width: 17px; height: 17px; border-radius: 50%; background: var(--ink); transition: transform .2s cubic-bezier(.34,1.56,.64,1), background .2s; }
+.switch input:checked + i { background: var(--lilac-deep); }
+.switch input:checked + i::after { transform: translateX(18px); background: #fff; box-shadow: 0 0 0 1.5px var(--ink); }
+.switch input:focus-visible + i { outline: 2px solid var(--violet); outline-offset: 2px; }
+
+/* filter pills, like the site's category filters */
+.seg { display: flex; gap: 8px; flex-wrap: wrap; }
+.seg button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 99px; border: 1px solid var(--ink); background: #fff; font-size: 12px; font-weight: 600; min-height: 34px; }
+.seg button b { font-weight: 700; font-size: 11px; padding: 0 6px; border-radius: 99px; background: var(--lilac); }
+.seg button.on { background: var(--ink); color: #fff; }
+.seg button.on b { background: rgba(255,255,255,.22); }
+
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 99px; border: 1px solid var(--ink); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; background: var(--lilac); white-space: nowrap; }
+.pill.ok { background: #DDF3CF; }
+.pill.warn { background: var(--sun); }
+.pill.bad { background: var(--blush); }
+.pill.line { background: #fff; }
+.eyebrow { display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 99px; border: 1px solid var(--ink); background: rgba(255,255,255,.72); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+
+/* ============ sign in ============ */
+.login { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; background: var(--lilac); overflow: hidden; padding: 24px 20px; padding-bottom: calc(24px + var(--sab)); }
+.login-in { position: relative; z-index: 2; width: 100%; max-width: 1120px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 34px; align-items: center; }
+.login-copy h1 { font-size: 34px; line-height: 1.16; font-weight: 700; letter-spacing: -.02em; margin: 18px 0 14px; }
+.login-copy p.lead { color: #374151; max-width: 40ch; margin-bottom: 26px; font-size: 15px; }
+.login-panel { background: #fff; border: 1.5px solid var(--ink); border-radius: 18px; box-shadow: var(--hard); padding: 20px; max-width: 420px; }
+#gbtn { display: flex; min-height: 44px; }
+.login-msg { min-height: 22px; font-size: 13px; margin-top: 10px; color: var(--muted); }
+.login-msg.err { color: #B12F4A; font-weight: 700; }
+.login-foot { margin-top: 14px; padding-top: 14px; border-top: 1px dashed rgba(26,26,26,.25); font-size: 12.5px; color: var(--muted); }
+.login-art { position: relative; display: none; justify-content: center; padding: 28px 0 10px; }
+.mock { position: relative; width: 100%; max-width: 440px; aspect-ratio: 4 / 3; background: #fff; border: 1.5px solid var(--ink); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--hard); }
+.mock-bar { height: 34px; flex: none; background: #F4F2FB; border-bottom: 1px solid rgba(26,26,26,.1); display: flex; align-items: center; gap: 12px; padding: 0 14px; }
+.mock-bar i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.mock-url { flex: 1; height: 19px; border-radius: 99px; background: #fff; border: 1px solid rgba(26,26,26,.1); display: grid; place-items: center; font-size: 10px; color: #6b7280; font-weight: 500; }
+.mock-body { position: relative; flex: 1; background: var(--soft); overflow: hidden; }
+.mock .bar { background: rgba(26,26,26,.15); height: 8px; border-radius: 99px; animation: shimmerBar 2.2s ease-in-out infinite; }
+.mock .card1 { margin: 12px 20px 0; border: 1px solid rgba(26,26,26,.15); background: #fff; border-radius: 12px; padding: 14px; animation: breathe 3.6s ease-in-out infinite; }
+.mock .cells { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 20px 0; }
+.mock .cell { height: 54px; border: 1px solid rgba(26,26,26,.15); background: #fff; border-radius: 8px; padding: 6px; display: flex; align-items: flex-end; overflow: hidden; }
+.mock .cell span { display: block; width: 100%; height: 100%; border-radius: 4px; transform-origin: bottom; animation: barGrow 1.8s ease-in-out infinite; }
+.mock .cursor { position: absolute; left: 0; top: 0; width: 20px; height: 20px; animation: cursorLoop 9s ease-in-out infinite; }
+.badge-spin { position: absolute; top: 4px; left: 6px; width: 96px; height: 96px; background: #fff; border: 1px solid var(--ink); border-radius: 50%; display: grid; place-items: center; z-index: 3; }
+.badge-spin > div { position: absolute; inset: 0; animation: spinSlow 22s linear infinite; }
+@media (min-width: 900px) {
+  .login-in { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; }
+  .login-copy h1 { font-size: 52px; }
+  .login-art { display: flex; }
+}
+
+/* ============ header + navigation ============ */
+.hdr { position: sticky; top: 0; z-index: 60; background: rgba(255,255,255,.9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid #ececf1; padding-top: var(--sat); }
+.hdr-in { max-width: 1240px; margin: 0 auto; padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 22px; letter-spacing: -.02em; white-space: nowrap; }
+.brand em { font-style: normal; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 9px; border-radius: 99px; border: 1px solid var(--ink); background: var(--lilac); }
+.topnav { display: none; align-items: center; gap: 26px; font-size: 14.5px; font-weight: 500; color: #374151; white-space: nowrap; }
+.nav-link { position: relative; display: inline-flex; align-items: center; gap: 7px; transition: color .15s; }
+.nav-link:hover, .nav-link.active { color: #000; }
+.nav-link::after { content: ''; position: absolute; left: 0; bottom: -6px; height: 2px; width: 0; background: var(--ink); transition: width .25s ease; }
+.nav-link:hover::after, .nav-link.active::after { width: 100%; }
+.nav-link .badge { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 99px; background: var(--ink); color: #fff; font-size: 10.5px; font-weight: 700; display: grid; place-items: center; }
+.hdr-r { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: var(--lilac); border: 1px solid var(--ink); display: grid; place-items: center; font-weight: 800; flex: none; overflow: hidden; }
+@media (min-width: 1024px) {
+  .hdr-in { height: 80px; padding: 0 48px; }
+  .brand { font-size: 26px; }
+  .topnav { display: flex; }
+}
+
+/* bottom tab bar (phones + tablets) */
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 70; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: rgba(255,255,255,.96); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-top: 1.5px solid var(--ink); padding: 6px 6px calc(6px + var(--sab)); }
+.tab { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 0; font-size: 10.5px; font-weight: 700; color: #4b5563; min-height: 52px; justify-content: center; position: relative; }
+.tab .tab-ic { position: relative; width: 44px; height: 28px; border-radius: 99px; border: 1px solid transparent; display: grid; place-items: center; transition: background .2s, border-color .2s, transform .2s; }
+.tab.active { color: var(--ink); }
+.tab.active .tab-ic { background: var(--c, var(--lilac)); border-color: var(--ink); box-shadow: 2px 2px 0 var(--ink); transform: translateY(-2px); }
+.tab .dotb { position: absolute; top: -4px; right: 2px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 99px; background: var(--ink); color: #fff; font-size: 9.5px; display: grid; place-items: center; }
+@media (min-width: 1024px) { .tabbar { display: none; } }
+
+/* ============ page banner ============ */
+.banner { position: relative; overflow: hidden; background: var(--bn, var(--lilac)); border-bottom: 1px solid rgba(26,26,26,.1); }
+.banner .wrap { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 26px 20px 26px; }
+.banner .eyebrow { margin-bottom: 14px; }
+.banner-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px 24px; flex-wrap: wrap; }
+.banner h1 { font-size: 30px; line-height: 1.15; font-weight: 700; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.banner .desc { margin-top: 14px; max-width: 46ch; color: #374151; font-size: 14.5px; line-height: 1.6; }
+.banner .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.ul { position: relative; display: inline-block; }
+.ul svg { position: absolute; left: 0; bottom: -9px; width: 104%; height: 13px; color: var(--violet); pointer-events: none; }
+.ul path { stroke-dasharray: 400; stroke-dashoffset: 400; animation: draw 1.6s ease forwards; animation-delay: .35s; }
+@media (min-width: 640px) { .banner .wrap { padding: 36px 32px 34px; } .banner h1 { font-size: 40px; } }
+@media (min-width: 1024px) { .banner .wrap { padding: 46px 48px 42px; } .banner h1 { font-size: 46px; } }
+@media (max-width: 639px) { .banner .actions { width: 100%; } .banner .actions .btn { flex: 1; } .banner .actions .btn.hide-xs { display: none; } }
+
+.content { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 24px 20px calc(var(--tab) + var(--sab) + 56px); }
+@media (min-width: 640px) { .content { padding-left: 32px; padding-right: 32px; } }
+@media (min-width: 1024px) { .content { padding: 36px 48px 90px; } }
+
+/* ============ cards + dashboard ============ */
+.card { background: #fff; border: 1px solid var(--ink); border-radius: 16px; box-shadow: var(--hard); }
+.card-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px 0; }
+.card-h h2 { font-size: 15px; font-weight: 700; }
+.card-b { padding: 14px 18px 18px; }
+.card.dark { position: relative; overflow: hidden; background: var(--ink); color: #fff; }
+.card.dark .muted { color: rgba(255,255,255,.72); }
+.card.dark .card-h, .card.dark .card-b { position: relative; z-index: 2; }
+.glance { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+.glance a { display: block; padding: 18px 18px 16px; border: 1.5px solid var(--ink); border-radius: 16px; box-shadow: var(--hard); transition: transform .3s cubic-bezier(.22,1,.36,1); background: var(--lilac); }
+.glance a:nth-child(2) { background: var(--mint); } .glance a:nth-child(3) { background: var(--blush); } .glance a:nth-child(4) { background: var(--sky); }
+.glance a:hover { transform: translateY(-5px) rotate(-1deg); }
+.glance b { display: block; font-family: var(--display); font-weight: 600; font-size: 42px; line-height: 1; letter-spacing: -.02em; }
+.glance span { display: block; margin-top: 8px; font-weight: 600; font-size: 12.5px; color: #374151; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; margin-bottom: 18px; }
+.mini { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+.mini + .mini { border-top: 1px dashed rgba(26,26,26,.22); }
+.mini .t { min-width: 0; flex: 1; line-height: 1.3; }
+.mini .t b { display: block; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini .t span { font-size: 12px; color: var(--muted); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini img, .mini .ph { width: 52px; height: 40px; border-radius: 8px; object-fit: cover; background: var(--lilac); border: 1px solid var(--ink); flex: none; }
+.mini .ph { display: grid; place-items: center; font-weight: 800; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--violet); flex: none; }
+.meter { height: 14px; border-radius: 99px; background: rgba(255,255,255,.14); overflow: hidden; margin: 12px 0 10px; border: 1px solid rgba(255,255,255,.4); }
+.meter i { display: block; height: 100%; background: var(--pink); border-radius: 99px; min-width: 6px; }
+.empty { position: relative; overflow: hidden; text-align: center; padding: 44px 22px; border: 1.5px dashed var(--ink); border-radius: 18px; background: #fff; }
+.empty h3 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 6px; }
+.empty p { color: var(--muted); max-width: 44ch; margin: 0 auto 20px; }
+.empty .art { width: 60px; height: 60px; border-radius: 18px; background: var(--lilac); border: 1.5px solid var(--ink); box-shadow: var(--hard); display: grid; place-items: center; margin: 0 auto 18px; animation: bob 4.8s ease-in-out infinite; }
+.empty .art .ic { width: 26px; height: 26px; }
+.mini.empty-mini { color: var(--muted); justify-content: center; padding: 22px 0; }
+@media (min-width: 900px) { .glance { grid-template-columns: repeat(4, minmax(0, 1fr)); } .grid2 { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } .glance b { font-size: 50px; } }
+
+/* ============ lists ============ */
+.toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+.search { position: relative; flex: 1 1 260px; max-width: 420px; }
+.search .ic { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.search .input { padding-left: 40px; }
+.toolbar .select { width: auto; min-width: 170px; }
+.prow { display: grid; grid-template-columns: 22px 92px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 12px 16px 12px 12px; background: #fff; border: 1px solid var(--ink); border-radius: 16px; box-shadow: 2px 2px 0 var(--ink); transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s; }
+.prow + .prow { margin-top: 12px; }
+.prow:hover { transform: translateY(-2px); box-shadow: 3px 4px 0 var(--ink); }
+.prow.dragging, .tcard.dragging, .srow.dragging, .mtile.dragging { opacity: .35; }
+.grip { color: var(--faint); cursor: grab; display: grid; place-items: center; }
+.grip:active { cursor: grabbing; }
+.movers { display: none; flex-direction: column; gap: 2px; }
+.movers button { height: 30px; width: 30px; color: #374151; display: grid; place-items: center; border-radius: 8px; border: 1px solid var(--ink); background: #fff; }
+.movers button:active { background: var(--lilac); }
+@media (pointer: coarse) { .grip { display: none; } .movers { display: flex; } .only-touch { display: grid; } }
+.thumb { width: 92px; aspect-ratio: 4 / 3; border-radius: 10px; object-fit: cover; background: var(--lilac); border: 1px solid var(--ink); display: grid; place-items: center; font-size: 24px; font-weight: 800; color: var(--violet); overflow: hidden; }
+.pinfo { min-width: 0; }
+.ptitle { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 700; font-size: 15px; }
+.ptitle .name { overflow-wrap: anywhere; }
+.pmeta { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; margin-top: 7px; color: var(--muted); font-size: 12.5px; }
+.pmeta > span, .pmeta > a { display: inline-flex; align-items: center; gap: 5px; }
+.pmeta a { font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(26,26,26,.3); }
+.pact { display: flex; align-items: center; gap: 8px; }
+.pact .switch { margin-right: 8px; }
+@media (max-width: 720px) {
+  .prow { grid-template-columns: 34px 72px minmax(0, 1fr); gap: 10px 12px; padding: 12px; }
+  .thumb { width: 72px; }
+  .pact { grid-column: 1 / -1; justify-content: flex-end; border-top: 1px dashed rgba(26,26,26,.25); padding-top: 12px; margin-top: 2px; }
+  .pact .switch { margin-right: auto; }
+}
+
+/* team cards */
+.tgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 16px; }
+.tcard { background: var(--c, var(--lilac)); border: 1.5px solid var(--ink); border-radius: 18px; padding: 12px 14px 16px; display: flex; flex-direction: column; align-items: center; text-align: center; color: var(--ink); box-shadow: var(--hard); transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .15s; }
+.tcard:hover { transform: translateY(-5px) rotate(-1deg); }
+.tcard.hidden-member { opacity: .62; }
+.tcard .top { align-self: stretch; display: flex; align-items: center; justify-content: space-between; min-height: 34px; gap: 6px; }
+.tcard .grip { color: rgba(0,0,0,.4); }
+.tcard .avatar-lg { width: 92px; height: 92px; border-radius: 50%; border: 1.5px solid var(--ink); background: #fff; object-fit: cover; margin-top: 4px; }
+.tcard h3 { font-size: 16px; font-weight: 700; margin-top: 12px; overflow-wrap: anywhere; }
+.tcard .role { margin-top: 8px; display: inline-flex; padding: 2px 10px; border-radius: 99px; border: 1px solid var(--ink); background: #fff; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.tcard .sub { margin-top: 6px; font-size: 12.5px; color: rgba(0,0,0,.62); min-height: 19px; }
+.tcard .acts { margin-top: 12px; display: flex; gap: 8px; }
+.tcard .switch { font-size: 12px; }
+.tcard .movers { flex-direction: row; }
+@media (max-width: 520px) { .tgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } .tcard { padding: 10px 10px 14px; } .tcard .avatar-lg { width: 78px; height: 78px; } .tcard .top .switch span { display: none; } }
+
+/* social rows */
+.srow { display: grid; grid-template-columns: 22px 40px 170px minmax(0, 1fr) auto auto; grid-template-areas: "gr ic sel url sw rm"; gap: 12px; align-items: center; padding: 10px 12px; background: #fff; border: 1px solid var(--ink); border-radius: 16px; box-shadow: 2px 2px 0 var(--ink); }
+.srow + .srow { margin-top: 12px; }
+.srow .s-gr { grid-area: gr; display: flex; flex-direction: column; align-items: center; }
+.srow .sicon { grid-area: ic; width: 40px; height: 40px; border-radius: 12px; background: var(--lilac); border: 1px solid var(--ink); display: grid; place-items: center; }
+.srow .s-sel { grid-area: sel; } .srow .url-wrap { grid-area: url; display: grid; gap: 8px; min-width: 0; } .srow .s-sw { grid-area: sw; } .srow .s-rm { grid-area: rm; }
+.addchips { display: flex; gap: 8px; flex-wrap: wrap; }
+.addchips button { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--ink); background: #fff; font-weight: 600; font-size: 12.5px; transition: transform .15s, background .15s; }
+.addchips button:hover { background: var(--lilac); transform: translateY(-2px); }
+.where { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.where .box { padding: 14px 16px; border-radius: 14px; background: var(--soft); border: 1px solid var(--ink); }
+.where .box b { display: block; font-size: 13px; margin-bottom: 2px; }
+.where .box p { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.icons { display: flex; gap: 8px; flex-wrap: wrap; min-height: 34px; align-items: center; }
+.icons .ico { width: 36px; height: 32px; border-radius: 8px; border: 1px solid var(--ink); display: grid; place-items: center; background: #fff; }
+.icons .ico .ic { width: 15px; height: 15px; }
+@media (max-width: 720px) {
+  .srow { grid-template-columns: 34px 40px minmax(0, 1fr) auto; grid-template-areas: "gr ic sel rm" "url url url url" "sw sw sw sw"; row-gap: 10px; }
+  .where { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* unsaved changes bar */
+.savebar { position: fixed; left: 0; right: 0; bottom: calc(var(--tab) + var(--sab) + 10px); z-index: 75; display: flex; justify-content: center; padding: 0 12px; pointer-events: none; visibility: hidden; transform: translateY(calc(100% + 160px)); transition: transform .3s cubic-bezier(.22,1,.36,1), visibility 0s linear .3s; }
+.savebar.show { transform: none; visibility: visible; transition: transform .3s cubic-bezier(.22,1,.36,1), visibility 0s; }
+.savebar > div { pointer-events: none; width: 100%; max-width: 520px; display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; background: var(--ink); color: #fff; border-radius: 16px; box-shadow: 0 14px 40px rgba(0,0,0,.28); font-weight: 600; font-size: 13px; }
+.savebar.show > div { pointer-events: auto; }
+.savebar > div > span { flex: 1; }
+.savebar .btn.ghost { color: #fff; }
+.savebar .btn.ghost:hover { background: rgba(255,255,255,.14); }
+.savebar .btn.primary { background: var(--lilac); color: var(--ink); box-shadow: none; border-color: var(--lilac); }
+@media (min-width: 1024px) { .savebar { bottom: 20px; } }
+
+/* messages + admins */
+.msg { background: #fff; border: 1px solid var(--ink); border-radius: 16px; box-shadow: 2px 2px 0 var(--ink); overflow: hidden; }
+.msg + .msg { margin-top: 12px; }
+.msg-h { display: flex; align-items: center; gap: 12px; padding: 14px 16px; width: 100%; text-align: left; }
+.msg-h:hover { background: var(--soft); }
+.msg-h .t { min-width: 0; flex: 1; line-height: 1.35; }
+.msg-h .t b { display: flex; gap: 8px; align-items: center; font-size: 14px; }
+.msg-h .t > span { display: block; color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.msg-h time { color: var(--faint); font-size: 11.5px; white-space: nowrap; align-self: flex-start; padding-top: 2px; }
+.msg.unread { background: var(--sky); }
+.msg.unread .t b { font-weight: 800; }
+.msg-b { padding: 4px 16px 16px 56px; border-top: 1px dashed rgba(26,26,26,.3); background: #fff; }
+.msg-b .text { white-space: pre-wrap; overflow-wrap: anywhere; margin: 14px 0; line-height: 1.65; }
+.arow { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #fff; border: 1px solid var(--ink); border-radius: 16px; box-shadow: 2px 2px 0 var(--ink); }
+.arow + .arow { margin-top: 12px; }
+.arow .t { min-width: 0; flex: 1; line-height: 1.35; }
+.arow .t b { font-size: 14px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; overflow-wrap: anywhere; }
+.arow .t span { color: var(--muted); font-size: 12.5px; overflow-wrap: anywhere; }
+.note { display: flex; gap: 12px; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--ink); background: var(--sun); margin-bottom: 18px; overflow-wrap: anywhere; }
+.note .ic { margin-top: 2px; }
+.note code, code.url { background: #fff; padding: 1px 7px; border-radius: 6px; border: 1px solid var(--ink); font-size: 12.5px; }
+.formcard { max-width: 760px; }
+.formcard .card-b { display: grid; gap: 18px; padding-top: 18px; }
+.sk { border-radius: 16px; background: linear-gradient(100deg, #eee 30%, #f8f8f8 50%, #eee 70%); background-size: 300% 100%; animation: sk 1.4s linear infinite; }
+@media (max-width: 640px) { .msg-h { padding: 12px; gap: 10px; } .msg-b { padding: 4px 14px 14px; } .arow { flex-wrap: wrap; } .arow .btn { width: 100%; } }
+
+/* ============ panels: side drawer on desktop, full-screen sheet on phones ============ */
+.scrim { position: fixed; inset: 0; z-index: 180; background: rgba(0,0,0,.5); animation: fade .2s both; }
+.scrim.closing { animation: fadeOut .18s both; }
+.drawer, .dialog { position: fixed; z-index: 181; display: flex; flex-direction: column; overscroll-behavior: contain; }
+.drawer { top: 0; right: 0; bottom: 0; width: min(var(--w, 1040px), 100vw); background: var(--paper); border-left: 1.5px solid var(--ink); animation: slideIn .3s cubic-bezier(.22,1,.36,1) both; }
+.drawer.closing { animation: slideOut .18s ease-in both; }
+.dialog { left: 50%; top: 50%; width: min(var(--w, 480px), calc(100vw - 28px)); max-height: calc(100dvh - 40px); transform: translate(-50%, -50%); background: #fff; border: 1.5px solid var(--ink); border-radius: 20px; box-shadow: var(--hard); animation: pop .22s cubic-bezier(.34,1.4,.64,1) both; overflow: hidden; }
+.dialog.closing { animation: fadeOut .15s both; }
+.ph { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 22px; padding-top: calc(16px + var(--sat)); border-bottom: 1px solid var(--ink); background: #fff; }
+.ph h2 { font-size: 21px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; overflow-wrap: anywhere; }
+.ph p { color: var(--muted); font-size: 13px; margin-top: 2px; overflow-wrap: anywhere; }
+.pb { flex: 1; overflow: auto; padding: 22px; -webkit-overflow-scrolling: touch; }
+.dialog .pb { padding: 18px 22px; }
+.pf { display: flex; justify-content: flex-end; align-items: center; gap: 10px; padding: 14px 22px; padding-bottom: calc(14px + var(--sab)); border-top: 1px solid var(--ink); background: #fff; }
+.dialog .ph { padding-top: 16px; }
+@media (max-width: 720px) {
+  .drawer { width: 100vw; border-left: 0; }
+  .dialog { left: 0; right: 0; top: auto; bottom: 0; width: 100%; max-height: 90dvh; transform: none; border-radius: 22px 22px 0 0; border-width: 1.5px 0 0; box-shadow: none; animation: sheetUp .28s cubic-bezier(.22,1,.36,1) both; }
+  .dialog.closing { animation: sheetDown .16s ease-in both; }
+  .dialog .ph::before { content: ''; position: absolute; top: 8px; left: 50%; width: 42px; height: 4px; border-radius: 4px; background: rgba(26,26,26,.25); transform: translateX(-50%); }
+  .dialog .ph { position: relative; padding-top: 22px; }
+  .ph, .pf { padding-left: 16px; padding-right: 16px; }
+  .pb { padding: 16px; }
+  .dialog .pb { padding: 14px 16px; }
+  .pf .btn { flex: 1; }
+  .pf .btn[data-cancel] { flex: 0 0 auto; }
+}
+
+/* editor layout */
+.editor { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 26px; align-items: start; }
+.editor.slim { grid-template-columns: minmax(0, 1fr) 250px; }
+.form { display: grid; gap: 18px; min-width: 0; }
+.sect { background: #fff; border: 1px solid var(--ink); border-radius: 16px; padding: 18px; display: grid; gap: 16px; box-shadow: 2px 2px 0 var(--ink); }
+.sect > h3 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.sect > h3::before { content: '✦'; font-size: 12px; color: var(--violet); }
+.sect > .sub { color: var(--muted); font-size: 12.5px; margin-top: -10px; }
+.preview { position: sticky; top: 0; display: grid; gap: 14px; }
+.pv-label { font-weight: 700; font-size: 12.5px; color: var(--muted); }
+@media (max-width: 900px) { .editor, .editor.slim { grid-template-columns: minmax(0, 1fr); gap: 18px; } .preview { position: static; } .two { grid-template-columns: minmax(0, 1fr); } }
+
+.pv { background: #fff; color: var(--ink); border: 1px solid var(--ink); border-radius: 16px; overflow: hidden; box-shadow: var(--hard); }
+.pv-img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--lilac); display: grid; place-items: center; color: var(--violet); font-weight: 800; font-size: 44px; }
+.pv-body { padding: 14px 16px; }
+.pv-tag { display: inline-block; padding: 2px 10px; border: 1px solid var(--ink); border-radius: 99px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.pv h4 { font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+.pv-detail { background: #fff; border: 1px solid var(--ink); border-radius: 14px; padding: 14px 16px; display: grid; gap: 10px; font-size: 13px; }
+.pv-detail p { color: var(--muted); overflow-wrap: anywhere; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 99px; border: 1px solid var(--ink); background: var(--soft); font-size: 11.5px; font-weight: 600; }
+.chip button { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); }
+.chip button:hover { background: var(--blush); color: #B12F4A; }
+.chip-input { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; min-height: 42px; background: #fff; border: 1.5px solid var(--ink); border-radius: 10px; }
+.chip-input:focus-within { box-shadow: 2.5px 2.5px 0 var(--violet); }
+.chip-input input { flex: 1; min-width: 120px; border: 0; outline: 0; background: none; height: 28px; }
+.pv-links { display: flex; gap: 8px; flex-wrap: wrap; }
+.pv-links span { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 700; padding: 6px 11px; border-radius: 8px; border: 1px solid var(--ink); background: #fff; }
+
+/* media picker */
+.cover { position: relative; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 1px solid var(--ink); background: var(--soft); display: grid; place-items: center; text-align: center; color: var(--muted); }
+.cover img { width: 100%; height: 100%; object-fit: cover; }
+.cover.drop, .media-grid.drop { outline: 2px dashed var(--violet); outline-offset: 4px; background: var(--lilac); }
+.cover .empty-in { display: grid; gap: 6px; justify-items: center; padding: 16px; }
+.cover .empty-in .ic { width: 26px; height: 26px; color: var(--violet); }
+.cover .rm { position: absolute; top: 8px; right: 8px; }
+.media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; border-radius: 12px; }
+.mtile { position: relative; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; border: 1px solid var(--ink); background: var(--soft); }
+.mtile > img, .mtile > video { width: 100%; height: 100%; object-fit: cover; }
+.mtile.add { border: 1.5px dashed var(--ink); display: grid; place-items: center; text-align: center; color: var(--ink); font-weight: 700; font-size: 12px; cursor: pointer; transition: background .15s, transform .15s; }
+.mtile.add:hover { background: var(--lilac); transform: translateY(-2px); }
+.mtile .kind { position: absolute; left: 6px; bottom: 6px; padding: 2px 8px; border-radius: 99px; background: rgba(0,0,0,.72); color: #fff; font-size: 10.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+.mtile .tools { position: absolute; top: 6px; right: 6px; display: flex; gap: 4px; }
+.mtile .tools button { width: 28px; height: 28px; border-radius: 8px; background: rgba(0,0,0,.72); color: #fff; display: grid; place-items: center; }
+.mtile .tools button:hover { background: #000; }
+.mtile .tools button.on { background: var(--violet); }
+.mtile .tools .only-touch { display: none; }
+@media (pointer: coarse) { .mtile .tools .only-touch { display: grid; } .mtile .tools button { width: 32px; height: 32px; } }
+.mtile .ph-embed { width: 100%; height: 100%; display: grid; place-items: center; color: var(--violet); background: var(--lilac); }
+.prog { position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: rgba(0,0,0,.15); }
+.prog i { display: block; height: 100%; width: 0; background: var(--violet); transition: width .15s; }
+.mtile.up { display: grid; place-items: center; font-size: 12px; color: var(--muted); font-weight: 600; }
+.radios { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.radio { position: relative; display: block; cursor: pointer; }
+.radio input { position: absolute; opacity: 0; }
+.radio > span { display: block; height: 100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--ink); background: #fff; transition: background .15s, transform .15s; }
+.radio > span b { display: block; font-size: 13.5px; }
+.radio > span small { color: var(--muted); font-size: 12px; }
+.radio input:checked + span { background: var(--lilac); box-shadow: 2.5px 2.5px 0 var(--ink); transform: translate(-1px, -1px); }
+.radio input:focus-visible + span { outline: 2px solid var(--violet); outline-offset: 2px; }
+
+/* team editor */
+.tv { width: 230px; max-width: 100%; margin: 0 auto; }
+.photo-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.photo-row .avatar-lg { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--ink); background: #fff; }
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.swatch { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--ink); position: relative; }
+.swatch.on::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--violet); }
+.swatches input[type=color] { width: 38px; height: 38px; padding: 0; border: 1.5px solid var(--ink); border-radius: 50%; background: none; cursor: pointer; overflow: hidden; }
+.swatches input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+.swatches input[type=color]::-webkit-color-swatch { border: 0; border-radius: 50%; }
+.more-list { display: grid; gap: 10px; margin-top: 14px; }
+.more-list a { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--ink); border-radius: 14px; background: var(--c, #fff); font-weight: 700; box-shadow: 2px 2px 0 var(--ink); }
+.more-list a .ic { width: 20px; height: 20px; }
+.me-card { display: flex; align-items: center; gap: 12px; }
+.me-card b { display: block; font-size: 14px; overflow-wrap: anywhere; }
+.me-card span.e { font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; }
+
+/* pricing plans + offers */
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+.pcard { position: relative; background: var(--c, var(--lilac)); border: 1.5px solid var(--ink); border-radius: 18px; padding: 12px 16px 16px; display: flex; flex-direction: column; color: var(--ink); box-shadow: var(--hard); transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .15s; }
+.pcard:hover { transform: translateY(-4px) rotate(-.6deg); }
+.pcard.hidden-plan { opacity: .62; }
+.pcard.is-offer { animation: offerGlowA 2.4s ease-in-out infinite; }
+@keyframes offerGlowA { 0%, 100% { box-shadow: var(--hard), 0 0 0 0 rgba(244,166,200,.6); } 50% { box-shadow: var(--hard), 0 0 22px 5px rgba(244,166,200,.65); } }
+.pcard .top { display: flex; align-items: center; justify-content: space-between; min-height: 34px; gap: 6px; }
+.pcard .grip { color: rgba(0,0,0,.4); }
+.pcard .movers { flex-direction: row; }
+.pcard .switch { font-size: 12px; }
+.pcard h3 { font-size: 18px; font-weight: 700; margin-top: 8px; overflow-wrap: anywhere; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pcard .pdesc { margin-top: 4px; font-size: 12.5px; color: rgba(0,0,0,.65); min-height: 19px; }
+.pcard .prices { margin-top: 12px; display: grid; gap: 6px; }
+.pcard .prow { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; padding: 8px 10px; border: 1px solid var(--ink); border-radius: 10px; background: rgba(255,255,255,.7); }
+.pcard .prow small { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); width: 58px; }
+.pcard .prow b { font-size: 17px; }
+.pcard .prow s { color: var(--faint); font-size: 12.5px; }
+.pcard .prow em { font-style: normal; font-size: 12px; color: var(--muted); }
+.pcard .pfeat { margin-top: 10px; font-size: 12px; color: rgba(0,0,0,.65); flex: 1; }
+.pcard .acts { margin-top: 12px; display: flex; gap: 8px; }
+@media (max-width: 520px) { .pgrid { grid-template-columns: minmax(0, 1fr); } .pcard .top .switch span { display: none; } }
+
+/* plan editor + live card preview */
+.seg { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 99px; overflow: hidden; background: #fff; }
+.seg button { padding: 5px 14px; font-size: 12px; font-weight: 700; }
+.seg button.on { background: var(--ink); color: #fff; }
+.pvplan { position: relative; background: var(--c, var(--lilac)); border: 1px solid var(--ink); border-radius: 16px; padding: 18px 16px 16px; display: flex; flex-direction: column; box-shadow: var(--hard); }
+.pvplan.feat { border-width: 1.5px; }
+.pvplan.offer { animation: offerGlowA 2.4s ease-in-out infinite; }
+.pvplan .sheen { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.pvplan .sheen::after { content: ''; position: absolute; top: 0; left: -60%; width: 38%; height: 100%; background: linear-gradient(115deg, rgba(255,255,255,0), rgba(255,255,255,.8), rgba(255,255,255,0)); transform: skewX(-18deg); animation: sheenSweep 3.2s ease-in-out infinite; }
+@keyframes sheenSweep { 0% { left: -60%; } 45% { left: 130%; } 100% { left: 130%; } }
+.pvplan .pvbadge { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); white-space: nowrap; padding: 2px 11px; border-radius: 99px; background: var(--ink); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; z-index: 2; }
+.pvplan .pvbadge.o { background: linear-gradient(90deg, #F4A6C8, #E9C9FF, #F4A6C8); color: var(--ink); border: 1px solid var(--ink); }
+.pvplan h4 { font-size: 17px; font-weight: 700; }
+.pvplan .d { font-size: 12px; color: rgba(0,0,0,.7); margin: 3px 0 12px; min-height: 16px; }
+.pvplan .pr { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
+.pvplan .pr b { font-size: 26px; }
+.pvplan .pr s { font-size: 13px; color: var(--faint); }
+.pvplan .pr span { font-size: 12.5px; color: var(--muted); }
+.pvplan .nt { font-size: 11px; color: var(--muted); min-height: 16px; margin: 2px 0 10px; }
+.pvplan ul { list-style: none; padding: 0; display: grid; gap: 6px; font-size: 12px; margin-bottom: 14px; }
+.pvplan .fake-btn { align-self: flex-start; padding: 8px 16px; border: 1.5px solid var(--ink); border-radius: 9px; font-weight: 700; font-size: 12.5px; background: #fff; box-shadow: 2px 2px 0 var(--ink); }
+.pvplan.offer .fake-btn, .pvplan.feat .fake-btn { background: var(--ink); color: #fff; }
+.prefix-wrap { position: relative; }
+.prefix-wrap > b { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 14px; pointer-events: none; }
+.prefix-wrap > .input { padding-left: 30px; }
+
+/* toasts (centered pill, same as the main site) */
+#toasts { position: fixed; left: 0; right: 0; bottom: calc(var(--tab) + var(--sab) + 16px); z-index: 400; display: grid; gap: 10px; justify-items: center; pointer-events: none; padding: 0 14px; }
+.toast { position: relative; left: auto; pointer-events: auto; display: flex; align-items: center; gap: 10px; max-width: min(460px, 100%); padding: 12px 20px; border-radius: 99px; background: var(--ink); color: #fff; font-weight: 600; font-size: 13.5px; box-shadow: 0 12px 32px rgba(0,0,0,.25); animation: riseIn .35s cubic-bezier(.22,1,.36,1) both; }
+.toast .ic { color: #B9F0A4; }
+.toast.error { background: var(--blush); color: var(--ink); border: 1.5px solid var(--ink); box-shadow: var(--hard); }
+.toast.error .ic { color: #B12F4A; }
+.toast.out { animation: fadeOut .25s ease-in both; }
+@media (min-width: 1024px) { #toasts { bottom: 28px; } }
+
+/* ============ phones: bigger touch targets, no iOS zoom ============ */
+@media (max-width: 1023px) {
+  .btn { min-height: 44px; }
+  .btn.sm { min-height: 40px; }
+  .btn.icon { width: 44px; } .btn.sm.icon { width: 40px; }
+  .input, .select, .textarea { font-size: 16px; min-height: 46px; }
+  .chip-input input { font-size: 16px; }
+  .seg button { min-height: 40px; padding: 8px 16px; }
+  .switch { min-height: 40px; }
+  .tcard .acts .btn { min-height: 40px; }
+  .search { flex: 1 1 100%; max-width: none; }
+  .toolbar .select { width: 100%; }
+  .movers button { width: 36px; height: 36px; }
+  .chip button { width: 32px; height: 32px; margin: -6px -8px -6px 0; }
+  .chip { padding-right: 2px; }
+  .chip-input input { height: 34px; }
+  .mtile .mv button { width: 36px; height: 36px; }
+}
+
+/* helpers */
+@media (max-width: 639px) { .hide-sm { display: none; } }
+@media (max-width: 479px) { .hide-xs { display: none; } }
+.mtile .mv { position: absolute; right: 6px; bottom: 6px; display: none; gap: 4px; }
+.mtile .mv button { width: 30px; height: 30px; border-radius: 8px; background: rgba(0,0,0,.72); color: #fff; display: grid; place-items: center; }
+@media (pointer: coarse) { .mtile .mv { display: flex; } .mtile .mv button { width: 36px; height: 36px; } }
+.srow .sw-txt { display: none; }
+@media (max-width: 720px) { .srow .sw-txt { display: inline; } .prow { grid-template-columns: 38px 72px minmax(0, 1fr); } }
+.bg-doodles .doodle, .login .doodle, .banner .doodle, .empty .doodle { z-index: 0; }
+#view > *, .content > *, .card, .card-b, .sect, .form, .preview { min-width: 0; }
+#banner, .content { overflow-x: clip; }
+</style>
+</head>
+<body>
+<div class="grain-overlay" aria-hidden="true"></div>
+<div class="bg-doodles" id="bgDoodles" aria-hidden="true"></div>
+
+<!-- ============ sign in ============ -->
+<main class="login" id="login" hidden>
+  <div id="loginDoodles" aria-hidden="true"></div>
+  <div class="login-in">
+    <section class="login-copy">
+      <div class="eyebrow rise d1"><span class="twinkle">✦</span><span>Admin area</span></div>
+      <h1 class="rise d2">Welcome back to<br><span class="ul">your studio<svg viewBox="0 0 160 18" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M3 13C25 8 50 16 80 10C110 4 135 14 157 9M18 16C45 13 80 18 115 12C130 10 148 14 155 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>.</h1>
+      <p class="lead rise d3">Sign in with the Google account that has admin access to manage your projects, team and site.</p>
+      <div class="login-panel rise d4">
+        <div id="gbtn" aria-label="Sign in with Google"></div>
+        <div class="login-msg" id="loginMsg" role="status" aria-live="polite"></div>
+        <div class="login-foot">Need access? Ask the site owner to add your Google email.</div>
+      </div>
+    </section>
+
+    <div class="login-art">
+      <div class="mock rise d3">
+        <div class="mock-bar">
+          <span><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i></span>
+          <div class="mock-url">admin</div>
+        </div>
+        <div class="mock-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px 0">
+            <div class="bar" style="width:56px;height:11px;background:#755BB4"></div>
+            <div style="display:flex;gap:6px"><div class="bar" style="width:20px"></div><div class="bar" style="width:20px;animation-delay:.2s"></div><div class="bar" style="width:20px;animation-delay:.4s"></div></div>
+          </div>
+          <div class="card1">
+            <div style="width:66%;height:13px;border-radius:99px;background:#8F76BE;margin-bottom:9px"></div>
+            <div style="width:50%;height:8px;border-radius:99px;background:rgba(26,26,26,.1);margin-bottom:6px"></div>
+            <div style="width:33%;height:8px;border-radius:99px;background:rgba(26,26,26,.1)"></div>
+          </div>
+          <div class="cells">
+            <div class="cell"><span style="background:#8F76BE"></span></div>
+            <div class="cell"><span style="background:#F4A6C8;animation-delay:.3s"></span></div>
+            <div class="cell"><span style="background:#755BB4;animation-delay:.6s"></span></div>
+          </div>
+          <svg class="cursor" viewBox="0 0 24 24" fill="#1a1a1a" aria-hidden="true"><path d="M4 2l16 6.5-6.2 2.2L11.5 17z"/></svg>
+        </div>
+      </div>
+      <div class="badge-spin pop-in" aria-hidden="true">
+        <div>
+          <svg viewBox="0 0 100 100" style="width:100%;height:100%;padding:6px">
+            <path d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="transparent" id="badge-path2"/>
+            <text style="font-size:8.8px;font-weight:700;letter-spacing:.23em;text-transform:uppercase;fill:#1a1a1a"><textPath href="#badge-path2">✦ ADMINS ONLY ✦ SIGN IN TO EDIT</textPath></text>
+          </svg>
+        </div>
+        <svg class="ic" style="width:20px;height:20px;transform:rotate(-45deg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ dashboard shell ============ -->
+<div id="app" hidden>
+  <header class="hdr">
+    <div class="hdr-in">
+      <a class="brand" href="#/dashboard"><span data-brand>purple dev</span><em>admin</em></a>
+      <nav class="topnav" id="topNav" aria-label="Admin sections"></nav>
+      <div class="hdr-r">
+        <a class="btn sm" href="/" target="_blank" rel="noopener" id="viewSite"></a>
+        <span class="avatar only-desk" id="meAvatar"></span>
+        <button class="btn sm icon only-desk" id="logoutBtn" aria-label="Sign out" title="Sign out"></button>
+      </div>
+    </div>
+  </header>
+
+  <div id="banner"></div>
+  <main class="content" id="view"></main>
+
+  <nav class="tabbar" id="tabBar" aria-label="Quick navigation"></nav>
+</div>
+
+<div class="savebar" id="savebar" aria-live="polite">
+  <div>
+    <span>You have unsaved changes</span>
+    <button class="btn ghost sm" id="discardBtn">Discard</button>
+    <button class="btn primary sm" id="saveBtn">Save</button>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toasts" aria-live="polite"></div>
+<script>
+(() => {
+'use strict';
+
+/* ==========================================================================
+   Helpers
+   ========================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+let uid = 0;
+const nextUid = () => 'u' + (++uid);
+
+const state = {
+  me: null, platforms: {}, maxUploadMb: 50,
+  projects: null, team: null, plans: null, settings: null, admins: null, messages: null,
+  unread: 0, dirty: false, onSave: null, onDiscard: null
+};
+
+const ICONS = {
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',
+  folder: '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+  users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+  sliders: '<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>',
+  inbox: '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>',
+  plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  trash: '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>',
+  edit: '<path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>',
+  external: '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>',
+  upload: '<polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
+  video: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
+  x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  alert: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+  info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+  sun: '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+  moon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
+  grip: '<circle cx="9" cy="6" r="1.4" fill="currentColor"/><circle cx="15" cy="6" r="1.4" fill="currentColor"/><circle cx="9" cy="12" r="1.4" fill="currentColor"/><circle cx="15" cy="12" r="1.4" fill="currentColor"/><circle cx="9" cy="18" r="1.4" fill="currentColor"/><circle cx="15" cy="18" r="1.4" fill="currentColor"/>',
+  heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/>',
+  search: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  github: '<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>',
+  up: '<polyline points="18 15 12 9 6 15"/>',
+  down: '<polyline points="6 9 12 15 18 9"/>',
+  mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+  star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  play: '<polygon points="5 3 19 12 5 21 5 3"/>',
+  user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+  menu: '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>',
+  left: '<polyline points="15 18 9 12 15 6"/>',
+  right: '<polyline points="9 18 15 12 9 6"/>',
+  help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
+};
+const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
+function platformIcon(key, cls = '') {
+  const p = state.platforms[key] || state.platforms.other;
+  if (!p) return '';
+  return p.filled
+    ? `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${p.svg}</svg>`
+    : `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p.svg}</svg>`;
+}
+
+
+/* ---------- cute doodles (same set as the main site) ---------- */
+const DOODLES = {
+  sparkle: '<path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"/>',
+  ring: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+  dot: '<circle cx="12" cy="12" r="12" fill="currentColor"/>',
+  heart: '<path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z" fill="currentColor"/>',
+  heartLine: '<path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+  cloud: '<path d="M6 17a4 4 0 1 1 .9-7.9 5 5 0 0 1 9.8-1A4.5 4.5 0 0 1 18 17H6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+  plus: '<path d="M4 8h4M6 6v4M17 15h4M19 13v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  flower: '<g fill="currentColor"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="12" r="3"/><circle cx="12" cy="19" r="3"/><circle cx="5" cy="12" r="3"/></g><circle cx="12" cy="12" r="3.6" fill="#C9BBEE"/>',
+  square: '<rect x="4" y="4" width="16" height="16" rx="5" transform="rotate(8 12 12)" fill="none" stroke="currentColor" stroke-width="1.4"/>'
+};
+const doodle = ([kind, size, pos, color, anim, cls]) =>
+  `<svg class="doodle ${anim || ''} ${cls || ''}" style="width:${size}px;height:${size}px;${pos};color:${color}" viewBox="0 0 24 24" aria-hidden="true">${DOODLES[kind]}</svg>`;
+const V = '#755BB4', VL = '#8F76BE', PK = '#F4A6C8', W = '#fff';
+
+const BANNER_SETS = [
+  [['ring', 36, 'left:5%;top:20%', W, 'bob', 'hide-sm'], ['dot', 14, 'right:38%;top:22%', V, 'drift'], ['heart', 24, 'right:27%;top:14%', PK, 'wiggle'], ['cloud', 46, 'right:8%;top:42%', 'rgba(255,255,255,.9)', 'bob-slow'],
+   ['sparkle', 22, 'left:40%;top:10%', W, 'twinkle', 'hide-sm'], ['plus', 30, 'left:3%;bottom:8%', V, 'wiggle', 'hide-sm'], ['ring', 120, 'right:-3%;bottom:-38%', 'rgba(117,91,180,.3)', 'bob-slow'], ['sparkle', 64, 'left:46%;top:-18%', 'rgba(255,255,255,.65)', 'twinkle-slow', 'hide-sm']],
+  [['sparkle', 26, 'left:8%;top:16%', V, 'twinkle-slow', 'hide-sm'], ['heart', 30, 'left:20%;bottom:10%', W, 'wiggle', 'hide-sm'], ['ring', 32, 'right:22%;top:18%', W, 'bob'], ['dot', 12, 'right:6%;top:62%', VL, 'drift'],
+   ['cloud', 52, 'right:12%;bottom:6%', 'rgba(255,255,255,.9)', 'drift', 'hide-sm'], ['plus', 28, 'left:44%;top:12%', PK, 'wiggle', 'hide-sm'], ['square', 90, 'left:-3%;bottom:-30%', 'rgba(117,91,180,.3)', 'drift', 'hide-sm'], ['heart', 20, 'right:4%;top:14%', PK, 'twinkle-slow']],
+  [['dot', 16, 'left:6%;top:26%', PK, 'bob', 'hide-sm'], ['sparkle', 30, 'right:10%;top:12%', W, 'twinkle'], ['flower', 44, 'right:26%;bottom:4%', 'rgba(143,118,190,.6)', 'bob', 'hide-sm'], ['ring', 28, 'left:24%;top:70%', W, 'bob-slow', 'hide-sm'],
+   ['heartLine', 26, 'left:42%;top:14%', V, 'wiggle', 'hide-sm'], ['cloud', 40, 'left:3%;bottom:6%', 'rgba(255,255,255,.9)', 'drift', 'hide-sm'], ['dot', 10, 'right:5%;top:58%', V, 'drift'], ['ring', 90, 'right:-4%;bottom:-40%', 'rgba(117,91,180,.3)', 'bob-slow']]
+];
+const BG_SET = [
+  ['sparkle', 22, 'left:2.5%;top:24%', VL, 'twinkle-slow'], ['dot', 12, 'left:5%;top:52%', PK, 'drift'], ['ring', 30, 'left:2%;top:78%', VL, 'bob', 'hide-sm'],
+  ['heart', 24, 'right:3%;top:30%', PK, 'wiggle'], ['plus', 26, 'right:2.5%;top:60%', V, 'wiggle'], ['cloud', 44, 'right:2%;top:84%', VL, 'drift', 'hide-sm'],
+  ['sparkle', 16, 'left:47%;top:93%', V, 'twinkle', 'hide-sm'], ['dot', 10, 'right:11%;top:14%', VL, 'bob-slow'], ['square', 50, 'left:-1.5%;top:40%', 'rgba(143,118,190,.4)', 'drift', 'hide-sm']
+];
+const LOGIN_SET = [
+  ['ring', 40, 'left:6%;top:18%', W, 'bob'], ['dot', 16, 'left:16%;top:30%', V, 'drift'], ['heart', 26, 'left:22%;bottom:10%', W, 'twinkle-slow'], ['plus', 30, 'left:3%;bottom:8%', V, 'wiggle'],
+  ['cloud', 56, 'right:6%;top:10%', 'rgba(255,255,255,.9)', 'drift', 'hide-sm'], ['heart', 26, 'right:30%;top:8%', PK, 'wiggle'], ['sparkle', 24, 'left:44%;top:6%', W, 'twinkle'], ['flower', 50, 'right:16%;bottom:6%', 'rgba(143,118,190,.6)', 'bob', 'hide-sm'],
+  ['ring', 130, 'right:-3%;bottom:-6%', 'rgba(117,91,180,.3)', 'bob-slow'], ['ring', 120, 'left:-4%;top:-6%', 'rgba(255,255,255,.6)', 'bob-slow']
+];
+const paintDoodles = (el, set) => { el.innerHTML = set.map(doodle).join(''); };
+const starDots = () => [[8, 18, 3, 'twinkle'], [16, 62, 2, 'twinkle-slow'], [26, 30, 2.5, 'twinkle'], [40, 78, 2, 'twinkle-slow'], [58, 22, 3, 'twinkle'], [72, 66, 2, 'twinkle-slow'], [84, 28, 2.5, 'twinkle'], [92, 74, 2, 'twinkle']]
+  .map(([x, y, sz, a]) => `<div class="star-dot ${a}" style="width:${sz}px;height:${sz}px;left:${x}%;top:${y}%" aria-hidden="true"></div>`).join('');
+const avatarInner = (me) => me.picture
+  ? `<img src="${esc(me.picture)}" alt="" referrerpolicy="no-referrer" width="36" height="36" style="width:100%;height:100%;object-fit:cover">`
+  : esc(initial(me.name || me.email));
+
+const timeAgo = (iso) => {
+  const s = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (s < 60) return 'just now';
+  if (s < 3600) return `${Math.floor(s / 60)} min ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)} h ago`;
+  if (s < 604800) return `${Math.floor(s / 86400)} d ago`;
+  return new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+};
+const fmtBytes = (n) => n < 1024 ? `${n} B` : n < 1048576 ? `${Math.round(n / 1024)} KB` : n < 1073741824 ? `${(n / 1048576).toFixed(1)} MB` : `${(n / 1073741824).toFixed(2)} GB`;
+const initial = (s) => (String(s || '?').trim()[0] || '?').toUpperCase();
+const dicebear = (name) => `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(name || 'member')}-purpledev&backgroundColor=ffffff&radius=50`;
+
+/* ==========================================================================
+   API, toasts, panels
+   ========================================================================== */
+class ApiError extends Error { constructor(msg, status) { super(msg); this.status = status; } }
+
+async function api(path, opts = {}) {
+  const init = { method: opts.method || 'GET', credentials: 'same-origin', headers: {} };
+  if (opts.body !== undefined) { init.headers['Content-Type'] = 'application/json'; init.body = JSON.stringify(opts.body); }
+  let res;
+  try { res = await fetch('/api' + path, init); }
+  catch (_) { throw new ApiError('Can’t reach the server. Check your connection.', 0); }
+  let data = null;
+  try { data = await res.json(); } catch (_) { /* empty body */ }
+  const revoked = res.status === 403 && data && /access was removed/i.test(data.error || '');
+  if ((res.status === 401 || revoked) && path.startsWith('/admin')) {
+    if (!$('#app').hidden) showLogin(res.status === 401 ? 'Your session ended. Please sign in again.' : data.error);
+    throw new ApiError((data && data.error) || 'Please sign in.', res.status);
+  }
+  if (!res.ok) throw new ApiError((data && data.error) || 'Something went wrong.', res.status);
+  return data;
+}
+
+function toast(msg, type = 'ok') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+  el.innerHTML = icon(type === 'ok' ? 'check' : 'alert') + `<span>${esc(msg)}</span>`;
+  $('#toasts').append(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 260); }, type === 'ok' ? 2800 : 5500);
+}
+
+const panelStack = [];
+function openPanel({ kind = 'drawer', title, subtitle = '', body = '', footer = '', width = '', onClose }) {
+  const scrim = document.createElement('div');
+  scrim.className = 'scrim';
+  const box = document.createElement('div');
+  box.className = kind === 'drawer' ? 'drawer' : 'dialog';
+  box.setAttribute('role', 'dialog');
+  box.setAttribute('aria-modal', 'true');
+  box.setAttribute('aria-label', title);
+  if (width) box.style.setProperty('--w', width);
+  box.innerHTML =
+    `<div class="ph"><div><h2>${esc(title)}</h2>${subtitle ? `<p>${esc(subtitle)}</p>` : ''}</div>` +
+    `<button class="btn ghost icon" data-close aria-label="Close">${icon('x')}</button></div>` +
+    `<div class="pb">${body}</div>${footer ? `<div class="pf">${footer}</div>` : ''}`;
+  $('#modalRoot').append(scrim, box);
+  document.body.classList.add('noscroll');
+
+  const p = { el: box, dirty: false, closed: false, $: (s) => $(s, box), $$: (s) => $$(s, box) };
+  p.close = async (force) => {
+    if (p.closed) return true;
+    if (!force && p.dirty) {
+      const ok = await confirmDialog({ title: 'Discard changes?', body: 'You have unsaved changes that will be lost.', confirmText: 'Discard', danger: true });
+      if (!ok) return false;
+    }
+    p.closed = true;
+    const i = panelStack.indexOf(p);
+    if (i > -1) panelStack.splice(i, 1);
+    box.classList.add('closing'); scrim.classList.add('closing');
+    setTimeout(() => { box.remove(); scrim.remove(); if (!panelStack.length) document.body.classList.remove('noscroll'); }, 180);
+    if (onClose) onClose();
+    return true;
+  };
+  scrim.addEventListener('click', () => p.close());
+  $('[data-close]', box).addEventListener('click', () => p.close());
+  panelStack.push(p);
+  return p;
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && panelStack.length) { e.preventDefault(); panelStack[panelStack.length - 1].close(); }
+});
+function closeAllPanels() { [...panelStack].forEach((p) => p.close(true)); }
+
+function confirmDialog({ title, body, confirmText = 'Confirm', danger = false }) {
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = (v) => { if (done) return; done = true; resolve(v); p.close(true); };
+    const p = openPanel({
+      kind: 'dialog', title,
+      body: `<p class="muted">${esc(body)}</p>`,
+      footer: `<button class="btn" data-cancel>Cancel</button><button class="btn ${danger ? 'danger-fill' : 'primary'}" data-ok>${esc(confirmText)}</button>`,
+      onClose: () => finish(false)
+    });
+    $('[data-cancel]', p.el).onclick = () => finish(false);
+    const ok = $('[data-ok]', p.el);
+    ok.onclick = () => finish(true);
+    ok.focus();
+  });
+}
+
+/* ==========================================================================
+   Uploads (images are shrunk in the browser first to save database space)
+   ========================================================================== */
+async function compressImage(file, { max = 1600, quality = 0.86, square = false } = {}) {
+  if (file.type === 'image/gif') return file;
+  const bmp = await createImageBitmap(file).catch(() => null);
+  if (!bmp) return file;
+  let sx = 0, sy = 0, sw = bmp.width, sh = bmp.height;
+  if (square) { const s = Math.min(sw, sh); sx = (sw - s) / 2; sy = (sh - s) / 2; sw = sh = s; }
+  const scale = Math.min(1, max / Math.max(sw, sh));
+  const w = Math.max(1, Math.round(sw * scale)), h = Math.max(1, Math.round(sh * scale));
+  const draw = (type) => new Promise((resolve) => {
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    if (type === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); }
+    ctx.drawImage(bmp, sx, sy, sw, sh, 0, 0, w, h);
+    c.toBlob(resolve, type, quality);
+  });
+  let blob = await draw('image/webp');
+  if (!blob || blob.type !== 'image/webp') blob = await draw('image/jpeg'); // older Safari can't encode WebP
+  bmp.close && bmp.close();
+  const resized = scale < 1 || square;
+  return blob && (resized || blob.size < file.size) ? blob : file;
+}
+
+function uploadFile(file, { onProgress, square = false } = {}) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const isVideo = file.type.startsWith('video/');
+      if (!isVideo && !file.type.startsWith('image/')) throw new Error(`“${file.name}” isn’t an image or video.`);
+      if (isVideo && file.size > state.maxUploadMb * 1048576) throw new Error(`“${file.name}” is ${fmtBytes(file.size)}. Videos can be up to ${state.maxUploadMb} MB — paste a YouTube or Vimeo link for longer ones.`);
+      const blob = isVideo ? file : await compressImage(file, square ? { max: 640, square: true } : {});
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/admin/upload?name=' + encodeURIComponent(file.name));
+      xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+      xhr.upload.onprogress = (e) => { if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total); };
+      xhr.onload = () => {
+        let d = null; try { d = JSON.parse(xhr.responseText); } catch (_) {}
+        if (xhr.status >= 200 && xhr.status < 300) return resolve(d);
+        if (xhr.status === 401) showLogin('Your session ended. Please sign in again.');
+        reject(new Error((d && d.error) || 'Upload failed.'));
+      };
+      xhr.onerror = () => reject(new Error('Network error while uploading.'));
+      xhr.send(blob);
+    } catch (e) { reject(e); }
+  });
+}
+
+/* Parse a pasted video link into something the site can play. */
+function parseVideoLink(raw) {
+  let u;
+  try { u = new URL(/^https?:\/\//i.test(raw.trim()) ? raw.trim() : 'https://' + raw.trim()); } catch (_) { return null; }
+  const h = u.hostname.replace(/^www\./, '');
+  let id = null;
+  if (h === 'youtu.be') id = u.pathname.slice(1);
+  else if (h === 'youtube.com' || h === 'm.youtube.com' || h === 'youtube-nocookie.com') {
+    id = u.pathname === '/watch' ? u.searchParams.get('v') : ((u.pathname.match(/^\/(?:embed|shorts|live)\/([\w-]{6,20})/) || [])[1] || null);
+  }
+  if (id && /^[\w-]{6,20}$/.test(id)) return { type: 'embed', url: `https://www.youtube-nocookie.com/embed/${id}` };
+  if (h === 'vimeo.com' || h === 'player.vimeo.com') {
+    const m = u.pathname.match(/(\d{5,})/);
+    if (m) return { type: 'embed', url: `https://player.vimeo.com/video/${m[1]}` };
+  }
+  if (/\.(mp4|webm|mov)$/i.test(u.pathname)) return { type: 'video', url: u.toString() };
+  return null;
+}
+const youtubeThumb = (embedUrl) => { const m = /youtube(?:-nocookie)?\.com\/embed\/([\w-]+)/.exec(embedUrl || ''); return m ? `https://i.ytimg.com/vi/${m[1]}/hqdefault.jpg` : ''; };
+
+/* Drag-to-reorder for any container whose children carry data-id */
+function enableSort(container, { selector = '[data-id]', axis = 'y', onDone }) {
+  let dragEl = null;
+  container.addEventListener('dragstart', (e) => {
+    const el = e.target.closest && e.target.closest(selector);
+    if (!el || el.parentElement !== container) return;
+    dragEl = el; el.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    try { e.dataTransfer.setData('text/plain', el.dataset.id || ''); } catch (_) {}
+  });
+  container.addEventListener('dragover', (e) => {
+    if (!dragEl) return;
+    const over = e.target.closest && e.target.closest(selector);
+    if (!over || over === dragEl || over.parentElement !== container) { e.preventDefault(); return; }
+    e.preventDefault();
+    const r = over.getBoundingClientRect();
+    const after = axis === 'y' ? e.clientY > r.top + r.height / 2 : e.clientX > r.left + r.width / 2;
+    container.insertBefore(dragEl, after ? over.nextElementSibling : over);
+  });
+  container.addEventListener('dragend', () => {
+    if (!dragEl) return;
+    dragEl.classList.remove('dragging'); dragEl = null;
+    onDone($$(selector, container).filter((el) => el.parentElement === container).map((el) => el.dataset.id));
+  });
+}
+
+/* ==========================================================================
+   Sign in / sign out
+   ========================================================================== */
+let gisReady = false;
+function setLoginMsg(msg, isErr) {
+  const el = $('#loginMsg');
+  el.textContent = msg || '';
+  el.classList.toggle('err', !!isErr);
+}
+async function waitFor(fn, ms) {
+  const t0 = Date.now();
+  while (Date.now() - t0 < ms) { if (fn()) return true; await sleep(150); }
+  return !!fn();
+}
+async function showLogin(msg) {
+  closeAllPanels();
+  setDirty(false);
+  $('#app').hidden = true;
+  $('#login').hidden = false;
+  document.title = 'Sign in — purple dev admin';
+  setLoginMsg(msg || '', !!msg);
+  let cfg;
+  try { cfg = await (await fetch('/api/auth/config')).json(); }
+  catch (_) { return setLoginMsg('Can’t reach the server. Refresh and try again.', true); }
+  const ok = await waitFor(() => window.google && window.google.accounts && window.google.accounts.id, 12000);
+  if (!ok) return setLoginMsg('Google sign-in didn’t load. Check your connection or turn off ad blockers, then refresh.', true);
+  if (!gisReady) {
+    google.accounts.id.initialize({ client_id: cfg.clientId, callback: onCredential, auto_select: false, cancel_on_tap_outside: true });
+    gisReady = true;
+  }
+  const holder = $('#gbtn');
+  holder.innerHTML = '';
+  google.accounts.id.renderButton(holder, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', logo_alignment: 'left', width: 300 });
+}
+async function onCredential(resp) {
+  setLoginMsg('Checking your account…');
+  try {
+    await api('/auth/google', { method: 'POST', body: { credential: resp.credential } });
+    enterApp(await api('/admin/me'));
+  } catch (e) { setLoginMsg(e.message, true); }
+}
+async function logout() {
+  try { await api('/auth/logout', { method: 'POST' }); } catch (_) {}
+  if (window.google && google.accounts) google.accounts.id.disableAutoSelect();
+  state.projects = state.team = state.plans = state.faqs = state.settings = state.admins = state.messages = null;
+  showLogin();
+}
+
+/* ==========================================================================
+   Shell: nav, theme, router
+   ========================================================================== */
+const ROUTES = {
+  dashboard: { label: 'Dashboard', nav: 'Dashboard', short: 'Home', icon: 'grid', color: '#E4DBF8', eyebrow: 'Dashboard' },
+  projects: { label: 'Projects', nav: 'Projects', short: 'Projects', icon: 'folder', color: '#E5F1FC', eyebrow: 'Projects' },
+  team: { label: 'Team', nav: 'Team', short: 'Team', icon: 'users', color: '#FBE4EE', eyebrow: 'Team' },
+  pricing: { label: 'Pricing', nav: 'Pricing', short: 'Pricing', icon: 'tag', color: '#FFF3D6', eyebrow: 'Pricing' },
+  faq: { label: 'Common questions', nav: 'FAQ', short: 'FAQ', icon: 'help', color: '#FFE3D6', eyebrow: 'FAQ' },
+  social: { label: 'Social links', nav: 'Social', short: 'Social', icon: 'share', color: '#EDF8E5', eyebrow: 'Social' },
+  site: { label: 'Site content', nav: 'Content', short: 'Content', icon: 'sliders', color: '#EDEAF8', eyebrow: 'Content' },
+  messages: { label: 'Messages', nav: 'Messages', short: 'Inbox', icon: 'inbox', color: '#E5F1FC', eyebrow: 'Inbox' },
+  admins: { label: 'Admins and access', nav: 'Admins', short: 'Admins', icon: 'shield', color: '#FBE4EE', eyebrow: 'Access' }
+};
+const TAB_KEYS = ['dashboard', 'projects', 'team', 'messages'];
+const VIEWS = () => ({ dashboard: viewDashboard, projects: viewProjects, team: viewTeam, pricing: viewPricing, faq: viewFaq, social: viewSocial, site: viewSite, messages: viewMessages, admins: viewAdmins });
+
+function renderNav(active) {
+  const badge = state.unread ? (state.unread > 99 ? '99+' : String(state.unread)) : '';
+  $('#topNav').innerHTML = Object.entries(ROUTES).map(([k, r]) =>
+    `<a class="nav-link ${k === active ? 'active' : ''}" href="#/${k}" ${k === active ? 'aria-current="page"' : ''}>${r.nav}${k === 'messages' && badge ? `<span class="badge">${badge}</span>` : ''}</a>`).join('');
+  $('#tabBar').innerHTML = TAB_KEYS.map((k) => {
+    const r = ROUTES[k];
+    return `<a class="tab ${k === active ? 'active' : ''}" href="#/${k}" style="--c:${r.color}" ${k === active ? 'aria-current="page"' : ''}><span class="tab-ic">${icon(r.icon)}${k === 'messages' && badge ? `<span class="dotb">${badge}</span>` : ''}</span><span>${r.short}</span></a>`;
+  }).join('') +
+    `<button type="button" class="tab ${TAB_KEYS.includes(active) ? '' : 'active'}" data-more style="--c:#EDF8E5" aria-haspopup="dialog"><span class="tab-ic">${icon('menu')}</span><span>More</span></button>`;
+}
+
+function openMoreSheet() {
+  const me = state.me;
+  const link = (k) => `<a href="#/${k}" style="--c:${ROUTES[k].color}">${icon(ROUTES[k].icon)}<span>${ROUTES[k].label}</span></a>`;
+  const p = openPanel({
+    kind: 'dialog', title: 'Menu',
+    body: `<div class="me-card"><span class="avatar">${avatarInner(me)}</span><div><b>${esc(me.name || me.email.split('@')[0])}</b><span class="e">${esc(me.email)}</span></div></div>
+      <div class="more-list">${['pricing', 'faq', 'social', 'site', 'admins'].map(link).join('')}<a href="/" target="_blank" rel="noopener">${icon('external')}<span>View live site</span></a></div>`,
+    footer: `<button class="btn danger" data-logout>${icon('logout', 'sm')}Sign out</button>`
+  });
+  p.el.addEventListener('click', (e) => {
+    if (e.target.closest('a')) p.close(true);
+    if (e.target.closest('[data-logout]')) { p.close(true); logout(); }
+  });
+}
+
+function currentRoute() {
+  const key = (location.hash.replace(/^#\/?/, '') || 'dashboard').split('/')[0];
+  return ROUTES[key] ? key : 'dashboard';
+}
+
+/* page banner: lilac / sky / blush / mint band with doodles, same idea as the site's hero */
+const WAVE = '<svg viewBox="0 0 160 18" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M3 13C25 8 50 16 80 10C110 4 135 14 157 9M18 16C45 13 80 18 115 12C130 10 148 14 155 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function setBanner(key, title, desc = '', actions = '') {
+  const r = ROUTES[key];
+  const el = $('#banner');
+  let html = `<div class="banner" style="--bn:${r.color}">${BANNER_SETS[Object.keys(ROUTES).indexOf(key) % BANNER_SETS.length].map(doodle).join('')}` +
+    `<div class="wrap"><div class="eyebrow rise d1"><span class="twinkle">✦</span><span>${esc(r.eyebrow)}</span></div>` +
+    `<div class="banner-row"><div><h1 class="rise d2"><span class="ul">${esc(title)}${WAVE}</span></h1>${desc ? `<p class="desc rise d3">${esc(desc)}</p>` : ''}</div>` +
+    `${actions ? `<div class="actions rise d4">${actions}</div>` : ''}</div></div></div>`;
+  if (el.dataset.sig === html) return;
+  // same page and title as what's already showing: don't replay the entrance animation
+  if (el.dataset.key === key && el.dataset.title === title) html = html.replace(/ rise d\d/g, '');
+  el.dataset.sig = html; el.dataset.key = key; el.dataset.title = title;
+  el.innerHTML = html;
+}
+const pageHead = (title, desc = '', actions = '') => { setBanner(currentRoute(), title, desc, actions); return ''; };
+
+function route() {
+  const key = currentRoute();
+  setDirty(false);
+  renderNav(key);
+  document.title = `${ROUTES[key].label} — ${brandName()} admin`;
+  const view = $('#view');
+  view.onclick = view.onchange = null;
+  setBanner(key, ROUTES[key].label);
+  view.innerHTML = loadingBlock();
+  window.scrollTo(0, 0);
+  Promise.resolve(VIEWS()[key]()).catch((e) => {
+    if (e.status === 401) return;
+    $('#view').innerHTML = `<div class="empty"><div class="art">${icon('alert')}</div><h3>Couldn’t load this page</h3><p>${esc(e.message)}</p><button class="btn primary" id="retry">Try again</button></div>`;
+    $('#retry').onclick = route;
+  });
+}
+const brandName = () => (state.settings && state.settings.site && state.settings.site.brand_name) || 'purple dev';
+function applyBrand() { $$('[data-brand]').forEach((el) => { el.textContent = brandName(); }); }
+const loadingBlock = () => `<div class="sk" style="height:96px;margin-bottom:14px"></div><div class="sk" style="height:96px;margin-bottom:14px"></div><div class="sk" style="height:96px"></div>`;
+
+/* unsaved-changes bar for the form-style pages */
+function setDirty(on, { save, discard } = {}) {
+  state.dirty = on;
+  state.onSave = on ? save : null;
+  state.onDiscard = on ? discard : null;
+  $('#savebar').classList.toggle('show', on);
+}
+window.addEventListener('beforeunload', (e) => { if (state.dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+function enterApp(me) {
+  state.me = me;
+  state.platforms = me.platforms || {};
+  state.maxUploadMb = me.maxUploadMb || 50;
+  $('#login').hidden = true;
+  $('#app').hidden = false;
+  $('#meAvatar').innerHTML = avatarInner(me);
+  $('#meAvatar').title = `${me.name || ''} ${me.email}`.trim();
+  $('#viewSite').innerHTML = `${icon('external', 'sm')}<span class="hide-xs">View site</span>`;
+  $('#viewSite').setAttribute('aria-label', 'View live site');
+  $('#logoutBtn').innerHTML = icon('logout');
+  // brand name + unread badge load quietly in the background
+  api('/admin/settings').then((st) => { state.settings = st; applyBrand(); }).catch(() => {});
+  api('/admin/dashboard').then((d) => { state.unread = d.counts.unread; renderNav(currentRoute()); }).catch(() => {});
+  route();
+}
+
+document.addEventListener('click', async (e) => {
+  const a = e.target.closest && e.target.closest('a[href^="#/"]');
+  if (!a || !state.dirty) return;
+  e.preventDefault();
+  const ok = await confirmDialog({ title: 'Leave without saving?', body: 'Your changes on this page haven’t been saved.', confirmText: 'Leave page', danger: true });
+  if (ok) { setDirty(false); location.hash = a.getAttribute('href'); }
+});
+window.addEventListener('hashchange', () => { if ($('#app').hidden) return; route(); });
+$('#logoutBtn').addEventListener('click', logout);
+$('#tabBar').addEventListener('click', (e) => { if (e.target.closest('[data-more]')) openMoreSheet(); });
+// buttons inside the banner (like "Add project") use the same handlers as the page below it
+$('#banner').addEventListener('click', (e) => { const v = $('#view'); if (typeof v.onclick === 'function') v.onclick(e); });
+$('#saveBtn').addEventListener('click', () => state.onSave && state.onSave());
+$('#discardBtn').addEventListener('click', () => state.onDiscard && state.onDiscard());
+
+async function start() {
+  paintDoodles($('#bgDoodles'), BG_SET);
+  paintDoodles($('#loginDoodles'), LOGIN_SET);
+  try { enterApp(await api('/admin/me')); }
+  catch (e) { showLogin(e.status === 0 || e.status === 403 ? e.message : ''); }
+}
+
+/* ==========================================================================
+   Shared bits for project / team visuals
+   ========================================================================== */
+function projectCover(p) {
+  if (p.cover) return p.cover;
+  const g = p.gallery || [];
+  const img = g.find((m) => m.type === 'image');
+  if (img) return img.url;
+  const emb = g.find((m) => m.type === 'embed');
+  return emb ? youtubeThumb(emb.url) : '';
+}
+function thumbHtml(p, cls = 'thumb') {
+  const src = projectCover(p);
+  return src
+    ? `<img class="${cls}" src="${esc(src)}" alt="" loading="lazy">`
+    : `<div class="${cls} ph" aria-hidden="true">${esc(initial(p.title))}</div>`;
+}
+
+/* ==========================================================================
+   Dashboard
+   ========================================================================== */
+async function viewDashboard() {
+  const d = await api('/admin/dashboard');
+  const c = d.counts;
+  state.unread = c.unread;
+  renderNav('dashboard');
+  const hour = new Date().getHours();
+  const part = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+  const first = (state.me.name || state.me.email.split('@')[0]).split(' ')[0];
+  const dbPct = Math.min(100, (c.db_bytes / 1073741824) * 100);
+
+  const recentProjects = d.recentProjects.length
+    ? d.recentProjects.map((p) => `
+        <a class="mini" href="#/projects">${thumbHtml(p, '')}
+          <div class="t"><b>${esc(p.title)}</b><span>${esc(p.category)} — updated ${timeAgo(p.updated_at)}</span></div>
+          <span class="pill ${p.status === 'published' ? 'ok' : 'warn'}">${p.status === 'published' ? 'Live' : 'Draft'}</span>
+        </a>`).join('')
+    : `<div class="mini empty-mini">No projects yet.</div>`;
+
+  const recentMsgs = d.recentMessages.length
+    ? d.recentMessages.map((m) => `
+        <a class="mini" href="#/messages">${m.is_read ? '<span style="width:8px"></span>' : '<span class="dot" title="Unread"></span>'}
+          <div class="t"><b>${esc(m.name)}</b><span>${esc(m.message)}</span></div>
+          <span class="muted" style="font-size:12px">${timeAgo(m.created_at)}</span>
+        </a>`).join('')
+    : `<div class="mini empty-mini">Messages from your contact form will show up here.</div>`;
+
+  $('#view').innerHTML =
+    pageHead(`Good ${part}, ${first}`, 'Here’s what’s happening on your site.',
+      `<a class="btn hide-xs" href="/" target="_blank" rel="noopener">${icon('external', 'sm')}View live site</a>
+       <button class="btn primary cta-glow shine-btn" id="dAdd">${icon('plus')}Add project</button>`) +
+    `<section class="glance" aria-label="Site summary">
+       <a href="#/projects"><b>${c.published}</b><span>Live projects</span></a>
+       <a href="#/projects"><b>${c.drafts}</b><span>Drafts</span></a>
+       <a href="#/team"><b>${c.team}</b><span>Team members</span></a>
+       <a href="#/messages"><b>${c.unread}</b><span>Unread messages</span></a>
+     </section>
+     <div class="grid2">
+       <section class="card"><div class="card-h"><h2>Recently updated</h2><a class="btn ghost sm" href="#/projects">See all</a></div><div class="card-b">${recentProjects}</div></section>
+       <section class="card"><div class="card-h"><h2>Latest messages</h2><a class="btn ghost sm" href="#/messages">Open inbox</a></div><div class="card-b">${recentMsgs}</div></section>
+     </div>
+     <section class="card dark"><div style="position:absolute;inset:0;pointer-events:none">${starDots()}</div><div class="card-h"><h2>Storage</h2></div><div class="card-b">
+       <div class="meter" role="img" aria-label="${dbPct.toFixed(1)} percent of 1 GB used"><i style="width:${Math.max(dbPct, 0.5)}%"></i></div>
+       <p class="muted">Your database is using <b>${fmtBytes(c.db_bytes)}</b> of the 1 GB included with Render’s free PostgreSQL plan. That includes <b>${c.media_count}</b> uploaded ${c.media_count === 1 ? 'file' : 'files'} (${fmtBytes(c.media_bytes)}) and ${c.likes} project ${c.likes === 1 ? 'like' : 'likes'}.</p>
+     </div></section>`;
+  $('#dAdd').onclick = () => openProjectEditor();
+}
+
+/* ==========================================================================
+   Projects list
+   ========================================================================== */
+const pf = { q: '', status: 'all', cat: 'all' };
+
+async function viewProjects() {
+  if (!state.projects) state.projects = await api('/admin/projects');
+  renderProjects();
+}
+
+function renderProjects() {
+  const all = state.projects;
+  const head = pageHead('Projects', 'Everything you add here appears on your site. Use the arrows or drag rows to change the order visitors see.',
+    `<button class="btn primary cta-glow shine-btn" data-act="add">${icon('plus')}Add project</button>`);
+  const view = $('#view');
+
+  if (!all.length) {
+    view.innerHTML = head +
+      `<div class="empty"><div class="art">${icon('folder')}</div><h3>No projects yet</h3>
+       <p>Add your first project with photos, a live link and a GitHub link. It appears on your site the moment you save it.</p>
+       <button class="btn primary" data-act="add">${icon('plus')}Add your first project</button></div>`;
+    view.onclick = (e) => { if (e.target.closest('[data-act="add"]')) openProjectEditor(); };
+    return;
+  }
+
+  const cats = [...new Set(all.map((p) => p.category))].sort((a, b) => a.localeCompare(b));
+  if (pf.cat !== 'all' && !cats.includes(pf.cat)) pf.cat = 'all';
+  const live = all.filter((p) => p.status === 'published').length;
+  const seg = (key, label, n) => `<button type="button" class="${pf.status === key ? 'on' : ''}" data-status="${key}">${label}<b>${n}</b></button>`;
+  view.innerHTML = head +
+    `<div class="toolbar">
+       <div class="search">${icon('search')}<input class="input" id="pq" type="search" placeholder="Search projects" aria-label="Search projects" value="${esc(pf.q)}"></div>
+       <div class="seg" role="group" aria-label="Filter by status">${seg('all', 'All', all.length)}${seg('published', 'Live', live)}${seg('draft', 'Drafts', all.length - live)}</div>
+       <select class="select" id="pcat" aria-label="Filter by category"><option value="all">All categories</option>${cats.map((c) => `<option ${pf.cat === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>
+     </div>
+     <div id="plist"></div><p class="hint" id="pnote" style="margin-top:12px"></p>`;
+
+  const list = $('#plist');
+  renderProjectRows();
+
+  $('#pq').addEventListener('input', (e) => { pf.q = e.target.value; renderProjectRows(); });
+  $('#pcat').addEventListener('change', (e) => { pf.cat = e.target.value; renderProjects(); });
+  $$('[data-status]', view).forEach((b) => b.addEventListener('click', () => { pf.status = b.dataset.status; renderProjects(); }));
+
+  view.onclick = (e) => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const row = btn.closest('[data-id]');
+    const p = row && state.projects.find((x) => String(x.id) === row.dataset.id);
+    const act = btn.dataset.act;
+    if (act === 'add') openProjectEditor();
+    else if (act === 'edit' && p) openProjectEditor(p);
+    else if (act === 'delete' && p) deleteProject(p);
+    else if ((act === 'up' || act === 'down') && row) {
+      const sib = act === 'up' ? row.previousElementSibling : row.nextElementSibling;
+      if (sib) { list.insertBefore(row, act === 'up' ? sib : sib.nextElementSibling); persistProjectOrder($$('[data-id]', list).map((r) => r.dataset.id)); }
+    }
+  };
+  view.onchange = async (e) => {
+    const t = e.target.closest('[data-act="toggle"]');
+    if (!t) return;
+    const p = state.projects.find((x) => String(x.id) === t.closest('[data-id]').dataset.id);
+    const status = t.checked ? 'published' : 'draft';
+    try {
+      Object.assign(p, await api('/admin/projects/' + p.id, { method: 'PATCH', body: { status } }));
+      toast(status === 'published' ? `“${p.title}” is live.` : `“${p.title}” moved to drafts.`);
+      renderProjects();
+    } catch (err) { t.checked = !t.checked; toast(err.message, 'error'); }
+  };
+  enableSort(list, { onDone: persistProjectOrder });
+}
+
+function renderProjectRows() {
+  const list = $('#plist');
+  if (!list) return;
+  const q = pf.q.trim().toLowerCase();
+  const filtering = !!q || pf.status !== 'all' || pf.cat !== 'all';
+  const rows = state.projects.filter((p) =>
+    (pf.status === 'all' || p.status === pf.status) &&
+    (pf.cat === 'all' || p.category === pf.cat) &&
+    (!q || `${p.title} ${p.category} ${p.short_desc} ${(p.tech || []).join(' ')}`.toLowerCase().includes(q)));
+  list.innerHTML = rows.length
+    ? rows.map((p) => projectRow(p, !filtering)).join('')
+    : `<div class="empty" style="padding:36px"><h3>Nothing matches</h3><p style="margin-bottom:0">Try a different search or clear the filters.</p></div>`;
+  $('#pnote').textContent = filtering && rows.length ? 'Clear the search and filters to drag projects into a new order.' : '';
+}
+
+function projectRow(p, sortable) {
+  const live = p.status === 'published';
+  const media = (p.gallery || []).length;
+  return `<div class="prow" data-id="${p.id}" draggable="${sortable}">
+    <div>${sortable ? `<span class="grip" aria-hidden="true">${icon('grip')}</span><div class="movers"><button type="button" data-act="up" aria-label="Move up">${icon('up', 'sm')}</button><button type="button" data-act="down" aria-label="Move down">${icon('down', 'sm')}</button></div>` : ''}</div>
+    ${thumbHtml(p, 'thumb')}
+    <div class="pinfo">
+      <div class="ptitle"><span class="name">${esc(p.title)}</span><span class="pill ${live ? 'ok' : 'warn'}">${live ? 'Live' : 'Draft'}</span></div>
+      <div class="pmeta">
+        <span class="pill line">${esc(p.category)}</span>
+        ${p.year ? `<span>${esc(p.year)}</span>` : ''}
+        <span title="Likes from visitors">${icon('heart', 'sm')}${p.likes}</span>
+        ${media ? `<span title="Photos and videos">${icon('image', 'sm')}${media}</span>` : ''}
+        ${p.live_url ? `<a href="${esc(p.live_url)}" target="_blank" rel="noopener">${icon('external', 'sm')}Live site</a>` : ''}
+        ${p.github_url ? `<a href="${esc(p.github_url)}" target="_blank" rel="noopener">${icon('github', 'sm')}GitHub</a>` : ''}
+      </div>
+    </div>
+    <div class="pact">
+      <label class="switch" title="Show on your site"><input type="checkbox" data-act="toggle" ${live ? 'checked' : ''} aria-label="Show ${esc(p.title)} on your site"><i></i><span>Live</span></label>
+      <button class="btn sm" data-act="edit">${icon('edit', 'sm')}Edit</button>
+      <button class="btn sm icon danger" data-act="delete" aria-label="Delete ${esc(p.title)}" title="Delete">${icon('trash', 'sm')}</button>
+    </div>
+  </div>`;
+}
+
+async function persistProjectOrder(ids) {
+  const byId = new Map(state.projects.map((p) => [String(p.id), p]));
+  state.projects = ids.map((id) => byId.get(id)).filter(Boolean);
+  try { await api('/admin/projects/reorder', { method: 'POST', body: { ids: ids.map(Number) } }); toast('Order saved.'); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteProject(p) {
+  const ok = await confirmDialog({
+    title: 'Delete this project?',
+    body: `“${p.title}” will disappear from your site. Its uploaded photos and videos are cleared from storage within a day. This can’t be undone.`,
+    confirmText: 'Delete project', danger: true
+  });
+  if (!ok) return;
+  try {
+    await api('/admin/projects/' + p.id, { method: 'DELETE' });
+    state.projects = state.projects.filter((x) => x.id !== p.id);
+    toast('Project deleted.');
+    renderProjects();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+/* ==========================================================================
+   Project editor (drawer with a live preview of the card visitors will see)
+   ========================================================================== */
+function openProjectEditor(existing) {
+  const isNew = !existing;
+  const p = existing ? clone(existing) : { title: '', category: '', short_desc: '', description: '', cover: '', gallery: [], tech: [], live_url: '', github_url: '', client: '', year: '', status: 'published' };
+  p.gallery = p.gallery || []; p.tech = p.tech || [];
+  const cats = [...new Set(['Web', 'App', 'Brand', ...(state.projects || []).map((x) => x.category)])];
+  const uploads = new Map();
+
+  const panel = openPanel({
+    title: isNew ? 'Add project' : 'Edit project',
+    subtitle: isNew ? 'Fill in what you have. You can come back and edit it any time.' : p.title,
+    width: '1080px',
+    body: `<div class="editor">
+      <div class="form">
+        <section class="sect">
+          <h3>Basics</h3>
+          <div class="field"><label for="pf-title">Project name</label><input class="input" id="pf-title" maxlength="120" placeholder="e.g. Fintra banking app" autocomplete="off"></div>
+          <div class="two">
+            <div class="field"><label for="pf-cat">Category</label><input class="input" id="pf-cat" list="pf-cats" maxlength="30" placeholder="Web, App, Brand…" autocomplete="off"><datalist id="pf-cats">${cats.map((c) => `<option value="${esc(c)}">`).join('')}</datalist><span class="hint">Visitors can filter your projects by category.</span></div>
+            <div class="field"><label for="pf-year">Year</label><input class="input" id="pf-year" maxlength="20" placeholder="2026" inputmode="numeric" autocomplete="off"></div>
+          </div>
+          <div class="field"><label for="pf-short">Short description</label><textarea class="textarea" id="pf-short" rows="2" maxlength="240" placeholder="One or two sentences that sum up the project."></textarea><span class="hint"><span id="pf-short-n">0</span> of 240 characters</span></div>
+          <div class="field"><label for="pf-desc">Full story <span class="muted" style="font-weight:500">(optional)</span></label><textarea class="textarea" id="pf-desc" rows="6" maxlength="6000" placeholder="What was the problem, what did you build, what happened next?"></textarea></div>
+        </section>
+
+        <section class="sect">
+          <h3>Photos and videos</h3>
+          <p class="sub">The cover appears on the project card. Everything in the gallery shows when someone opens the project. Images are resized automatically. Videos can be up to ${state.maxUploadMb} MB, or paste a YouTube or Vimeo link.</p>
+          <div class="field"><span class="lbl">Cover image</span>
+            <div class="cover" id="cover-box"></div>
+            <div class="row"><button type="button" class="btn sm" data-act="pick-cover">${icon('upload', 'sm')}Upload cover</button><input class="input" id="pf-cover-url" placeholder="or paste an image link" aria-label="Cover image link" autocomplete="off"></div>
+            <input type="file" id="cover-file" accept="image/*" hidden>
+          </div>
+          <div class="field"><span class="lbl">Gallery</span>
+            <div class="media-grid" id="gal"></div>
+            <input type="file" id="gal-file" accept="image/*,video/*" multiple hidden>
+            <div class="row" style="margin-top:6px"><input class="input" id="pf-vid" placeholder="Paste a YouTube, Vimeo or .mp4 link" aria-label="Video link" autocomplete="off"><button type="button" class="btn" data-act="add-video">${icon('video', 'sm')}Add video link</button></div>
+            <span class="hint">Reorder with the arrows or by dragging. The star sets the cover.</span>
+          </div>
+        </section>
+
+        <section class="sect">
+          <h3>Links</h3>
+          <div class="two">
+            <div class="field"><label for="pf-live">Live site</label><input class="input" id="pf-live" placeholder="https://yourproject.com" inputmode="url" autocomplete="off"><span class="hint">Visitors can preview it right inside the project.</span></div>
+            <div class="field"><label for="pf-gh">GitHub repository</label><input class="input" id="pf-gh" placeholder="https://github.com/you/repo" inputmode="url" autocomplete="off"></div>
+          </div>
+        </section>
+
+        <section class="sect">
+          <h3>Details</h3>
+          <div class="field"><label for="pf-tech">Tech stack</label><div class="chip-input" id="pf-chips"></div><span class="hint">Press Enter or comma after each one.</span></div>
+          <div class="field"><label for="pf-client">Client <span class="muted" style="font-weight:500">(optional)</span></label><input class="input" id="pf-client" maxlength="80" placeholder="Who was this for?" autocomplete="off"></div>
+        </section>
+
+        <section class="sect">
+          <h3>Visibility</h3>
+          <div class="radios" role="radiogroup" aria-label="Visibility">
+            <label class="radio"><input type="radio" name="pf-status" value="published"><span><b>Live</b><small>Shown on your site right away.</small></span></label>
+            <label class="radio"><input type="radio" name="pf-status" value="draft"><span><b>Draft</b><small>Hidden until you’re ready.</small></span></label>
+          </div>
+        </section>
+      </div>
+
+      <aside class="preview" aria-label="Preview">
+        <div><div class="pv-label" style="margin-bottom:8px">Card on your site</div><div id="pv-card"></div></div>
+        <div><div class="pv-label" style="margin-bottom:8px">When someone opens it</div><div class="pv-detail" id="pv-detail"></div></div>
+      </aside>
+    </div>`,
+    footer: `<button class="btn" data-cancel>Cancel</button><button class="btn primary" data-save>${isNew ? 'Add project' : 'Save changes'}</button>`
+  });
+
+  const q1 = panel.$;
+
+  /* --- text fields --- */
+  const bind = (sel, key) => {
+    const el = q1(sel);
+    el.value = p[key] || '';
+    el.addEventListener('input', () => { p[key] = el.value; panel.dirty = true; el.classList.remove('err'); updatePreview(); });
+  };
+  bind('#pf-title', 'title'); bind('#pf-cat', 'category'); bind('#pf-year', 'year');
+  bind('#pf-short', 'short_desc'); bind('#pf-desc', 'description');
+  bind('#pf-live', 'live_url'); bind('#pf-gh', 'github_url'); bind('#pf-client', 'client');
+  const shortN = () => { q1('#pf-short-n').textContent = p.short_desc.length; };
+  q1('#pf-short').addEventListener('input', shortN); shortN();
+  qa('input[name="pf-status"]').forEach((r) => { r.checked = r.value === p.status; r.addEventListener('change', () => { p.status = r.value; panel.dirty = true; }); });
+  function qa(s) { return panel.$$(s); }
+
+  /* --- tech chips --- */
+  const chipBox = q1('#pf-chips');
+  function renderChips(focus) {
+    chipBox.innerHTML = p.tech.map((t, i) => `<span class="chip">${esc(t)}<button type="button" data-i="${i}" aria-label="Remove ${esc(t)}">${icon('x', 'sm')}</button></span>`).join('') +
+      `<input id="pf-tech" placeholder="${p.tech.length ? '' : 'e.g. React, Figma, Node.js'}" aria-label="Add technology" autocomplete="off">`;
+    if (focus) q1('#pf-tech').focus();
+  }
+  function commitTech() {
+    const inp = q1('#pf-tech');
+    if (!inp || !inp.value.trim()) return false;
+    inp.value.split(',').map((s) => s.trim()).filter(Boolean).forEach((t) => {
+      if (p.tech.length < 20 && !p.tech.some((x) => x.toLowerCase() === t.toLowerCase())) p.tech.push(t.slice(0, 30));
+    });
+    inp.value = '';
+    panel.dirty = true;
+    return true;
+  }
+  chipBox.addEventListener('keydown', (e) => {
+    if (e.target.id !== 'pf-tech') return;
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); if (commitTech()) { renderChips(true); updatePreview(); } }
+    else if (e.key === 'Backspace' && !e.target.value && p.tech.length) { p.tech.pop(); panel.dirty = true; renderChips(true); updatePreview(); }
+  });
+  chipBox.addEventListener('focusout', (e) => { if (e.target.id === 'pf-tech' && commitTech()) { renderChips(); updatePreview(); } });
+  chipBox.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-i]');
+    if (b) { p.tech.splice(Number(b.dataset.i), 1); panel.dirty = true; renderChips(true); updatePreview(); }
+    else q1('#pf-tech') && q1('#pf-tech').focus();
+  });
+
+  /* --- media --- */
+  function renderCover() {
+    const box = q1('#cover-box');
+    if (!box) return;
+    const up = [...uploads.entries()].find(([, u]) => u.target === 'cover');
+    if (up) box.innerHTML = `<div class="empty-in">${icon('upload')}<b>Uploading…</b></div><div class="prog" data-uid="${up[0]}"><i style="width:${Math.round(up[1].progress * 100)}%"></i></div>`;
+    else if (p.cover) box.innerHTML = `<img src="${esc(p.cover)}" alt="Cover preview"><button type="button" class="btn sm icon rm" data-act="rm-cover" aria-label="Remove cover" title="Remove cover">${icon('x', 'sm')}</button>`;
+    else box.innerHTML = `<div class="empty-in">${icon('image')}<b>Drop a cover image here</b><span class="hint">or use the button below</span></div>`;
+    q1('#pf-cover-url').value = p.cover && /^https?:/i.test(p.cover) ? p.cover : '';
+  }
+  function tileHtml(m, i) {
+    let media;
+    if (m.type === 'image') media = `<img src="${esc(m.url)}" alt="" loading="lazy">`;
+    else if (m.type === 'video') media = `<video src="${esc(m.url)}#t=0.1" preload="metadata" muted playsinline></video>`;
+    else { const t = youtubeThumb(m.url); media = t ? `<img src="${esc(t)}" alt="" loading="lazy">` : `<div class="ph-embed">${icon('play')}</div>`; }
+    const kind = m.type === 'image' ? '' : `<span class="kind">${icon(m.type === 'video' ? 'video' : 'play', 'sm')}${m.type === 'video' ? 'Video' : 'Embed'}</span>`;
+    const isCover = m.type === 'image' && m.url === p.cover;
+    return `<div class="mtile" data-id="${i}" draggable="true">${media}${kind}<div class="tools">` +
+      (m.type === 'image' ? `<button type="button" data-act="make-cover" data-i="${i}" class="${isCover ? 'on' : ''}" title="${isCover ? 'This is the cover' : 'Use as cover'}" aria-label="Use as cover">${icon('star', 'sm')}</button>` : '') +
+      `<button type="button" data-act="rm-media" data-i="${i}" title="Remove" aria-label="Remove from gallery">${icon('x', 'sm')}</button></div>` +
+      `<div class="mv"><button type="button" data-act="mv-l" data-i="${i}" aria-label="Move earlier">${icon('left', 'sm')}</button><button type="button" data-act="mv-r" data-i="${i}" aria-label="Move later">${icon('right', 'sm')}</button></div></div>`;
+  }
+  function renderGallery() {
+    const g = q1('#gal');
+    if (!g) return;
+    const ups = [...uploads.entries()].filter(([, u]) => u.target === 'gallery').map(([id, u]) =>
+      `<div class="mtile up" data-uid="${id}"><span>${esc(u.name.length > 16 ? u.name.slice(0, 14) + '…' : u.name)}</span><div class="prog"><i style="width:${Math.round(u.progress * 100)}%"></i></div></div>`).join('');
+    g.innerHTML = p.gallery.map(tileHtml).join('') + ups +
+      `<button type="button" class="mtile add" data-act="pick-gallery"><span>${icon('plus')}<br>Add photos<br>or videos</span></button>`;
+  }
+  function updatePreview() {
+    const cover = projectCover(p);
+    q1('#pv-card').innerHTML = `<div class="pv">${cover ? `<img class="pv-img" src="${esc(cover)}" alt="">` : `<div class="pv-img">${esc(initial(p.title || 'P'))}</div>`}` +
+      `<div class="pv-body"><span class="pv-tag">${esc(p.category || 'Category')}</span><h4>${esc(p.title || 'Project name')}</h4></div></div>`;
+    q1('#pv-detail').innerHTML =
+      `<b>${esc(p.title || 'Project name')}</b>` +
+      (p.short_desc ? `<p>${esc(p.short_desc)}</p>` : `<p style="opacity:.7">Your short description shows here.</p>`) +
+      (p.tech.length ? `<div class="chips">${p.tech.map((t) => `<span class="chip">${esc(t)}</span>`).join('')}</div>` : '') +
+      `<div class="pv-links">${p.live_url ? `<span>${icon('external', 'sm')}Live preview</span>` : ''}${p.github_url ? `<span>${icon('github', 'sm')}GitHub</span>` : ''}<span>Discuss a project like this</span></div>`;
+  }
+
+  async function addFiles(files, target) {
+    for (const file of files) {
+      if (panel.closed) return;
+      if (target === 'cover' && !file.type.startsWith('image/')) { toast('The cover has to be an image.', 'error'); continue; }
+      const id = nextUid();
+      uploads.set(id, { name: file.name, target, progress: 0 });
+      renderCover(); renderGallery();
+      try {
+        const res = await uploadFile(file, {
+          onProgress: (f) => { const u = uploads.get(id); if (u) u.progress = f; const bar = panel.$(`[data-uid="${id}"] i`); if (bar) bar.style.width = Math.round(f * 100) + '%'; }
+        });
+        uploads.delete(id);
+        if (target === 'cover') p.cover = res.url;
+        else { p.gallery.push({ type: res.type, url: res.url }); if (!p.cover && res.type === 'image') p.cover = res.url; }
+        panel.dirty = true;
+      } catch (e) { uploads.delete(id); toast(e.message, 'error'); }
+      if (panel.closed) return;
+      renderCover(); renderGallery(); updatePreview();
+    }
+  }
+  const wireDrop = (el, target) => {
+    const isFiles = (e) => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+    el.addEventListener('dragover', (e) => { if (isFiles(e)) { e.preventDefault(); el.classList.add('drop'); } });
+    el.addEventListener('dragleave', () => el.classList.remove('drop'));
+    el.addEventListener('drop', (e) => { if (isFiles(e)) { e.preventDefault(); el.classList.remove('drop'); addFiles([...e.dataTransfer.files], target); } });
+  };
+  wireDrop(q1('#cover-box'), 'cover');
+  wireDrop(q1('#gal'), 'gallery');
+  enableSort(q1('#gal'), {
+    axis: 'x',
+    onDone: (ids) => { const old = p.gallery; p.gallery = ids.map(Number).map((i) => old[i]).filter(Boolean); panel.dirty = true; renderGallery(); }
+  });
+
+  q1('#cover-file').addEventListener('change', (e) => { addFiles([...e.target.files], 'cover'); e.target.value = ''; });
+  q1('#gal-file').addEventListener('change', (e) => { addFiles([...e.target.files], 'gallery'); e.target.value = ''; });
+  q1('#pf-cover-url').addEventListener('change', (e) => {
+    const v = e.target.value.trim();
+    if (v && !/^https?:\/\//i.test(v)) { toast('Cover links need to start with http:// or https://', 'error'); return; }
+    p.cover = v; panel.dirty = true; renderCover(); renderGallery(); updatePreview();
+  });
+  function addVideoLink() {
+    const inp = q1('#pf-vid');
+    const v = parseVideoLink(inp.value);
+    if (!inp.value.trim()) return;
+    if (!v) { toast('That link isn’t supported. Use a YouTube or Vimeo link, or a direct .mp4 or .webm link.', 'error'); return; }
+    p.gallery.push(v); inp.value = ''; panel.dirty = true; renderGallery();
+  }
+  q1('#pf-vid').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addVideoLink(); } });
+
+  panel.el.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const i = Number(b.dataset.i);
+    switch (b.dataset.act) {
+      case 'pick-cover': q1('#cover-file').click(); break;
+      case 'pick-gallery': q1('#gal-file').click(); break;
+      case 'add-video': addVideoLink(); break;
+      case 'rm-cover': p.cover = ''; panel.dirty = true; renderCover(); renderGallery(); updatePreview(); break;
+      case 'make-cover': p.cover = p.gallery[i].url; panel.dirty = true; renderCover(); renderGallery(); updatePreview(); break;
+      case 'mv-l': if (i > 0) { [p.gallery[i - 1], p.gallery[i]] = [p.gallery[i], p.gallery[i - 1]]; panel.dirty = true; renderGallery(); } break;
+      case 'mv-r': if (i < p.gallery.length - 1) { [p.gallery[i + 1], p.gallery[i]] = [p.gallery[i], p.gallery[i + 1]]; panel.dirty = true; renderGallery(); } break;
+      case 'rm-media': {
+        const [gone] = p.gallery.splice(i, 1);
+        if (gone && gone.url === p.cover) p.cover = '';
+        panel.dirty = true; renderCover(); renderGallery(); updatePreview(); break;
+      }
+    }
+  });
+
+  /* --- save --- */
+  async function save() {
+    commitTech();
+    if (!p.title.trim()) { const t = q1('#pf-title'); t.classList.add('err'); t.focus(); toast('Give the project a name first.', 'error'); return; }
+    if (uploads.size) { toast('Uploads are still running. Save once they finish.', 'error'); return; }
+    const btn = q1('[data-save]');
+    btn.classList.add('busy'); btn.textContent = 'Saving…';
+    try {
+      const saved = isNew
+        ? await api('/admin/projects', { method: 'POST', body: p })
+        : await api('/admin/projects/' + p.id, { method: 'PUT', body: p });
+      state.projects = state.projects || [];
+      if (isNew) state.projects.unshift(saved);
+      else state.projects = state.projects.map((x) => (x.id === saved.id ? saved : x));
+      panel.dirty = false;
+      await panel.close(true);
+      toast(isNew ? 'Project added.' : 'Changes saved.');
+      if (currentRoute() === 'projects') renderProjects();
+    } catch (e) {
+      btn.classList.remove('busy'); btn.textContent = isNew ? 'Add project' : 'Save changes';
+      toast(e.message, 'error');
+    }
+  }
+  q1('[data-save]').addEventListener('click', save);
+  q1('[data-cancel]').addEventListener('click', () => panel.close());
+  panel.el.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } });
+
+  renderChips(); renderCover(); renderGallery(); updatePreview();
+  q1('#pf-title').focus();
+}
+
+/* ==========================================================================
+   Team
+   ========================================================================== */
+async function viewTeam() {
+  if (!state.team) state.team = await api('/admin/team');
+  renderTeam();
+}
+
+function teamCardHtml(t) {
+  return `<article class="tcard ${t.visible ? '' : 'hidden-member'}" data-id="${t.id}" draggable="true" style="--c:${esc(t.color)}">
+    <div class="top">
+      <span class="grip" aria-hidden="true">${icon('grip')}</span>
+      <div class="movers" style="flex-direction:row"><button type="button" data-act="up" aria-label="Move earlier">${icon('up', 'sm')}</button><button type="button" data-act="down" aria-label="Move later">${icon('down', 'sm')}</button></div>
+      <label class="switch" title="Show on your site"><input type="checkbox" data-act="vis" ${t.visible ? 'checked' : ''} aria-label="Show ${esc(t.name)} on your site"><i></i><span>Shown</span></label>
+    </div>
+    <img class="avatar-lg" src="${esc(t.photo || dicebear(t.name))}" alt="">
+    <h3>${esc(t.name)}</h3>
+    ${t.role ? `<span class="role">${esc(t.role)}</span>` : ''}
+    <p class="sub">${esc(t.subtitle)}</p>
+    <div class="acts">
+      <button class="btn sm" data-act="edit">${icon('edit', 'sm')}Edit</button>
+      <button class="btn sm icon" data-act="delete" aria-label="Delete ${esc(t.name)}" title="Delete">${icon('trash', 'sm')}</button>
+    </div>
+  </article>`;
+}
+
+function renderTeam() {
+  const view = $('#view');
+  const head = pageHead('Team', 'The people in the scrolling team strip on your homepage. Use the arrows or drag cards to change their order.',
+    `<button class="btn primary cta-glow shine-btn" data-act="add">${icon('plus')}Add team member</button>`);
+  if (!state.team.length) {
+    view.innerHTML = head + `<div class="empty"><div class="art">${icon('users')}</div><h3>No team members yet</h3>
+      <p>Add the people behind your work. Once you add someone, the team section appears on your homepage. Until then it stays hidden.</p>
+      <button class="btn primary" data-act="add">${icon('plus')}Add a team member</button></div>`;
+  } else {
+    view.innerHTML = head + `<div class="tgrid" id="tgrid">${state.team.map(teamCardHtml).join('')}</div>`;
+    enableSort($('#tgrid'), { axis: 'x', onDone: persistTeamOrder });
+  }
+  view.onclick = (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b || b.dataset.act === 'vis') return;
+    const card = b.closest('[data-id]');
+    const t = card && state.team.find((x) => String(x.id) === card.dataset.id);
+    const act = b.dataset.act;
+    if (act === 'add') openTeamEditor();
+    else if (act === 'edit' && t) openTeamEditor(t);
+    else if (act === 'delete' && t) deleteTeamMember(t);
+    else if ((act === 'up' || act === 'down') && card) {
+      const sib = act === 'up' ? card.previousElementSibling : card.nextElementSibling;
+      if (sib) { card.parentElement.insertBefore(card, act === 'up' ? sib : sib.nextElementSibling); persistTeamOrder($$('[data-id]', card.parentElement).map((c) => c.dataset.id)); }
+    }
+  };
+  view.onchange = async (e) => {
+    const sw = e.target.closest('[data-act="vis"]');
+    if (!sw) return;
+    const t = state.team.find((x) => String(x.id) === sw.closest('[data-id]').dataset.id);
+    try {
+      const saved = await api('/admin/team/' + t.id, { method: 'PUT', body: { ...t, visible: sw.checked } });
+      Object.assign(t, saved);
+      toast(sw.checked ? `${t.name} is shown on your site.` : `${t.name} is hidden.`);
+      renderTeam();
+    } catch (err) { sw.checked = !sw.checked; toast(err.message, 'error'); }
+  };
+}
+
+async function persistTeamOrder(ids) {
+  const byId = new Map(state.team.map((t) => [String(t.id), t]));
+  state.team = ids.map((id) => byId.get(id)).filter(Boolean);
+  try { await api('/admin/team/reorder', { method: 'POST', body: { ids: ids.map(Number) } }); toast('Order saved.'); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteTeamMember(t) {
+  const ok = await confirmDialog({ title: `Remove ${t.name}?`, body: 'They’ll disappear from your homepage. This can’t be undone.', confirmText: 'Remove member', danger: true });
+  if (!ok) return;
+  try {
+    await api('/admin/team/' + t.id, { method: 'DELETE' });
+    state.team = state.team.filter((x) => x.id !== t.id);
+    toast('Team member removed.');
+    renderTeam();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function openTeamEditor(existing) {
+  const isNew = !existing;
+  const t = existing ? clone(existing) : { name: '', role: '', subtitle: '', photo: '', color: '#E4E1F8', linkedin: '', github: '', visible: true };
+  const COLORS = ['#E4E1F8', '#EDF8E5', '#FBE4EE', '#E5F1FC', '#FFF1D6', '#FFE3D6'];
+  let uploading = false;
+
+  const panel = openPanel({
+    kind: 'dialog', width: '860px',
+    title: isNew ? 'Add team member' : 'Edit team member',
+    body: `<div class="editor slim">
+      <div class="form" style="gap:16px">
+        <div class="field"><span class="lbl">Photo</span>
+          <div class="photo-row"><img class="avatar-lg" id="tp-img" alt="">
+            <div style="display:grid;gap:8px"><div class="row"><button type="button" class="btn sm" data-act="pick">${icon('upload', 'sm')}Upload photo</button><button type="button" class="btn sm ghost danger" data-act="rm-photo" id="tp-rm">Remove</button></div>
+            <span class="hint">Square photos work best. Without one, a friendly generated avatar is shown.</span></div></div>
+          <input type="file" id="tp-file" accept="image/*" hidden>
+        </div>
+        <div class="two">
+          <div class="field"><label for="tp-name">Name</label><input class="input" id="tp-name" maxlength="80" autocomplete="off" placeholder="e.g. Aditya"></div>
+          <div class="field"><label for="tp-role">Role or focus</label><input class="input" id="tp-role" maxlength="60" autocomplete="off" placeholder="e.g. AI &amp; ML"></div>
+        </div>
+        <div class="field"><label for="tp-sub">Small line under the name</label><input class="input" id="tp-sub" maxlength="80" autocomplete="off" placeholder="e.g. B.Tech CSE"></div>
+        <div class="field"><span class="lbl">Card color</span><div class="swatches" id="tp-colors" role="radiogroup" aria-label="Card color"></div></div>
+        <div class="two">
+          <div class="field"><label for="tp-li">LinkedIn <span class="muted" style="font-weight:500">(optional)</span></label><input class="input" id="tp-li" placeholder="https://linkedin.com/in/…" inputmode="url" autocomplete="off"></div>
+          <div class="field"><label for="tp-gh">GitHub <span class="muted" style="font-weight:500">(optional)</span></label><input class="input" id="tp-gh" placeholder="https://github.com/…" inputmode="url" autocomplete="off"></div>
+        </div>
+        <label class="switch"><input type="checkbox" id="tp-vis"><i></i><span>Show on my site</span></label>
+      </div>
+      <aside class="preview"><div class="pv-label">Card on your site</div><div id="tp-card"></div></aside>
+    </div>`,
+    footer: `<button class="btn" data-cancel>Cancel</button><button class="btn primary" data-save>${isNew ? 'Add member' : 'Save changes'}</button>`
+  });
+  const q1 = panel.$;
+
+  const bind = (sel, key) => {
+    const el = q1(sel);
+    el.value = t[key] || '';
+    el.addEventListener('input', () => { t[key] = el.value; panel.dirty = true; el.classList.remove('err'); paint(); });
+  };
+  bind('#tp-name', 'name'); bind('#tp-role', 'role'); bind('#tp-sub', 'subtitle'); bind('#tp-li', 'linkedin'); bind('#tp-gh', 'github');
+  const vis = q1('#tp-vis');
+  vis.checked = t.visible;
+  vis.addEventListener('change', () => { t.visible = vis.checked; panel.dirty = true; });
+
+  function paintColors() {
+    const custom = !COLORS.includes(t.color.toUpperCase());
+    q1('#tp-colors').innerHTML = COLORS.map((c) => `<button type="button" class="swatch ${c.toUpperCase() === t.color.toUpperCase() ? 'on' : ''}" style="background:${c}" data-c="${c}" role="radio" aria-checked="${c.toUpperCase() === t.color.toUpperCase()}" aria-label="Color ${c}"></button>`).join('') +
+      `<input type="color" id="tp-custom" value="${esc(t.color)}" aria-label="Pick a custom color" title="Custom color" ${custom ? 'style="outline:2px solid var(--violet);outline-offset:3px"' : ''}>`;
+  }
+  function paint() {
+    q1('#tp-img').src = t.photo || dicebear(t.name);
+    q1('#tp-rm').hidden = !t.photo;
+    q1('#tp-card').innerHTML = `<article class="tcard tv" style="--c:${esc(t.color)}"><img class="avatar-lg" src="${esc(t.photo || dicebear(t.name))}" alt="">` +
+      `<h3>${esc(t.name || 'Name')}</h3>${t.role ? `<span class="role">${esc(t.role)}</span>` : ''}<p class="sub">${esc(t.subtitle)}</p></article>`;
+  }
+  q1('#tp-colors').addEventListener('click', (e) => {
+    const b = e.target.closest('.swatch');
+    if (b) { t.color = b.dataset.c; panel.dirty = true; paintColors(); paint(); }
+  });
+  q1('#tp-colors').addEventListener('input', (e) => {
+    if (e.target.id === 'tp-custom') { t.color = e.target.value; panel.dirty = true; paint(); q1('#tp-colors').querySelectorAll('.swatch').forEach((s) => s.classList.remove('on')); }
+  });
+  q1('#tp-file').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    uploading = true;
+    const btn = q1('[data-act="pick"]'); btn.classList.add('busy');
+    try { const res = await uploadFile(file, { square: true }); if (res.type !== 'image') throw new Error('Please choose an image.'); t.photo = res.url; panel.dirty = true; paint(); }
+    catch (err) { toast(err.message, 'error'); }
+    uploading = false; btn.classList.remove('busy');
+  });
+  panel.el.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    if (b.dataset.act === 'pick') q1('#tp-file').click();
+    if (b.dataset.act === 'rm-photo') { t.photo = ''; panel.dirty = true; paint(); }
+  });
+
+  async function save() {
+    if (!t.name.trim()) { const n = q1('#tp-name'); n.classList.add('err'); n.focus(); toast('Add a name first.', 'error'); return; }
+    if (uploading) { toast('The photo is still uploading.', 'error'); return; }
+    const btn = q1('[data-save]');
+    btn.classList.add('busy'); btn.textContent = 'Saving…';
+    try {
+      const saved = isNew ? await api('/admin/team', { method: 'POST', body: t }) : await api('/admin/team/' + t.id, { method: 'PUT', body: t });
+      state.team = state.team || [];
+      if (isNew) state.team.push(saved); else state.team = state.team.map((x) => (x.id === saved.id ? saved : x));
+      panel.dirty = false;
+      await panel.close(true);
+      toast(isNew ? 'Team member added.' : 'Changes saved.');
+      if (currentRoute() === 'team') renderTeam();
+    } catch (err) { btn.classList.remove('busy'); btn.textContent = isNew ? 'Add member' : 'Save changes'; toast(err.message, 'error'); }
+  }
+  q1('[data-save]').addEventListener('click', save);
+  q1('[data-cancel]').addEventListener('click', () => panel.close());
+  panel.el.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } });
+  paintColors(); paint();
+  q1('#tp-name').focus();
+}
+
+/* ==========================================================================
+   Pricing: plans and offers (prices are whole Indian rupees; yearly = total for the year)
+   ========================================================================== */
+const inr = (n) => '₹' + Number(n).toLocaleString('en-IN');
+const toNum = (v) => { const n = parseInt(String(v == null ? '' : v).replace(/\D/g, ''), 10); return Number.isFinite(n) && n > 0 ? n : null; };
+const numStr = (v) => (v == null ? '' : String(v));
+
+// same rules the public site uses, so the preview matches what visitors will see
+function priceView(p, wantYearly) {
+  const m = p.price_monthly, y = p.price_yearly;
+  const v = { amount: null, unit: '', old: null, note: '', label: '' };
+  if (m == null && y == null) { v.label = p.price_label || 'Custom'; return v; }
+  const useYearly = wantYearly ? y != null : m == null;
+  if (useYearly) {
+    v.amount = y; v.unit = '/year'; v.old = p.old_price_yearly;
+    if (wantYearly) {
+      v.note = `≈ ${inr(Math.round(y / 12))}/month, billed yearly`;
+      if (m != null && m * 12 > y) v.note += ` · save ${inr(m * 12 - y)}`;
+    } else v.note = 'Yearly billing only';
+  } else {
+    v.amount = m; v.unit = '/month'; v.old = p.old_price_monthly;
+    if (wantYearly) v.note = 'Monthly billing only';
+  }
+  return v;
+}
+
+function planPreviewHtml(p, yearly) {
+  const v = priceView(p, yearly);
+  const hasPrice = p.price_monthly != null || p.price_yearly != null;
+  const badge = p.is_offer ? (p.badge || 'Special offer') : (p.featured ? (p.badge || 'Most popular') : p.badge);
+  return `<div class="pvplan ${p.is_offer ? 'offer' : ''} ${!p.is_offer && p.featured ? 'feat' : ''}" style="--c:${esc(p.color)}">
+    ${p.is_offer ? '<span class="sheen"></span>' : ''}
+    ${badge ? `<span class="pvbadge ${p.is_offer ? 'o' : ''}">✦ ${esc(badge)}</span>` : ''}
+    <h4>${esc(p.name || 'Plan name')}</h4>
+    <p class="d">${esc(p.description)}</p>
+    <div class="pr">${v.amount != null && v.old != null ? `<s>${inr(v.old)}</s>` : ''}<b>${v.amount != null ? inr(v.amount) : esc(v.label)}</b><span>${v.amount != null ? v.unit : ''}</span></div>
+    <div class="nt">${esc(v.note)}</div>
+    <ul>${p.features.map((f) => `<li>✓ ${esc(f)}</li>`).join('')}</ul>
+    <span class="fake-btn">${esc(p.button_text || (hasPrice ? 'Choose ' + (p.name || 'plan') : 'Contact sales'))}</span>
+  </div>`;
+}
+
+async function viewPricing() {
+  if (!state.plans) state.plans = await api('/admin/plans');
+  renderPricing();
+}
+
+function planCardHtml(p) {
+  const hasPrice = p.price_monthly != null || p.price_yearly != null;
+  const row = (label, price, old) => `<div class="prow"><small>${label}</small>${price != null
+    ? `${old != null ? `<s>${inr(old)}</s>` : ''}<b>${inr(price)}</b><em>${label === 'Monthly' ? 'per month' : 'per year'}</em>`
+    : '<em>Not offered</em>'}</div>`;
+  return `<article class="pcard ${p.visible ? '' : 'hidden-plan'} ${p.is_offer ? 'is-offer' : ''}" data-id="${p.id}" draggable="true" style="--c:${esc(p.color)}">
+    <div class="top">
+      <span class="grip" aria-hidden="true">${icon('grip')}</span>
+      <div class="movers" style="flex-direction:row"><button type="button" data-act="up" aria-label="Move earlier">${icon('up', 'sm')}</button><button type="button" data-act="down" aria-label="Move later">${icon('down', 'sm')}</button></div>
+      <label class="switch" title="Show on your site"><input type="checkbox" data-act="vis" ${p.visible ? 'checked' : ''} aria-label="Show ${esc(p.name)} on your site"><i></i><span>Shown</span></label>
+    </div>
+    <h3>${esc(p.name)}
+      ${p.is_offer ? '<span class="pill warn">✦ Offer</span>' : (p.featured ? '<span class="pill">Highlighted</span>' : '')}
+      ${p.visible ? '' : '<span class="pill line">Hidden</span>'}</h3>
+    <p class="pdesc">${esc(p.description)}</p>
+    <div class="prices">${hasPrice
+      ? row('Monthly', p.price_monthly, p.old_price_monthly) + row('Yearly', p.price_yearly, p.old_price_yearly)
+      : `<div class="prow"><small>Price</small><b>${esc(p.price_label || 'Custom')}</b></div>`}</div>
+    <p class="pfeat">${p.features.length ? `${p.features.length} item${p.features.length === 1 ? '' : 's'} listed: ${esc(p.features.slice(0, 2).join(', '))}${p.features.length > 2 ? '…' : ''}` : 'Nothing listed yet'}</p>
+    <div class="acts">
+      <button class="btn sm" data-act="edit">${icon('edit', 'sm')}Edit</button>
+      <button class="btn sm icon" data-act="delete" aria-label="Delete ${esc(p.name)}" title="Delete">${icon('trash', 'sm')}</button>
+    </div>
+  </article>`;
+}
+
+function renderPricing() {
+  const view = $('#view');
+  const head = pageHead('Pricing', 'The plans and special offers in the Pricing section of your homepage. Prices are in Indian rupees (₹). Offers shine on your site so visitors notice them.',
+    `<button class="btn" data-act="add-offer">${icon('star')}Add offer</button><button class="btn primary cta-glow shine-btn" data-act="add">${icon('plus')}Add plan</button>`);
+  if (!state.plans.length) {
+    view.innerHTML = head + `<div class="empty"><div class="art">${icon('tag')}</div><h3>No plans yet</h3>
+      <p>Until you add one, the Pricing section on your homepage tells visitors to get in touch for a quote.</p>
+      <button class="btn primary" data-act="add">${icon('plus')}Add a plan</button></div>`;
+  } else {
+    view.innerHTML = head + `<div class="pgrid" id="pgrid">${state.plans.map(planCardHtml).join('')}</div>`;
+    enableSort($('#pgrid'), { axis: 'x', onDone: persistPlanOrder });
+  }
+  view.onclick = (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b || b.dataset.act === 'vis') return;
+    const card = b.closest('[data-id]');
+    const p = card && state.plans.find((x) => String(x.id) === card.dataset.id);
+    const act = b.dataset.act;
+    if (act === 'add') openPlanEditor();
+    else if (act === 'add-offer') openPlanEditor(null, { offer: true });
+    else if (act === 'edit' && p) openPlanEditor(p);
+    else if (act === 'delete' && p) deletePlan(p);
+    else if ((act === 'up' || act === 'down') && card) {
+      const sib = act === 'up' ? card.previousElementSibling : card.nextElementSibling;
+      if (sib) { card.parentElement.insertBefore(card, act === 'up' ? sib : sib.nextElementSibling); persistPlanOrder($$('[data-id]', card.parentElement).map((c) => c.dataset.id)); }
+    }
+  };
+  view.onchange = async (e) => {
+    const sw = e.target.closest('[data-act="vis"]');
+    if (!sw) return;
+    const p = state.plans.find((x) => String(x.id) === sw.closest('[data-id]').dataset.id);
+    try {
+      const saved = await api('/admin/plans/' + p.id, { method: 'PUT', body: { ...p, visible: sw.checked } });
+      Object.assign(p, saved);
+      toast(sw.checked ? `${p.name} is shown on your site.` : `${p.name} is hidden.`);
+      renderPricing();
+    } catch (err) { sw.checked = !sw.checked; toast(err.message, 'error'); }
+  };
+}
+
+async function persistPlanOrder(ids) {
+  const byId = new Map(state.plans.map((p) => [String(p.id), p]));
+  state.plans = ids.map((id) => byId.get(id)).filter(Boolean);
+  try { await api('/admin/plans/reorder', { method: 'POST', body: { ids: ids.map(Number) } }); toast('Order saved.'); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+async function deletePlan(p) {
+  const ok = await confirmDialog({ title: `Delete ${p.name}?`, body: 'It will disappear from your homepage. This can’t be undone.', confirmText: 'Delete', danger: true });
+  if (!ok) return;
+  try {
+    await api('/admin/plans/' + p.id, { method: 'DELETE' });
+    state.plans = state.plans.filter((x) => x.id !== p.id);
+    toast('Removed.');
+    renderPricing();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function openPlanEditor(existing, preset = {}) {
+  const isNew = !existing;
+  const t = existing
+    ? { ...clone(existing), price_monthly: numStr(existing.price_monthly), price_yearly: numStr(existing.price_yearly), old_price_monthly: numStr(existing.old_price_monthly), old_price_yearly: numStr(existing.old_price_yearly), features: (existing.features || []).slice() }
+    : { name: '', description: '', price_monthly: '', price_yearly: '', old_price_monthly: '', old_price_yearly: '', price_label: '', features: [], button_text: '', color: preset.offer ? '#FFF1D6' : '#E4E1F8', is_offer: !!preset.offer, badge: '', featured: false, visible: true };
+  const COLORS = ['#E4E1F8', '#EDF8E5', '#FBE4EE', '#E5F1FC', '#FFF1D6', '#FFE3D6'];
+  const mode = { yearly: false };
+  const noun = () => (t.is_offer ? 'offer' : 'plan');
+
+  const panel = openPanel({
+    kind: 'dialog', width: '940px',
+    title: isNew ? (t.is_offer ? 'Add an offer' : 'Add a plan') : 'Edit ' + noun(),
+    body: `<div class="editor">
+      <div class="form" style="gap:16px">
+        <label class="switch"><input type="checkbox" id="pl-offer"><i></i><span>This is an offer ✦ <span class="muted" style="font-weight:500">(the card shines on your site)</span></span></label>
+        <div class="two">
+          <div class="field"><label for="pl-name">Name</label><input class="input" id="pl-name" maxlength="60" autocomplete="off" placeholder="e.g. Starter, or Diwali offer"></div>
+          <div class="field"><label for="pl-badge">Badge on top <span class="muted" style="font-weight:500">(optional)</span></label><input class="input" id="pl-badge" maxlength="40" autocomplete="off" placeholder="e.g. Most popular"></div>
+        </div>
+        <div class="field"><label for="pl-desc">Description</label><textarea class="textarea" id="pl-desc" maxlength="200" rows="2" placeholder="One line about who this is for"></textarea><span class="hint" id="pl-desc-n"></span></div>
+
+        <div class="two">
+          <div class="field"><label for="pl-pm">Monthly price</label><div class="prefix-wrap"><b>₹</b><input class="input" id="pl-pm" inputmode="numeric" autocomplete="off" placeholder="e.g. 50000"></div></div>
+          <div class="field"><label for="pl-py">Yearly price <span class="muted" style="font-weight:500">(total for the year)</span></label><div class="prefix-wrap"><b>₹</b><input class="input" id="pl-py" inputmode="numeric" autocomplete="off" placeholder="e.g. 480000"></div></div>
+        </div>
+        <span class="hint" id="pl-calc"></span>
+        <div class="two" id="pl-old-row">
+          <div class="field"><label for="pl-om">Original monthly price <span class="muted" style="font-weight:500">(crossed out)</span></label><div class="prefix-wrap"><b>₹</b><input class="input" id="pl-om" inputmode="numeric" autocomplete="off" placeholder="price before the offer"></div></div>
+          <div class="field"><label for="pl-oy">Original yearly price <span class="muted" style="font-weight:500">(crossed out)</span></label><div class="prefix-wrap"><b>₹</b><input class="input" id="pl-oy" inputmode="numeric" autocomplete="off" placeholder="price before the offer"></div></div>
+        </div>
+        <div class="field" id="pl-label-row"><label for="pl-label">Text instead of a price <span class="muted" style="font-weight:500">(used when both prices are empty)</span></label><input class="input" id="pl-label" maxlength="30" autocomplete="off" placeholder="Custom"></div>
+
+        <div class="field"><label for="pl-feat">What’s included <span class="muted" style="font-weight:500">(one per line)</span></label><textarea class="textarea" id="pl-feat" rows="5" placeholder="1 active project&#10;2 revision rounds&#10;Figma source files"></textarea></div>
+        <div class="two">
+          <div class="field"><label for="pl-btn">Button text <span class="muted" style="font-weight:500">(optional)</span></label><input class="input" id="pl-btn" maxlength="30" autocomplete="off" placeholder="Choose Starter"></div>
+          <div class="field"><span class="lbl">Card color</span><div class="swatches" id="pl-colors" role="radiogroup" aria-label="Card color"></div></div>
+        </div>
+        <label class="switch" id="pl-feat-sw"><input type="checkbox" id="pl-featured"><i></i><span>Highlight this card <span class="muted" style="font-weight:500">(bigger, black button)</span></span></label>
+        <label class="switch"><input type="checkbox" id="pl-vis"><i></i><span>Show on my site</span></label>
+      </div>
+      <aside class="preview"><div class="row" style="justify-content:space-between"><div class="pv-label">Card on your site</div>
+        <div class="seg" role="group" aria-label="Preview billing"><button type="button" data-mode="m" class="on">Monthly</button><button type="button" data-mode="y">Yearly</button></div></div>
+        <div id="pl-card"></div></aside>
+    </div>`,
+    footer: `<button class="btn" data-cancel>Cancel</button><button class="btn primary" data-save>${isNew ? 'Add' : 'Save changes'}</button>`
+  });
+  const q1 = panel.$;
+
+  const bind = (sel, key, { digits = false } = {}) => {
+    const el = q1(sel);
+    el.value = t[key] || '';
+    el.addEventListener('input', () => {
+      if (digits) { const d = el.value.replace(/\D/g, ''); if (d !== el.value) el.value = d; }
+      t[key] = el.value; panel.dirty = true; el.classList.remove('err'); paint();
+    });
+  };
+  bind('#pl-name', 'name'); bind('#pl-badge', 'badge'); bind('#pl-desc', 'description'); bind('#pl-label', 'price_label'); bind('#pl-btn', 'button_text');
+  bind('#pl-pm', 'price_monthly', { digits: true }); bind('#pl-py', 'price_yearly', { digits: true });
+  bind('#pl-om', 'old_price_monthly', { digits: true }); bind('#pl-oy', 'old_price_yearly', { digits: true });
+  const feat = q1('#pl-feat');
+  feat.value = t.features.join('\n');
+  feat.addEventListener('input', () => { t.features = feat.value.split('\n').map((x) => x.trim()).filter(Boolean); panel.dirty = true; paint(); });
+  const flag = (sel, key) => { const el = q1(sel); el.checked = !!t[key]; el.addEventListener('change', () => { t[key] = el.checked; panel.dirty = true; paint(); }); };
+  flag('#pl-offer', 'is_offer'); flag('#pl-featured', 'featured'); flag('#pl-vis', 'visible');
+
+  function paintColors() {
+    const custom = !COLORS.includes(t.color.toUpperCase());
+    q1('#pl-colors').innerHTML = COLORS.map((c) => `<button type="button" class="swatch ${c.toUpperCase() === t.color.toUpperCase() ? 'on' : ''}" style="background:${c}" data-c="${c}" role="radio" aria-checked="${c.toUpperCase() === t.color.toUpperCase()}" aria-label="Color ${c}"></button>`).join('') +
+      `<input type="color" id="pl-custom" value="${esc(t.color)}" aria-label="Pick a custom color" title="Custom color" ${custom ? 'style="outline:2px solid var(--violet);outline-offset:3px"' : ''}>`;
+  }
+  q1('#pl-colors').addEventListener('click', (e) => { const b = e.target.closest('.swatch'); if (b) { t.color = b.dataset.c; panel.dirty = true; paintColors(); paint(); } });
+  q1('#pl-colors').addEventListener('input', (e) => {
+    if (e.target.id === 'pl-custom') { t.color = e.target.value; panel.dirty = true; paint(); q1('#pl-colors').querySelectorAll('.swatch').forEach((s) => s.classList.remove('on')); }
+  });
+  panel.el.addEventListener('click', (e) => {
+    const b = e.target.closest('.seg button');
+    if (!b) return;
+    mode.yearly = b.dataset.mode === 'y';
+    panel.$$('.seg button').forEach((x) => x.classList.toggle('on', x === b));
+    paint();
+  });
+
+  const current = () => ({
+    ...t, features: t.features,
+    price_monthly: toNum(t.price_monthly), price_yearly: toNum(t.price_yearly),
+    old_price_monthly: t.is_offer ? toNum(t.old_price_monthly) : null, old_price_yearly: t.is_offer ? toNum(t.old_price_yearly) : null
+  });
+  function paint() {
+    const p = current();
+    q1('#pl-old-row').hidden = !t.is_offer;
+    q1('#pl-feat-sw').hidden = t.is_offer;
+    q1('#pl-label-row').hidden = p.price_monthly != null || p.price_yearly != null;
+    q1('#pl-badge').placeholder = t.is_offer ? 'e.g. Diwali offer · 20% off' : 'e.g. Most popular';
+    q1('#pl-desc-n').textContent = `${t.description.length}/200`;
+    let calc = 'Leave a price empty if you don’t sell it that way. Empty on both shows the text below instead.';
+    if (p.price_monthly && p.price_yearly) {
+      const full = p.price_monthly * 12, pct = Math.round((1 - p.price_yearly / full) * 100);
+      calc = pct > 0
+        ? `Yearly works out to ${inr(Math.round(p.price_yearly / 12))}/month, which is ${pct}% less than paying monthly (${inr(full)} a year).`
+        : `Yearly works out to ${inr(Math.round(p.price_yearly / 12))}/month. That’s not cheaper than paying monthly (${inr(full)} a year).`;
+    }
+    q1('#pl-calc').textContent = calc;
+    q1('#pl-card').innerHTML = planPreviewHtml(p, mode.yearly);
+    q1('[data-save]').textContent = isNew ? 'Add' : 'Save changes';
+  }
+
+  async function save() {
+    if (!t.name.trim()) { const n = q1('#pl-name'); n.classList.add('err'); n.focus(); toast('Add a name first.', 'error'); return; }
+    const btn = q1('[data-save]');
+    btn.classList.add('busy'); btn.textContent = 'Saving…';
+    try {
+      const body = { ...t, price_monthly: t.price_monthly || null, price_yearly: t.price_yearly || null, old_price_monthly: t.old_price_monthly || null, old_price_yearly: t.old_price_yearly || null };
+      const saved = isNew ? await api('/admin/plans', { method: 'POST', body }) : await api('/admin/plans/' + t.id, { method: 'PUT', body });
+      state.plans = state.plans || [];
+      if (isNew) state.plans.push(saved); else state.plans = state.plans.map((x) => (x.id === saved.id ? saved : x));
+      panel.dirty = false;
+      await panel.close(true);
+      toast(isNew ? 'Added to your pricing.' : 'Changes saved.');
+      if (currentRoute() === 'pricing') renderPricing();
+    } catch (err) { btn.classList.remove('busy'); paint(); toast(err.message, 'error'); }
+  }
+  q1('[data-save]').addEventListener('click', save);
+  q1('[data-cancel]').addEventListener('click', () => panel.close());
+  panel.el.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } });
+  paintColors(); paint();
+  q1('#pl-name').focus();
+}
+
+/* ==========================================================================
+   FAQ (common questions, shown under Pricing on the homepage)
+   ========================================================================== */
+async function viewFaq() {
+  if (!state.faqs) state.faqs = await api('/admin/faqs');
+  renderFaq();
+}
+
+function faqRowHtml(f) {
+  return `<article class="tcard" data-id="${f.id}" draggable="true" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px">
+    <span class="grip" aria-hidden="true" style="margin-top:3px">${icon('grip')}</span>
+    <div style="flex:1;min-width:0">
+      <h3 style="margin:0 0 4px">${esc(f.question)}</h3>
+      <p class="sub" style="white-space:normal">${esc(f.answer)}</p>
+    </div>
+    <div class="acts" style="flex-direction:row;flex-shrink:0">
+      <button class="btn sm" data-act="edit">${icon('edit', 'sm')}Edit</button>
+      <button class="btn sm icon" data-act="delete" aria-label="Delete question" title="Delete">${icon('trash', 'sm')}</button>
+    </div>
+  </article>`;
+}
+
+function renderFaq() {
+  const view = $('#view');
+  const head = pageHead('Common questions', 'The FAQ accordion shown under Pricing on your homepage. Drag to reorder.',
+    `<button class="btn primary cta-glow shine-btn" data-act="add">${icon('plus')}Add question</button>`);
+  if (!state.faqs.length) {
+    view.innerHTML = head + `<div class="empty"><div class="art">${icon('help')}</div><h3>No questions yet</h3>
+      <p>Add the questions people ask before working with you. Once you add one, the FAQ section appears on your homepage.</p>
+      <button class="btn primary" data-act="add">${icon('plus')}Add a question</button></div>`;
+  } else {
+    view.innerHTML = head + `<div class="tgrid" id="faqGrid" style="grid-template-columns:1fr">${state.faqs.map(faqRowHtml).join('')}</div>`;
+    enableSort($('#faqGrid'), { axis: 'y', onDone: persistFaqOrder });
+  }
+  view.onclick = (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const card = b.closest('[data-id]');
+    const f = card && state.faqs.find((x) => String(x.id) === card.dataset.id);
+    const act = b.dataset.act;
+    if (act === 'add') openFaqEditor();
+    else if (act === 'edit' && f) openFaqEditor(f);
+    else if (act === 'delete' && f) deleteFaq(f);
+  };
+}
+
+async function persistFaqOrder(ids) {
+  const byId = new Map(state.faqs.map((f) => [String(f.id), f]));
+  state.faqs = ids.map((id) => byId.get(id)).filter(Boolean);
+  try { await api('/admin/faqs/reorder', { method: 'POST', body: { ids: ids.map(Number) } }); toast('Order saved.'); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteFaq(f) {
+  const ok = await confirmDialog({ title: 'Remove this question?', body: 'It’ll disappear from your homepage. This can’t be undone.', confirmText: 'Remove question', danger: true });
+  if (!ok) return;
+  try {
+    await api('/admin/faqs/' + f.id, { method: 'DELETE' });
+    state.faqs = state.faqs.filter((x) => x.id !== f.id);
+    toast('Question removed.');
+    renderFaq();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function openFaqEditor(existing) {
+  const isNew = !existing;
+  const f = existing ? clone(existing) : { question: '', answer: '' };
+
+  const panel = openPanel({
+    kind: 'dialog', width: '560px',
+    title: isNew ? 'Add question' : 'Edit question',
+    body: `<div class="form" style="gap:16px">
+      <div class="field"><label for="fq-q">Question</label><input class="input" id="fq-q" maxlength="200" autocomplete="off" placeholder="e.g. Can we switch plans later?"></div>
+      <div class="field"><label for="fq-a">Answer</label><textarea class="textarea" id="fq-a" rows="4" maxlength="600" placeholder="Keep it short and to the point."></textarea></div>
+    </div>`,
+    footer: `<button class="btn" data-cancel>Cancel</button><button class="btn primary" data-save>${isNew ? 'Add question' : 'Save changes'}</button>`
+  });
+  const q1 = panel.$;
+
+  const bind = (sel, key) => {
+    const el = q1(sel);
+    el.value = f[key] || '';
+    el.addEventListener('input', () => { f[key] = el.value; panel.dirty = true; el.classList.remove('err'); });
+  };
+  bind('#fq-q', 'question'); bind('#fq-a', 'answer');
+
+  async function save() {
+    if (!f.question.trim()) { const n = q1('#fq-q'); n.classList.add('err'); n.focus(); toast('Add a question first.', 'error'); return; }
+    if (!f.answer.trim()) { const n = q1('#fq-a'); n.classList.add('err'); n.focus(); toast('Add an answer first.', 'error'); return; }
+    const btn = q1('[data-save]');
+    btn.classList.add('busy'); btn.textContent = 'Saving…';
+    try {
+      const saved = isNew ? await api('/admin/faqs', { method: 'POST', body: f }) : await api('/admin/faqs/' + f.id, { method: 'PUT', body: f });
+      state.faqs = state.faqs || [];
+      if (isNew) state.faqs.push(saved); else state.faqs = state.faqs.map((x) => (x.id === saved.id ? saved : x));
+      panel.dirty = false;
+      await panel.close(true);
+      toast(isNew ? 'Question added.' : 'Changes saved.');
+      if (currentRoute() === 'faq') renderFaq();
+    } catch (err) { btn.classList.remove('busy'); btn.textContent = isNew ? 'Add question' : 'Save changes'; toast(err.message, 'error'); }
+  }
+  q1('[data-save]').addEventListener('click', save);
+  q1('[data-cancel]').addEventListener('click', () => panel.close());
+  panel.el.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } });
+  q1('#fq-q').focus();
+}
+
+/* ==========================================================================
+   Social links
+   ========================================================================== */
+let socialDraft = [];
+
+async function viewSocial() {
+  if (!state.settings) state.settings = await api('/admin/settings');
+  renderSocial(true);
+}
+
+function socialRowHtml(s) {
+  const opts = Object.entries(state.platforms).map(([k, v]) => `<option value="${k}" ${k === s.platform ? 'selected' : ''}>${esc(v.label)}</option>`).join('');
+  const isEmail = s.platform === 'email';
+  return `<div class="srow" data-id="${s._id}" draggable="true">
+    <div class="s-gr"><span class="grip" aria-hidden="true">${icon('grip')}</span><div class="movers"><button type="button" data-act="up" aria-label="Move up">${icon('up', 'sm')}</button><button type="button" data-act="down" aria-label="Move down">${icon('down', 'sm')}</button></div></div>
+    <span class="sicon">${platformIcon(s.platform)}</span>
+    <select class="select s-sel" data-k="platform" aria-label="Platform">${opts}</select>
+    <div class="url-wrap">
+      <input class="input" data-k="url" value="${esc(isEmail ? s.url.replace(/^mailto:/i, '') : s.url)}" placeholder="${isEmail ? 'name@email.com' : 'https://…'}" aria-label="Link address" autocomplete="off" inputmode="${isEmail ? 'email' : 'url'}" autocapitalize="off">
+      ${s.platform === 'other' ? `<input class="input" data-k="label" value="${esc(s.label)}" placeholder="Name for this link" aria-label="Link name" maxlength="40">` : ''}
+    </div>
+    <label class="switch s-sw" title="Show on your site"><input type="checkbox" data-k="enabled" ${s.enabled ? 'checked' : ''}><i></i><span class="sw-txt">Show on my site</span></label>
+    <button class="btn ghost icon danger s-rm" data-act="rm" aria-label="Remove link" title="Remove">${icon('trash')}</button>
+  </div>`;
+}
+
+function renderSocial(reset) {
+  if (reset) socialDraft = clone(state.settings.socials || []).map((s) => ({ ...s, _id: nextUid() }));
+  const used = new Set(socialDraft.map((s) => s.platform));
+  const chips = Object.entries(state.platforms).filter(([k]) => k === 'other' || !used.has(k))
+    .map(([k, v]) => `<button type="button" data-add="${k}">${platformIcon(k, 'sm')}${esc(v.label)}</button>`).join('');
+  $('#view').innerHTML =
+    pageHead('Social links', 'Add the places people can find you. Toggle a link off to hide it without deleting it.') +
+    `<div id="slist">${socialDraft.length ? socialDraft.map(socialRowHtml).join('') : `<div class="empty" style="padding:34px"><h3>No links yet</h3><p style="margin-bottom:0">Pick a platform below to add your first one.</p></div>`}</div>
+     <section class="card" style="margin-top:18px"><div class="card-h"><h2>Add a link</h2></div><div class="card-b"><div class="addchips">${chips}</div></div></section>
+     <section class="card" style="margin-top:18px"><div class="card-h"><h2>Where they show up</h2></div><div class="card-b"><div class="where">
+       <div class="box"><b>Site header</b><p>The first three visible links.</p><div class="icons" id="pvHeader"></div></div>
+       <div class="box"><b>Contact section</b><p>Every visible link.</p><div class="icons" id="pvContact"></div></div>
+     </div></div></section>`;
+  paintSocialPreview();
+
+  const list = $('#slist');
+  const markDirty = () => setDirty(true, { save: saveSocial, discard: () => { setDirty(false); renderSocial(true); } });
+  const find = (el) => socialDraft.find((s) => s._id === el.closest('[data-id]').dataset.id);
+
+  list.addEventListener('input', (e) => {
+    const k = e.target.dataset.k;
+    if (!k || k === 'platform' || k === 'enabled') return;
+    find(e.target)[k] = e.target.value;
+    markDirty(); paintSocialPreview();
+  });
+  list.addEventListener('change', (e) => {
+    const k = e.target.dataset.k;
+    const s = k && find(e.target);
+    if (!s) return;
+    if (k === 'platform') { s.platform = e.target.value; markDirty(); renderSocial(false); setDirty(true, { save: saveSocial, discard: () => { setDirty(false); renderSocial(true); } }); }
+    if (k === 'enabled') { s.enabled = e.target.checked; markDirty(); paintSocialPreview(); }
+  });
+  list.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const s = find(b);
+    const i = socialDraft.indexOf(s);
+    if (b.dataset.act === 'rm') socialDraft = socialDraft.filter((x) => x !== s);
+    else if (b.dataset.act === 'up' && i > 0) [socialDraft[i - 1], socialDraft[i]] = [socialDraft[i], socialDraft[i - 1]];
+    else if (b.dataset.act === 'down' && i < socialDraft.length - 1) [socialDraft[i + 1], socialDraft[i]] = [socialDraft[i], socialDraft[i + 1]];
+    else return;
+    renderSocial(false); markDirty();
+  });
+  enableSort(list, { onDone: (ids) => { socialDraft = ids.map((id) => socialDraft.find((s) => s._id === id)).filter(Boolean); markDirty(); paintSocialPreview(); } });
+  $$('[data-add]').forEach((b) => b.addEventListener('click', () => {
+    socialDraft.push({ platform: b.dataset.add, label: '', url: '', enabled: true, _id: nextUid() });
+    renderSocial(false); markDirty();
+    const inputs = $$('#slist [data-k="url"]');
+    inputs[inputs.length - 1].focus();
+  }));
+}
+
+function paintSocialPreview() {
+  const on = socialDraft.filter((s) => s.enabled && s.url.trim());
+  const ico = (s) => `<span class="ico" title="${esc(state.platforms[s.platform] ? state.platforms[s.platform].label : '')}">${platformIcon(s.platform)}</span>`;
+  const none = '<span class="muted" style="font-size:12.5px">Nothing to show yet.</span>';
+  $('#pvHeader').innerHTML = on.slice(0, 3).map(ico).join('') || none;
+  $('#pvContact').innerHTML = on.map(ico).join('') || none;
+}
+
+async function saveSocial() {
+  const btn = $('#saveBtn');
+  btn.classList.add('busy');
+  try {
+    const socials = socialDraft.filter((s) => s.url.trim()).map(({ _id, ...rest }) => rest);
+    state.settings = await api('/admin/settings', { method: 'PUT', body: { site: state.settings.site, socials } });
+    setDirty(false);
+    renderSocial(true);
+    toast('Social links saved.');
+  } catch (e) { toast(e.message, 'error'); }
+  btn.classList.remove('busy');
+}
+
+/* ==========================================================================
+   Site content
+   ========================================================================== */
+const SITE_FIELDS = [
+  { key: 'brand_name', label: 'Brand name', hint: 'Shown in the header, the hero heading, the team section and the projects page.', max: 40 },
+  { key: 'tagline', label: 'Hero paragraph', hint: 'The short paragraph under your main heading.', max: 300, area: true },
+  { key: 'site_url_label', label: 'Address shown in the hero browser bar', hint: 'Just text for the little browser window illustration.', max: 60 },
+  { key: 'contact_email', label: 'Contact email', hint: 'Shown at the bottom of your contact section.', max: 120 },
+  { key: 'location', label: 'Location', hint: 'Shown next to your email, for example “India”.', max: 60 },
+  { key: 'availability_message', label: 'Availability message', hint: 'Pops up when a visitor clicks the rotating “available” badge.', max: 160 },
+  { key: 'about_heading', label: 'About heading', hint: 'The bold heading in the “About us” section.', max: 140 },
+  { key: 'about_description', label: 'About paragraph', hint: 'The paragraph under the About heading.', max: 400, area: true }
+];
+let siteDraft = {};
+
+async function viewSite() {
+  if (!state.settings) state.settings = await api('/admin/settings');
+  renderSite();
+}
+function renderSite() {
+  siteDraft = clone(state.settings.site);
+  $('#view').innerHTML = pageHead('Site content', 'The main text on your homepage. Changes go live as soon as you save.') +
+    `<section class="card formcard"><div class="card-b">` +
+    SITE_FIELDS.map((f) => `<div class="field"><label for="sf-${f.key}">${f.label}</label>` +
+      (f.area ? `<textarea class="textarea" id="sf-${f.key}" rows="3" maxlength="${f.max}"></textarea>` : `<input class="input" id="sf-${f.key}" maxlength="${f.max}" autocomplete="off">`) +
+      `<span class="hint">${f.hint}</span></div>`).join('') +
+    `</div></section>`;
+  SITE_FIELDS.forEach((f) => {
+    const el = $('#sf-' + f.key);
+    el.value = siteDraft[f.key] || '';
+    el.addEventListener('input', () => {
+      siteDraft[f.key] = el.value; el.classList.remove('err');
+      setDirty(true, { save: saveSite, discard: () => { setDirty(false); renderSite(); } });
+    });
+  });
+}
+async function saveSite() {
+  if (!siteDraft.brand_name.trim()) { const el = $('#sf-brand_name'); el.classList.add('err'); el.focus(); toast('Brand name can’t be empty.', 'error'); return; }
+  const btn = $('#saveBtn');
+  btn.classList.add('busy');
+  try {
+    state.settings = await api('/admin/settings', { method: 'PUT', body: { site: siteDraft, socials: state.settings.socials } });
+    setDirty(false);
+    applyBrand();
+    renderSite();
+    toast('Site content saved.');
+  } catch (e) { toast(e.message, 'error'); }
+  btn.classList.remove('busy');
+}
+
+/* ==========================================================================
+   Messages
+   ========================================================================== */
+async function viewMessages() {
+  state.messages = await api('/admin/messages');
+  renderMessages();
+}
+function renderMessages() {
+  const list = state.messages;
+  state.unread = list.filter((m) => !m.is_read).length;
+  renderNav('messages');
+  const view = $('#view');
+  const head = pageHead('Messages', 'Everything visitors send through your contact form lands here.',
+    state.unread ? `<button class="btn" id="readAll">${icon('check', 'sm')}Mark all as read</button>` : '');
+  if (!list.length) {
+    view.innerHTML = head + `<div class="empty"><div class="art">${icon('inbox')}</div><h3>No messages yet</h3><p>When someone fills in the contact form on your site, their message shows up here.</p></div>`;
+    return;
+  }
+  view.innerHTML = head + list.map((m) => {
+    const subject = encodeURIComponent(`Re: your message to ${brandName()}`);
+    return `<article class="msg ${m.is_read ? '' : 'unread'}" data-id="${m.id}">
+      <button class="msg-h" aria-expanded="false">
+        <span class="avatar">${esc(initial(m.name))}</span>
+        <span class="t"><b>${esc(m.name)}${m.is_read ? '' : '<span class="dot" title="Unread"></span>'}</b><span>${esc(m.message)}</span></span>
+        <time datetime="${esc(m.created_at)}">${timeAgo(m.created_at)}</time>
+      </button>
+      <div class="msg-b" hidden>
+        <p class="muted" style="margin-top:12px">${esc(m.email)}</p>
+        <div class="text">${esc(m.message)}</div>
+        <div class="row">
+          <a class="btn primary sm" href="mailto:${esc(m.email)}?subject=${subject}">${icon('mail', 'sm')}Reply by email</a>
+          <button class="btn sm" data-act="read">${m.is_read ? 'Mark as unread' : 'Mark as read'}</button>
+          <span class="spacer"></span>
+          <button class="btn sm icon danger" data-act="delete" aria-label="Delete message" title="Delete">${icon('trash', 'sm')}</button>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+
+  const ra = $('#readAll');
+  if (ra) ra.onclick = async () => {
+    try { await api('/admin/messages/read-all', { method: 'POST' }); state.messages.forEach((m) => { m.is_read = true; }); renderMessages(); toast('All messages marked as read.'); }
+    catch (e) { toast(e.message, 'error'); }
+  };
+  view.onclick = async (e) => {
+    const card = e.target.closest('.msg');
+    if (!card) return;
+    const m = state.messages.find((x) => String(x.id) === card.dataset.id);
+    const act = e.target.closest('[data-act]');
+    try {
+      if (e.target.closest('.msg-h')) {
+        const body = $('.msg-b', card), h = $('.msg-h', card);
+        const open = body.hidden;
+        body.hidden = !open; h.setAttribute('aria-expanded', String(open));
+        if (open && !m.is_read) {
+          await api('/admin/messages/' + m.id, { method: 'PATCH', body: { is_read: true } });
+          m.is_read = true; card.classList.remove('unread'); const d = $('.dot', card); if (d) d.remove();
+          state.unread = state.messages.filter((x) => !x.is_read).length; renderNav('messages');
+        }
+      } else if (act && act.dataset.act === 'read') {
+        await api('/admin/messages/' + m.id, { method: 'PATCH', body: { is_read: !m.is_read } });
+        m.is_read = !m.is_read; renderMessages();
+      } else if (act && act.dataset.act === 'delete') {
+        const ok = await confirmDialog({ title: 'Delete this message?', body: `The message from ${m.name} will be permanently deleted.`, confirmText: 'Delete message', danger: true });
+        if (!ok) return;
+        await api('/admin/messages/' + m.id, { method: 'DELETE' });
+        state.messages = state.messages.filter((x) => x.id !== m.id); renderMessages(); toast('Message deleted.');
+      }
+    } catch (err) { toast(err.message, 'error'); }
+  };
+}
+
+/* ==========================================================================
+   Admins and access
+   ========================================================================== */
+async function viewAdmins() {
+  state.admins = await api('/admin/admins');
+  renderAdmins();
+}
+function renderAdmins() {
+  const owner = state.me.isOwner;
+  const view = $('#view');
+  view.innerHTML = pageHead('Admins and access', 'Everyone listed here can sign in with their Google account and manage the site.') +
+    `<div class="note">${icon('info')}<div>The admin panel lives at <code class="url">${esc(location.origin)}/admin</code>. It isn’t linked from your public site.${owner ? '' : ` Only the owner (${esc(state.me.ownerEmail)}) can add or remove admins.`}</div></div>` +
+    (owner ? `<section class="card" style="margin-bottom:18px"><div class="card-h"><h2>Add an admin</h2></div><div class="card-b">
+       <div class="row"><input class="input" id="newAdmin" type="email" placeholder="name@gmail.com" aria-label="Google email address" autocomplete="off"><button class="btn primary" id="addAdmin">${icon('plus')}Add admin</button></div>
+       <p class="hint" style="margin-top:8px">Use the exact Google account they’ll sign in with.</p></div></section>` : '') +
+    state.admins.map((a) => `<div class="arow" data-email="${esc(a.email)}">
+      <span class="avatar">${a.picture ? `<img src="${esc(a.picture)}" alt="" referrerpolicy="no-referrer" width="36" height="36" style="width:100%;height:100%;object-fit:cover">` : esc(initial(a.name || a.email))}</span>
+      <div class="t"><b>${esc(a.name || a.email)}${a.isOwner ? '<span class="pill">Owner</span>' : ''}${a.email === state.me.email ? '<span class="pill line">You</span>' : ''}</b>
+        <span>${a.name ? esc(a.email) + ' — ' : ''}${a.last_login ? 'last signed in ' + timeAgo(a.last_login) : 'hasn’t signed in yet'}${a.added_by && a.added_by !== 'system' ? `, added by ${esc(a.added_by)}` : ''}</span></div>
+      ${owner && !a.isOwner ? `<button class="btn sm danger" data-act="remove">${icon('trash', 'sm')}Remove</button>` : ''}
+    </div>`).join('');
+
+  const add = async () => {
+    const inp = $('#newAdmin');
+    const email = inp.value.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { inp.classList.add('err'); inp.focus(); toast('Enter a valid Google email address.', 'error'); return; }
+    try { await api('/admin/admins', { method: 'POST', body: { email } }); toast(`${email} can now sign in.`); await viewAdmins(); }
+    catch (e) { toast(e.message, 'error'); }
+  };
+  if (owner) {
+    $('#addAdmin').onclick = add;
+    $('#newAdmin').addEventListener('keydown', (e) => { if (e.key === 'Enter') add(); });
+    $('#newAdmin').addEventListener('input', (e) => e.target.classList.remove('err'));
+  }
+  view.onclick = async (e) => {
+    const b = e.target.closest('[data-act="remove"]');
+    if (!b) return;
+    const email = b.closest('[data-email]').dataset.email;
+    const ok = await confirmDialog({ title: 'Remove this admin?', body: `${email} will lose access right away and be signed out.`, confirmText: 'Remove admin', danger: true });
+    if (!ok) return;
+    try { await api('/admin/admins/' + encodeURIComponent(email), { method: 'DELETE' }); toast('Admin removed.'); await viewAdmins(); }
+    catch (err) { toast(err.message, 'error'); }
+  };
+}
+
+/* ==========================================================================
+   Go
+   ========================================================================== */
+start();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1576 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>purple dev — Product Designer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500..700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --lilac:#E4DBF8;
+    --lilac-deep:#8F76BE;
+    --violet:#755BB4;
+    --ink:#1a1a1a;
+    --mint:#EDF8E5;
+    --blush:#FBE4EE;
+    --sky:#E5F1FC;
+  }
+  html{scroll-behavior:smooth;}
+  .font-display{ font-family: 'Fraunces', 'Plus Jakarta Sans', serif; font-optical-sizing:auto; }
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* ---- retro hard-shadow button ---- */
+  .retro-shadow { box-shadow: 2.5px 2.5px 0px #1a1a1a; transition: all .15s ease-in-out; }
+  .retro-shadow:hover { box-shadow: 1px 1px 0px #1a1a1a; transform: translate(1.5px, 1.5px); }
+  .retro-shadow:active { box-shadow: 0px 0px 0px #1a1a1a; transform: translate(2.5px, 2.5px); }
+
+  /* ---- rotating badge ---- */
+  @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .animate-spin-slow { animation: spin-slow 22s linear infinite; }
+
+  /* ---- hero load-in sequence (the one orchestrated moment) ---- */
+  @keyframes riseIn { from { opacity:0; transform: translateY(18px);} to {opacity:1; transform:translateY(0);} }
+  .hero-rise { opacity:0; animation: riseIn .7s cubic-bezier(.22,1,.36,1) forwards; }
+  .hero-rise[data-d="1"]{animation-delay:.05s}
+  .hero-rise[data-d="2"]{animation-delay:.18s}
+  .hero-rise[data-d="3"]{animation-delay:.32s}
+  .hero-rise[data-d="4"]{animation-delay:.46s}
+  .hero-rise[data-d="5"]{animation-delay:.6s}
+
+  @keyframes popIn { from {opacity:0; transform: scale(.6) rotate(-8deg);} to {opacity:1; transform: scale(1) rotate(0);} }
+  .badge-pop { opacity:0; animation: popIn .6s cubic-bezier(.22,1.4,.36,1) forwards; animation-delay:.75s; }
+
+  /* ---- scroll reveal (used once per section entrance, not per-card) ---- */
+  .reveal { opacity:0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1); }
+  .reveal.in-view { opacity:1; transform: translateY(0); }
+
+  /* ---- portfolio card image zoom on hover ---- */
+  .proj-img { transition: transform .5s cubic-bezier(.22,1,.36,1); }
+  .proj-card:hover .proj-img { transform: scale(1.06); }
+  .proj-card:hover .proj-arrow { transform: translate(3px,-3px); }
+  .proj-arrow { transition: transform .25s ease; }
+  .proj-card{ transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
+  .proj-card:hover{ transform: translateY(-4px); }
+
+  /* ---- all-projects grid: staggered entrance ---- */
+  @keyframes projCardIn{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:translateY(0); } }
+  .proj-card-in{ opacity:0; animation: projCardIn .5s cubic-bezier(.22,1,.36,1) forwards; }
+
+  /* ---- nav underline ---- */
+  .nav-link{position:relative;}
+  .nav-link::after{
+    content:''; position:absolute; left:0; bottom:-4px; height:2px; width:0%;
+    background:var(--ink); transition: width .25s ease;
+  }
+  .nav-link:hover::after, .nav-link.active::after{ width:100%; }
+
+  /* ---- mobile menu ---- */
+  /* overlay panel: sits over the page instead of pushing it down, so scroll targets never shift */
+  #mobileMenu{
+    position:absolute; top:100%; left:0; right:0; background:#fff;
+    max-height:0; overflow:hidden; visibility:hidden;
+    transition: max-height .35s ease, visibility 0s linear .35s;
+  }
+  #mobileMenu.open{
+    max-height:480px; visibility:visible;
+    border-bottom:1px solid #f3f4f6; box-shadow:0 14px 24px -14px rgba(0,0,0,.18);
+    transition: max-height .35s ease, visibility 0s;
+  }
+  /* keeps anchors clear of the sticky header (h-16 mobile / h-20 desktop) */
+  section[id]{ scroll-margin-top:64px; }
+  @media (min-width:768px){ section[id]{ scroll-margin-top:80px; } }
+
+  /* ---- accordion ---- */
+  .acc-panel{ max-height:0; overflow:hidden; transition:max-height .35s ease; }
+  .acc-panel.open{ max-height:300px; }
+  .acc-chevron{ transition: transform .25s ease; }
+  .acc-btn[aria-expanded="true"] .acc-chevron{ transform: rotate(180deg); }
+
+  /* ---- toast ---- */
+  #toast{
+    position:fixed; left:50%; bottom:28px; transform:translate(-50%,20px);
+    opacity:0; pointer-events:none; transition: all .35s cubic-bezier(.22,1,.36,1); z-index:100;
+  }
+  #toast.show{ opacity:1; transform:translate(-50%,0); pointer-events:auto; }
+
+  /* ---- like button pulse ---- */
+  @keyframes pulseHeart { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 100%{transform:scale(1)} }
+  .liked { animation: pulseHeart .35s ease; }
+
+  /* ---- pricing toggle knob ---- */
+  #billingKnob{ transition: transform .25s ease; }
+
+  /* ---- back to top ---- */
+  #backToTop{ opacity:0; pointer-events:none; transition: opacity .3s ease, transform .3s ease; transform:translateY(8px); }
+  #backToTop.show{ opacity:1; pointer-events:auto; transform:translateY(0); }
+
+  .wave-line{ stroke-dasharray: 400; stroke-dashoffset: 400; animation: draw 1.8s ease forwards; animation-delay:.9s; }
+  @keyframes draw{ to { stroke-dashoffset: 0; } }
+
+  /* ---- twinkling sparkles on decorative doodles ---- */
+  @keyframes twinkle{ 0%,100%{ opacity:.35; transform:scale(.86) rotate(0deg); } 50%{ opacity:1; transform:scale(1.12) rotate(6deg); } }
+  .twinkle{ animation:twinkle 3.2s ease-in-out infinite; transform-origin:center; }
+  .twinkle-slow{ animation:twinkle 4.6s ease-in-out infinite; animation-delay:.6s; transform-origin:center; }
+
+  /* ---- gentle bob for floating doodles ---- */
+  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-9px); } }
+  .bob{ animation:bob 4.8s ease-in-out infinite; }
+  .bob-slow{ animation:bob 6.5s ease-in-out infinite; animation-delay:.4s; }
+
+  /* ---- soft sideways drift ---- */
+  @keyframes drift{ 0%,100%{ transform:translateX(0) rotate(0deg); } 50%{ transform:translateX(10px) rotate(4deg); } }
+  .drift{ animation:drift 7s ease-in-out infinite; }
+
+  /* ---- playful wiggle ---- */
+  @keyframes wiggle{ 0%,100%{ transform:rotate(-6deg); } 50%{ transform:rotate(6deg); } }
+  .wiggle{ animation:wiggle 2.6s ease-in-out infinite; transform-origin:center; }
+
+  /* ---- fine grain texture for a premium, non-flat surface ---- */
+  .grain-overlay{
+    position:fixed; inset:0; pointer-events:none; z-index:200; opacity:.035; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---- playful hover pop for primary CTAs (no gradients) ---- */
+  .pop-cta{ transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
+  .pop-cta:hover{ transform: translateY(-2px) scale(1.035) rotate(-1deg); }
+
+  /* ---- twinkling star field for the dark contact section ---- */
+  .star-dot{ position:absolute; border-radius:9999px; background:#fff; }
+
+  /* ---- cute decorative doodle sizing helper ---- */
+  .doodle{ position:absolute; pointer-events:none; select-none; z-index:0; }
+
+  /* ---- animated "website design" demo panel (replaces a video) ---- */
+  @keyframes shimmerBar{ 0%,100%{ opacity:.35; } 50%{ opacity:.9; } }
+  .shimmer-bar{ animation:shimmerBar 2.2s ease-in-out infinite; }
+
+  @keyframes barGrow{ 0%,100%{ transform:scaleY(.42); } 50%{ transform:scaleY(1); } }
+  .chart-bar{ transform-origin:bottom; animation:barGrow 1.8s ease-in-out infinite; }
+
+  @keyframes breathe{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.025); } }
+  .breathe{ animation:breathe 3.6s ease-in-out infinite; }
+
+  @keyframes cursorLoop{
+    0%{ transform:translate(14px,18px); }
+    22%{ transform:translate(78%,14px); }
+    45%{ transform:translate(82%,62%); }
+    68%{ transform:translate(38%,78%); }
+    86%{ transform:translate(16px,46%); }
+    100%{ transform:translate(14px,18px); }
+  }
+  .cursor-loop{ animation:cursorLoop 9s ease-in-out infinite; }
+
+  /* ---- projects: fanned card stack, settles into place on reveal ---- */
+  .card-fan-item{
+    transform: translateX(var(--x)) rotate(var(--rot)) translateY(30px);
+    opacity:0;
+    transition: transform .8s cubic-bezier(.22,1,.36,1), opacity .6s ease;
+  }
+  .reveal.in-view .card-fan-item{ transform: translateX(var(--x)) rotate(var(--rot)) translateY(0); opacity:1; }
+  .reveal.in-view .card-fan-item:nth-child(1){ transition-delay:.05s; }
+  .reveal.in-view .card-fan-item:nth-child(2){ transition-delay:.13s; }
+  .reveal.in-view .card-fan-item:nth-child(3){ transition-delay:.21s; }
+  .reveal.in-view .card-fan-item:nth-child(4){ transition-delay:.29s; }
+
+  /* ---- big attention-grabbing CTA glow ---- */
+  @keyframes ctaGlow{
+    0%,100%{ box-shadow: 2.5px 2.5px 0px #1a1a1a, 0 0 0 0 rgba(117,91,180,.45); }
+    50%{ box-shadow: 2.5px 2.5px 0px #1a1a1a, 0 0 0 14px rgba(117,91,180,0); }
+  }
+  .cta-glow{ animation: ctaGlow 2.2s ease-out infinite; }
+  .cta-glow:hover{ animation-play-state: paused; }
+
+  /* ---- shine sweep across the CTA button ---- */
+  .shine-btn{ position:relative; overflow:hidden; isolation:isolate; }
+  .shine-btn::after{
+    content:''; position:absolute; top:0; left:-60%; width:45%; height:100%;
+    background:linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.85) 50%, rgba(255,255,255,0) 100%);
+    transform:skewX(-18deg); animation:shineSweep 2.8s ease-in-out infinite; z-index:1; pointer-events:none;
+  }
+  @keyframes shineSweep{ 0%{ left:-60%; } 45%{ left:130%; } 100%{ left:130%; } }
+
+  /* ---- team: slow drifting carousel (moved by script) with arrow buttons ---- */
+  .team-track{ width:max-content; will-change:transform; }
+  .team-viewport{ touch-action:pan-y; cursor:grab; -webkit-user-select:none; user-select:none; }
+  .team-viewport.grabbing{ cursor:grabbing; }
+  .team-viewport img{ -webkit-user-drag:none; pointer-events:none; }
+  .team-arrow{
+    width:48px; height:48px; border-radius:9999px; flex:none;
+    background:#fff; color:#1a1a1a; border:1.5px solid #1a1a1a; box-shadow:2.5px 2.5px 0 #1a1a1a;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .15s ease-in-out, box-shadow .15s ease-in-out, background .15s;
+  }
+  .team-arrow:hover{ background:var(--lilac); transform:translate(1.5px,1.5px); box-shadow:1px 1px 0 #1a1a1a; }
+  .team-arrow:active{ transform:translate(2.5px,2.5px); box-shadow:0 0 0 #1a1a1a; }
+  .team-arrow:focus-visible{ outline:2px solid var(--violet); outline-offset:3px; }
+
+  /* ---- pricing offers: glow + light sweep so they stand out ---- */
+  @keyframes offerGlow{
+    0%,100%{ box-shadow:4px 4px 0 #1a1a1a, 0 0 0 0 rgba(244,166,200,.6); }
+    50%{ box-shadow:4px 4px 0 #1a1a1a, 0 0 26px 6px rgba(244,166,200,.65); }
+  }
+  .offer-card{ animation:offerGlow 2.4s ease-in-out infinite; }
+  .offer-sheen{ position:absolute; inset:0; overflow:hidden; border-radius:inherit; pointer-events:none; z-index:1; }
+  .offer-sheen::after{
+    content:''; position:absolute; top:0; left:-60%; width:38%; height:100%;
+    background:linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.8) 50%, rgba(255,255,255,0) 100%);
+    transform:skewX(-18deg); animation:shineSweep 3.2s ease-in-out infinite;
+  }
+  .offer-badge{ background:linear-gradient(90deg,#F4A6C8,#E9C9FF,#F4A6C8); background-size:200% 100%; animation:badgeShift 3s linear infinite; }
+  @keyframes badgeShift{ from{ background-position:0 0; } to{ background-position:200% 0; } }
+  .team-card{ transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s ease; }
+  .team-card:hover{ transform: translateY(-5px) rotate(-1deg); }
+  .team-avatar{ transition: transform .4s cubic-bezier(.22,1,.36,1); }
+  .team-card:hover .team-avatar{ transform: scale(1.05) rotate(2deg); }
+</style>
+</head>
+<body class="bg-white text-slate-900 antialiased selection:bg-purple-200">
+<div class="grain-overlay" aria-hidden="true"></div>
+
+<!-- ============ HEADER ============ -->
+<header class="w-full bg-white/90 backdrop-blur border-b border-gray-100/60 sticky top-0 z-50">
+  <div class="max-w-[1240px] mx-auto px-5 sm:px-6 md:px-12 h-16 md:h-20 flex items-center justify-between">
+    <a class="text-xl md:text-[26px] font-bold tracking-tight text-black hover:opacity-90 transition" data-nav href="#home"><span data-bind="brand_name">purple dev</span></a>
+
+    <nav class="hidden md:flex items-center space-x-4 lg:space-x-7 text-[13.5px] lg:text-[14.5px] font-medium text-gray-700 whitespace-nowrap">
+      <a class="nav-link hover:text-black transition" data-nav href="#home">Home</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#team">Team</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#services">Services</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#about">About</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#portfolio">Our Projects</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#pricing">Pricing</a>
+      <a class="nav-link hover:text-black transition" data-nav href="#contact">Contact</a>
+    </nav>
+
+    <div class="flex items-center gap-2.5">
+      <div id="headerSocials" class="hidden sm:flex md:hidden lg:flex items-center space-x-2.5" style="display:none"></div>
+
+      <!-- mobile menu button -->
+      <button id="menuBtn" aria-label="Open menu" aria-expanded="false" class="md:hidden w-10 h-9 rounded-lg border border-black flex items-center justify-center">
+        <svg id="menuIconOpen" class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg id="menuIconClose" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- mobile nav panel -->
+  <div id="mobileMenu" class="md:hidden">
+    <nav class="flex flex-col px-5 py-3 text-[15px] font-medium text-gray-800">
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#home">Home</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#team">Team</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#services">Services</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#about">About</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#portfolio">Our Projects</a>
+      <a class="py-2.5 border-b border-gray-100" data-nav href="#pricing">Pricing</a>
+      <a class="py-2.5" data-nav href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="relative bg-[#E4DBF8] overflow-hidden border-b border-gray-200/50 pt-10 pb-0 md:pt-20" id="home">
+  <!-- cute floating doodles -->
+  <svg class="doodle w-9 h-9 text-white left-[6%] top-[22%] bob" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
+  <svg class="doodle w-4 h-4 text-[#755BB4] left-[14%] top-[55%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-6 h-6 text-white left-[22%] top-[75%] twinkle-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z"></path></svg>
+  <svg class="doodle w-7 h-7 text-[#755BB4]/70 left-[3%] bottom-[8%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" aria-hidden="true"><path d="M4 8h4M6 6v4"></path><path d="M17 15h4M19 13v4"></path></svg>
+  <svg class="doodle w-10 h-10 text-white/80 right-[16%] top-[42%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" aria-hidden="true"><path d="M6 17a4 4 0 1 1 .9-7.9 5 5 0 0 1 9.8-1A4.5 4.5 0 0 1 18 17H6z"></path></svg>
+  <svg class="doodle w-6 h-6 text-[#F4A6C8] right-[28%] top-[14%] wiggle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z"></path></svg>
+  <svg class="doodle w-5 h-5 text-white left-[38%] top-[8%] twinkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-3 h-3 text-[#755BB4] right-[8%] bottom-[30%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+
+  <!-- bigger cute background pieces -->
+  <svg class="doodle w-32 h-32 sm:w-44 sm:h-44 text-white/60 -left-10 -top-10 bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
+  <svg class="doodle w-24 h-24 sm:w-32 sm:h-32 text-[#755BB4]/50 right-[4%] top-[6%] drift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" aria-hidden="true"><path d="M6 17a4 4 0 1 1 .9-7.9 5 5 0 0 1 9.8-1A4.5 4.5 0 0 1 18 17H6z"></path></svg>
+  <svg class="doodle w-20 h-20 sm:w-28 sm:h-28 text-white/70 left-[8%] bottom-[-2%] sm:bottom-[4%] wiggle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z"></path></svg>
+  <svg class="doodle w-16 h-16 sm:w-20 sm:h-20 text-[#8F76BE]/40 right-[26%] bottom-[2%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="3"></circle><circle cx="19" cy="12" r="3"></circle><circle cx="12" cy="19" r="3"></circle><circle cx="5" cy="12" r="3"></circle><circle cx="12" cy="12" r="3.6" fill="#C9BBEE"></circle></svg>
+  <svg class="doodle w-14 h-14 sm:w-20 sm:h-20 text-white/60 left-[42%] -top-4 sm:top-[-6%] twinkle-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-24 h-24 sm:w-28 sm:h-28 text-[#755BB4]/30 right-[-3%] bottom-[-4%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
+
+  <div class="max-w-[1240px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
+    <div class="absolute right-6 md:right-10 top-2 text-slate-800 pointer-events-none select-none hidden sm:block">
+      <svg class="w-8 h-8 twinkle" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+      <svg class="w-4 h-4 ml-6 -mt-1 twinkle-slow" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+    </div>
+    <div class="absolute left-2 sm:left-8 bottom-10 text-[#755BB4] pointer-events-none select-none hidden sm:block bob">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+      <div class="lg:col-span-6 pb-12 md:pb-24 pt-2 md:pt-4 z-10">
+        <div class="hero-rise inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-6 md:mb-7" data-d="1">
+          <span class="text-xs">✦</span><span>HELLO!</span>
+        </div>
+
+        <h1 class="hero-rise text-[34px] sm:text-5xl md:text-[54px] font-bold text-black tracking-tight leading-[1.18] mb-5 md:mb-6" data-d="2">
+          We're <span data-bind="brand_name">purple dev</span>,<br>
+          a <span class="relative inline-block">
+            product
+            <svg class="absolute -bottom-2.5 left-0 w-[108%] h-4 text-[#755BB4] pointer-events-none" fill="none" preserveAspectRatio="none" viewBox="0 0 160 18">
+              <path class="wave-line" d="M3 13C25 8 50 16 80 10C110 4 135 14 157 9M18 16C45 13 80 18 115 12C130 10 148 14 155 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+            </svg>
+          </span> design team.
+        </h1>
+
+        <p class="hero-rise text-[15px] sm:text-[15.5px] leading-relaxed text-gray-700 max-w-md mb-8 md:mb-9 font-normal" data-d="3" data-bind="tagline">
+          We're a product design team based in India. We're very passionate about the work that we do.
+        </p>
+
+        <div class="hero-rise flex flex-wrap items-center gap-3" data-d="4">
+          <a class="pop-cta inline-block px-6 py-2.5 bg-white border-[1.5px] border-black rounded-lg text-sm font-semibold text-black retro-shadow" data-nav href="#portfolio">See Our Work</a>
+          <a class="inline-block px-6 py-2.5 bg-transparent border-[1.5px] border-black/0 rounded-lg text-sm font-semibold text-black hover:border-black/60 transition" data-nav href="#contact">Let's talk →</a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-6 relative flex justify-center lg:justify-end items-center pb-10 sm:pb-14 md:pb-20">
+        <div class="hero-rise relative w-[280px] sm:w-[360px] md:w-[440px] aspect-[4/3] bg-white rounded-2xl border-[1.5px] border-black overflow-hidden flex flex-col retro-shadow" data-d="3">
+          <!-- browser chrome -->
+          <div class="h-7 sm:h-9 shrink-0 bg-[#F4F2FB] border-b border-black/10 flex items-center gap-3 px-3 sm:px-4">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FF5F57]"></span>
+              <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FEBC2E]"></span>
+              <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#28C840]"></span>
+            </div>
+            <div class="flex-1 h-4 sm:h-5 rounded-full bg-white border border-black/10 flex items-center justify-center">
+              <span class="text-[8px] sm:text-[10px] text-gray-500 font-medium tracking-wide" data-bind="site_url_label">purpledevs.qd.je</span>
+            </div>
+          </div>
+          <!-- animated website-design canvas, in place of a video -->
+          <div class="relative flex-1 bg-[#F7F5FC] overflow-hidden">
+            <div class="flex items-center justify-between px-4 sm:px-5 pt-3 sm:pt-4">
+              <div class="w-10 sm:w-14 h-2.5 sm:h-3 rounded-full bg-[#755BB4] shimmer-bar"></div>
+              <div class="flex gap-1.5">
+                <div class="w-4 sm:w-5 h-2 rounded-full bg-black/15 shimmer-bar" style="animation-delay:.15s"></div>
+                <div class="w-4 sm:w-5 h-2 rounded-full bg-black/15 shimmer-bar" style="animation-delay:.35s"></div>
+                <div class="w-4 sm:w-5 h-2 rounded-full bg-black/15 shimmer-bar" style="animation-delay:.55s"></div>
+              </div>
+            </div>
+
+            <div class="breathe mx-4 sm:mx-5 mt-3 sm:mt-4 rounded-xl border border-black/15 bg-white p-3 sm:p-4">
+              <div class="w-2/3 h-3 sm:h-3.5 rounded-full bg-[#8F76BE] mb-2"></div>
+              <div class="w-1/2 h-2 rounded-full bg-black/10 mb-1.5"></div>
+              <div class="w-1/3 h-2 rounded-full bg-black/10"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 sm:gap-2.5 mx-4 sm:mx-5 mt-2.5 sm:mt-3.5">
+              <div class="rounded-lg border border-black/15 bg-white h-9 sm:h-14 flex items-end p-1 sm:p-1.5 overflow-hidden">
+                <span class="chart-bar block w-full rounded bg-[#8F76BE] h-full" style="animation-delay:0s"></span>
+              </div>
+              <div class="rounded-lg border border-black/15 bg-white h-9 sm:h-14 flex items-end p-1 sm:p-1.5 overflow-hidden">
+                <span class="chart-bar block w-full rounded bg-[#F4A6C8] h-full" style="animation-delay:.3s"></span>
+              </div>
+              <div class="rounded-lg border border-black/15 bg-white h-9 sm:h-14 flex items-end p-1 sm:p-1.5 overflow-hidden">
+                <span class="chart-bar block w-full rounded bg-[#755BB4] h-full" style="animation-delay:.6s"></span>
+              </div>
+            </div>
+
+            <svg class="cursor-loop absolute left-0 top-0 w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="#1a1a1a" aria-hidden="true"><path d="M4 2l16 6.5-6.2 2.2L11.5 17z"></path></svg>
+          </div>
+        </div>
+
+        <button id="availBadge" aria-label="Availability info" class="badge-pop absolute -top-4 sm:-top-6 left-1 sm:left-6 md:left-12 w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-full border border-black flex items-center justify-center shadow-sm z-20 cursor-pointer">
+          <div class="absolute inset-0 flex items-center justify-center animate-spin-slow pointer-events-none">
+            <svg class="w-full h-full p-1.5" viewBox="0 0 100 100">
+              <path d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="transparent" id="badge-path"></path>
+              <text class="text-[8.8px] font-bold uppercase tracking-[0.23em] fill-black">
+                <textPath href="#badge-path" startOffset="0%">✦ FOR FREELANCE ✦ WE ARE AVAILABLE</textPath>
+              </text>
+            </svg>
+          </div>
+          <div class="z-10 text-black">
+            <svg class="w-5 h-5 -rotate-45" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24"><line x1="5" x2="19" y1="12" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </div>
+        </button>
+
+        <div class="absolute -right-2 sm:-right-6 bottom-2 sm:bottom-6 text-slate-800 pointer-events-none select-none hidden sm:block bob">
+          <svg class="w-16 h-8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7" viewBox="0 0 60 28">
+            <path d="M2 5C10 5 15 1 25 1C35 1 42 7 55 7"></path>
+            <path d="M5 14C13 14 18 10 28 10C38 10 45 16 58 16"></path>
+            <path d="M1 23C9 23 14 19 24 19C34 19 41 25 54 25"></path>
+          </svg>
+        </div>
+        <div class="absolute left-0 top-6 sm:top-10 text-white pointer-events-none select-none hidden sm:block twinkle-slow">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEAM ============ -->
+<section class="hidden relative bg-white py-16 sm:py-20 md:py-24 overflow-hidden border-b border-gray-100" id="team">
+  <svg class="doodle w-6 h-6 text-[#8F76BE] left-[6%] top-[10%] twinkle-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-4 h-4 text-[#F4A6C8] right-[10%] top-[16%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-8 h-8 text-[#755BB4]/70 left-[3%] bottom-[8%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" aria-hidden="true"><path d="M4 8h4M6 6v4"></path><path d="M17 15h4M19 13v4"></path></svg>
+  <svg class="doodle w-9 h-9 text-[#8F76BE] right-[5%] bottom-[10%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
+
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
+    <div class="reveal text-center max-w-2xl mx-auto mb-12 md:mb-14">
+      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+        <span class="text-xs">✦</span><span>OUR TEAM</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
+        The core team behind<br class="hidden sm:inline"> <span data-bind="brand_name">purple dev</span>.
+      </h2>
+      <p class="mt-4 text-[13.5px] sm:text-[15px] text-gray-600 max-w-md mx-auto">
+        A small crew of builders keeping the security tight and the models sharp.
+      </p>
+    </div>
+  </div>
+
+  <!-- edge-to-edge carousel: drifts slowly by itself, drag it, or use the arrows to jump -->
+  <div class="team-marquee-wrap relative" id="teamWrap">
+    <div class="pointer-events-none absolute inset-y-0 left-0 w-14 sm:w-28 bg-gradient-to-r from-white to-transparent z-10"></div>
+    <div class="pointer-events-none absolute inset-y-0 right-0 w-14 sm:w-28 bg-gradient-to-l from-white to-transparent z-10"></div>
+
+    <div class="team-viewport overflow-hidden py-3" id="teamViewport">
+      <div class="team-track flex gap-5 sm:gap-6 px-5 sm:px-6" id="teamTrack"></div>
+    </div>
+  </div>
+
+  <!-- arrows: one member per press -->
+  <div class="relative z-10 flex items-center justify-center gap-4 mt-6">
+    <button type="button" id="teamPrev" class="team-arrow" aria-label="Previous team member">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button type="button" id="teamNext" class="team-arrow" aria-label="Next team member">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section class="relative bg-white py-16 sm:py-20 md:py-28 overflow-hidden" id="services">
+  <svg class="doodle w-5 h-5 text-[#8F76BE] left-[8%] top-[12%] bob-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-3 h-3 text-[#F4A6C8] left-[15%] bottom-[18%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-8 h-8 text-[#8F76BE] right-[6%] bottom-[10%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" transform="rotate(12 12 12)"></rect></svg>
+  <svg class="doodle w-8 h-8 text-[#755BB4] right-[18%] top-[8%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 18l1.4-8.6L9 13l3-7 3 7 4.6-3.6L21 18H3z"></path></svg>
+  <svg class="doodle w-5 h-5 text-[#F4A6C8] left-[46%] top-[6%] twinkle-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-4 h-4 text-[#8F76BE] left-[4%] bottom-[38%] drift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
+    <div class="absolute left-6 md:left-14 top-14 text-slate-800 pointer-events-none select-none hidden sm:block bob">
+      <svg class="w-6 h-10 -rotate-12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 36"><path d="M14 2L2 19H12L10 34L22 17H12L14 2Z"></path></svg>
+    </div>
+    <div class="absolute right-6 md:right-16 top-10 text-slate-800 pointer-events-none select-none hidden sm:block">
+      <svg class="w-7 h-7 twinkle" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+      <svg class="w-4 h-4 ml-5 -mt-1 twinkle-slow" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+    </div>
+
+    <div class="reveal text-center max-w-2xl mx-auto mb-12 md:mb-16">
+      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+        <span class="text-xs">✦</span><span>OUR SERVICES</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
+        The service we offer is specifically<br class="hidden sm:inline"> designed to meet your needs.
+      </h2>
+    </div>
+
+    <div class="reveal grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 max-w-[1040px] mx-auto">
+      <button data-service="strategy" class="service-card group relative text-left bg-[#E4E1F8] border border-black rounded-2xl p-4 sm:p-8 flex items-start gap-3 sm:gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="relative flex-shrink-0 w-9 h-9 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-2 sm:p-3 text-black">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><path d="M19.439 7.85c0-1.57.8-2.35 1.561-2.85v-.01A2.5 2.5 0 0 0 18.5 2h-3.01c-.5 0-1.04.42-1.39 1.15-.37.78-.97 1.35-1.6 1.35s-1.23-.57-1.6-1.35C10.55 2.42 10.01 2 9.51 2H6.5A2.5 2.5 0 0 0 4 4.5v3.01c0 .5.42 1.04 1.15 1.39.78.37 1.35.97 1.35 1.6s-.57 1.23-1.35 1.6C4.42 12.45 4 12.99 4 13.49v3.01A2.5 2.5 0 0 0 6.5 19h3.01c.5 0 1.04-.42 1.39-1.15.37-.78.97-1.35 1.6-1.35s1.23.57 1.6 1.35c.35.73.89 1.15 1.39 1.15h3.01A2.5 2.5 0 0 0 21 16.5v-3.01c0-.5-.42-1.04-1.15-1.39-.78-.37-1.35-.97-1.35-1.6s.57-1.23 1.35-1.6c.72-.34 1.14-.87 1.14-1.05z"></path></svg>
+          <svg class="absolute -top-1.5 -right-1.5 w-4 h-4 text-[#755BB4] opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+        </div>
+        <div>
+          <h3 class="text-sm sm:text-[17px] font-bold text-slate-900 mb-1 sm:mb-2">Strategy &amp; Planning</h3>
+          <p class="text-[11px] sm:text-[13.5px] leading-snug sm:leading-relaxed text-gray-700">Streamline your campaigns with tools that improve engagement, boost visibility, and help you connect with your audience.</p>
+        </div>
+      </button>
+
+      <button data-service="research" class="service-card group relative text-left bg-[#EDF8E5] border border-black rounded-2xl p-4 sm:p-8 flex items-start gap-3 sm:gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="relative flex-shrink-0 w-9 h-9 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-2 sm:p-3 text-black">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" x2="16" y1="21" y2="16"></line><circle cx="11" cy="11" r="2.5"></circle></svg>
+          <svg class="absolute -top-1.5 -right-1.5 w-4 h-4 text-[#8F76BE] opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+        </div>
+        <div>
+          <h3 class="text-sm sm:text-[17px] font-bold text-slate-900 mb-1 sm:mb-2">User Research</h3>
+          <p class="text-[11px] sm:text-[13.5px] leading-snug sm:leading-relaxed text-gray-700">Simplify project workflows with organized tools and strategies designed to keep your team aligned and your goals on track.</p>
+        </div>
+      </button>
+
+      <button data-service="web" class="service-card group relative text-left bg-[#FBE4EE] border border-black rounded-2xl p-4 sm:p-8 flex items-start gap-3 sm:gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="relative flex-shrink-0 w-9 h-9 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-2 sm:p-3 text-black">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><rect height="16" rx="3" width="18" x="3" y="4"></rect><line x1="3" x2="21" y1="9" y2="9"></line><line x1="6" x2="6.01" y1="6.5" y2="6.5"></line><line x1="9" x2="9.01" y1="6.5" y2="6.5"></line></svg>
+          <svg class="absolute -top-1.5 -right-1.5 w-4 h-4 text-[#F4A6C8] opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+        </div>
+        <div>
+          <h3 class="text-sm sm:text-[17px] font-bold text-slate-900 mb-1 sm:mb-2">Web Design</h3>
+          <p class="text-[11px] sm:text-[13.5px] leading-snug sm:leading-relaxed text-gray-700">Gain valuable insights into user behavior, website performance, and key business metrics to optimize your digital presence.</p>
+        </div>
+      </button>
+
+      <button data-service="brand" class="service-card group relative text-left bg-[#E5F1FC] border border-black rounded-2xl p-4 sm:p-8 flex items-start gap-3 sm:gap-5 transition hover:shadow-md hover:-translate-y-0.5">
+        <div class="relative flex-shrink-0 w-9 h-9 sm:w-14 sm:h-14 rounded-full border border-black bg-white flex items-center justify-center p-2 sm:p-3 text-black">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 4v4m0 8v4M4 12h4m8 0h4"></path><circle cx="12" cy="12" r="3"></circle><circle cx="12" cy="3" r="1.5"></circle><circle cx="12" cy="21" r="1.5"></circle><circle cx="3" cy="12" r="1.5"></circle><circle cx="21" cy="12" r="1.5"></circle></svg>
+          <svg class="absolute -top-1.5 -right-1.5 w-4 h-4 text-[#7EA9D6] opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+        </div>
+        <div>
+          <h3 class="text-sm sm:text-[17px] font-bold text-slate-900 mb-1 sm:mb-2">Brand Design</h3>
+          <p class="text-[11px] sm:text-[13.5px] leading-snug sm:leading-relaxed text-gray-700">Understand your market with precise data analysis and deep customer insights that guide your decision-making processes.</p>
+        </div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="relative bg-[#FAFAFA] py-16 sm:py-20 md:py-28 border-y border-gray-100 overflow-hidden" id="about">
+  <svg class="doodle w-6 h-6 text-[#8F76BE] left-[4%] top-[20%] bob" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle></svg>
+  <svg class="doodle w-3 h-3 text-[#8F76BE] left-[10%] bottom-[24%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-7 h-7 text-[#F4A6C8] right-[10%] top-[14%] wiggle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.5-4-8.5-7.6C1.7 10 3 6.5 6.3 6.5c1.8 0 3.1 1.2 3.7 2.6.6-1.4 1.9-2.6 3.7-2.6 3.3 0 4.6 3.5 2.8 6.9C18.5 17 12 21 12 21z"></path></svg>
+  <svg class="doodle w-5 h-5 text-[#755BB4] right-[6%] bottom-[18%] bob-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-8 h-8 text-[#8F76BE]/70 left-[18%] top-[68%] drift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" aria-hidden="true"><path d="M6 17a4 4 0 1 1 .9-7.9 5 5 0 0 1 9.8-1A4.5 4.5 0 0 1 18 17H6z"></path></svg>
+  <div class="reveal max-w-[720px] mx-auto px-5 sm:px-6 md:px-12 relative z-10 text-center">
+    <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+      <span class="text-xs">✦</span><span>ABOUT US</span>
+    </div>
+    <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug mb-4" data-bind="about_heading">
+      Product design, focused on the clean version of a hard problem.
+    </h2>
+    <p class="text-[14.5px] sm:text-[15.5px] leading-relaxed text-gray-700 mb-2 max-w-lg mx-auto" data-bind="about_description">
+      We work with founders and small teams to take fuzzy product ideas into interfaces people actually enjoy using — from early research through to shipped, polished screens. Based in India, working with clients worldwide.
+    </p>
+
+    <div class="flex items-center justify-center gap-3 mt-7" aria-hidden="true">
+      <svg class="w-4 h-4 text-[#8F76BE] twinkle" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+      <span class="w-10 h-px bg-black/15"></span>
+      <svg class="w-3 h-3 text-[#F4A6C8]" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"></circle></svg>
+      <span class="w-10 h-px bg-black/15"></span>
+      <svg class="w-4 h-4 text-[#755BB4] twinkle-slow" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PORTFOLIO ============ -->
+<section class="relative bg-[#F7F5FC] py-16 sm:py-20 md:py-28 overflow-hidden" id="portfolio">
+  <svg class="doodle w-5 h-5 text-[#F4A6C8] right-[6%] top-[10%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-3 h-3 text-[#8F76BE] right-[13%] top-[22%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-6 h-6 text-[#8F76BE] left-[5%] bottom-[8%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="currentColor"></path></svg>
+  <svg class="doodle w-8 h-8 text-[#755BB4] left-[3%] top-[45%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="9" r="7"></circle><path d="M12 16v5M9 21h6" stroke-linecap="round"></path></svg>
+  <svg class="doodle w-4 h-4 text-[#F4A6C8] right-[3%] bottom-[30%] twinkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-16 h-16 text-[#8F76BE]/25 -left-4 top-[6%] bob-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
+  <svg class="doodle w-20 h-20 text-[#F4A6C8]/25 -right-6 bottom-[4%] drift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5" transform="rotate(8 12 12)"></rect></svg>
+
+  <div class="max-w-[880px] mx-auto px-5 sm:px-6 md:px-12 relative z-10 text-center">
+    <div class="reveal">
+      <h2 class="font-display text-5xl sm:text-6xl md:text-7xl font-semibold text-slate-900 tracking-tight leading-none mb-10 md:mb-14">
+        Our Projects
+      </h2>
+
+      <button id="viewAllProjectsBtn" class="cta-glow shine-btn pop-cta relative inline-flex items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-black text-white border-[1.5px] border-black rounded-2xl text-base sm:text-lg font-bold retro-shadow">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6 twinkle" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+        View all projects
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+      <p id="noProjectsNote" class="hidden text-base sm:text-lg text-gray-600 font-medium">New projects are landing soon ✦</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ALL PROJECTS (full listing, opens like its own dedicated page) ============ -->
+<section class="hidden fixed inset-0 z-[85] bg-[#FAFAFA] overflow-y-auto" id="all-projects">
+
+  <!-- sticky sub-header, feels like its own page rather than a modal -->
+  <div class="sticky top-0 z-20 bg-[#1a1a1a] text-white border-b border-black">
+    <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 h-16 md:h-[72px] flex items-center justify-between">
+      <button id="backToHomeBtn" class="inline-flex items-center gap-2 text-sm font-semibold hover:opacity-70 transition shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span class="hidden sm:inline">Back to home</span>
+      </button>
+      <span class="text-sm font-bold tracking-tight"><span data-bind="brand_name">purple dev</span> — projects</span>
+      <a href="#contact" id="allProjectsTalkLink" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full border border-white/30 hover:border-white transition">
+        Let's talk →
+      </a>
+    </div>
+  </div>
+
+  <!-- page hero -->
+  <div class="relative bg-[#EDEAF8] border-b border-black/10 overflow-hidden">
+    <svg class="doodle w-10 h-10 text-[#755BB4]/30 right-[8%] top-[20%] bob-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+    <svg class="doodle w-6 h-6 text-[#F4A6C8]/50 left-[10%] bottom-[16%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+    <svg class="doodle w-16 h-16 text-white/60 -right-4 -bottom-6 wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
+    <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 pt-10 pb-9 md:pt-14 md:pb-12 relative z-10">
+      <div class="max-w-2xl">
+        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-white/70 text-[11px] font-bold tracking-wider uppercase mb-5">
+          <span class="text-xs twinkle">✦</span><span>ALL PROJECTS</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-[44px] font-bold text-slate-900 tracking-tight leading-[1.15] mb-4">
+          Every project,<br>filtered by what<br>you're curious about.
+        </h1>
+        <p class="text-[15px] text-gray-700 max-w-md leading-relaxed">
+          <span id="allProjectCount">0</span> <span id="allProjectLabel">projects</span> to explore. Open one to see the photos, the live site and the story behind it.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 py-10 md:py-14">
+
+    <div id="filterBar" class="hidden flex-wrap items-center gap-2.5 mb-10"></div>
+
+    <div id="allProjectGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
+      <!-- injected by JS: full list -->
+    </div>
+
+    <!-- closing CTA, makes the page feel complete rather than cut off -->
+    <div class="mt-12 md:mt-16 border-[1.5px] border-black rounded-2xl bg-[#1a1a1a] text-white p-8 sm:p-10 text-center relative overflow-hidden">
+      <svg class="doodle w-8 h-8 text-white/20 left-[6%] top-[16%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+      <svg class="doodle w-6 h-6 text-white/20 right-[8%] bottom-[18%] twinkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+      <h3 class="text-xl sm:text-2xl font-bold mb-2 relative z-10">Like what you see?</h3>
+      <p class="text-sm text-white/70 mb-6 relative z-10">Let's talk about what we could build for you next.</p>
+      <a href="#contact" class="pop-cta relative z-10 inline-flex items-center gap-2 px-6 py-2.5 bg-white text-black rounded-lg text-sm font-semibold">
+        Start a project
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- project modal -->
+<div id="projectModal" class="fixed inset-0 z-[95] hidden items-center justify-center p-3 sm:p-4">
+  <div id="modalOverlay" class="absolute inset-0 bg-black/50"></div>
+  <div role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="relative bg-white border-[1.5px] border-black rounded-2xl max-w-2xl w-full p-4 sm:p-7 max-h-[92vh] overflow-y-auto">
+    <button id="modalClose" aria-label="Close" class="absolute top-3 right-3 sm:top-5 sm:right-5 z-20 w-8 h-8 rounded-full border border-black bg-white flex items-center justify-center hover:bg-gray-50">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+
+    <div id="modalStage" class="w-full aspect-[16/10] rounded-xl border border-black overflow-hidden bg-[#F7F5FC] mb-3"></div>
+    <p id="modalPreviewNote" class="hidden text-xs text-gray-500 mb-3">Some websites don't allow being shown inside other pages. If this looks blank, <a id="modalPreviewOpen" class="underline font-semibold text-black" target="_blank" rel="noopener" href="#">open it in a new tab</a>.</p>
+    <div id="modalThumbs" class="flex gap-2 overflow-x-auto pb-1 mb-4"></div>
+
+    <div class="flex flex-wrap items-center gap-2 mb-3">
+      <span id="modalTag" class="inline-block px-3 py-1 rounded-full border border-black text-[10px] font-bold uppercase tracking-wider"></span>
+      <span id="modalMeta" class="text-xs text-gray-500"></span>
+    </div>
+    <h3 id="modalTitle" class="text-xl sm:text-2xl font-bold mb-2"></h3>
+    <p id="modalShort" class="text-[14.5px] text-gray-800 leading-relaxed mb-3"></p>
+    <p id="modalDesc" class="text-[14px] text-gray-700 leading-relaxed whitespace-pre-line mb-4 break-words"></p>
+    <div id="modalTech" class="flex flex-wrap gap-1.5 mb-5"></div>
+
+    <div class="flex flex-wrap items-center gap-2.5">
+      <button id="modalLike" aria-label="Like this project" class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-black text-sm font-semibold retro-shadow">
+        <svg id="modalHeart" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+        <span id="modalLikeCount">0</span>
+      </button>
+      <button id="modalPreviewBtn" class="hidden px-4 py-2 rounded-lg border border-black bg-[#E4DBF8] text-sm font-semibold retro-shadow">Live preview</button>
+      <a id="modalLive" class="hidden px-4 py-2 rounded-lg border border-black bg-white text-sm font-semibold retro-shadow" target="_blank" rel="noopener" href="#">Visit live site</a>
+      <a id="modalGithub" class="hidden px-4 py-2 rounded-lg border border-black bg-white text-sm font-semibold retro-shadow" target="_blank" rel="noopener" href="#">GitHub</a>
+      <a id="modalVisit" data-nav href="#contact" class="px-4 py-2 rounded-lg bg-black text-white text-sm font-semibold hover:bg-gray-800 transition">Discuss a project like this</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PRICING ============ -->
+<section class="relative bg-white py-16 sm:py-20 md:py-28 overflow-hidden" id="pricing">
+  <svg class="doodle w-6 h-6 text-[#8F76BE] left-[8%] top-[14%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" transform="rotate(10 12 12)"></rect></svg>
+  <svg class="doodle w-3 h-3 text-[#F4A6C8] right-[10%] top-[20%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <svg class="doodle w-4 h-4 text-[#755BB4] right-[16%] bottom-[10%] twinkle-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-8 h-8 text-[#8F76BE] left-[4%] bottom-[16%] bob-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 18l1.4-8.6L9 13l3-7 3 7 4.6-3.6L21 18H3z"></path></svg>
+  <svg class="doodle w-3 h-3 text-[#8F76BE] left-[14%] top-[8%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <div class="max-w-[1000px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
+    <div class="reveal text-center max-w-2xl mx-auto mb-8">
+      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-black bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+        <span class="text-xs">✦</span><span>PRICING</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
+        Simple pricing, no surprises.
+      </h2>
+    </div>
+
+    <!-- billing toggle: shown only when at least one plan has both a monthly and a yearly price -->
+    <div class="reveal hidden flex items-center justify-center gap-3 mb-10" id="billingRow">
+      <span class="text-sm font-medium" id="billMonthlyLbl">Monthly</span>
+      <button id="billingToggle" type="button" class="w-14 h-8 rounded-full border-[1.5px] border-black bg-white relative" aria-pressed="false" aria-label="Switch between monthly and yearly prices">
+        <span id="billingKnob" class="absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-black"></span>
+      </button>
+      <span class="text-sm font-medium" id="billYearlyLbl">Yearly <span id="saveNote" class="text-[11px] text-green-700 font-bold"></span></span>
+    </div>
+
+    <!-- plans + offers are rendered here from the admin panel (Admin → Pricing) -->
+    <div class="reveal" id="plansWrap">
+      <div id="plansGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-6" aria-live="polite">
+        <div class="h-[340px] rounded-2xl border border-black/15 bg-gray-50 animate-pulse"></div>
+        <div class="h-[340px] rounded-2xl border border-black/15 bg-gray-50 animate-pulse"></div>
+        <div class="h-[340px] rounded-2xl border border-black/15 bg-gray-50 animate-pulse hidden sm:block"></div>
+      </div>
+      <p id="plansEmpty" class="hidden text-center text-sm text-gray-600 max-w-md mx-auto">
+        Every project is different, so we quote it after a quick chat. <a href="#contact" data-nav class="underline font-semibold text-black">Tell us what you need</a> and we'll send a price.
+      </p>
+    </div>
+
+    <!-- FAQ accordion (content comes from the admin panel -> Common questions) -->
+    <div class="reveal max-w-2xl mx-auto mt-16 hidden" id="faqWrap">
+      <h3 class="text-lg font-bold mb-4 text-center">Common questions</h3>
+      <div class="space-y-2.5" id="faqList" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="relative bg-[#1a1a1a] text-white py-16 sm:py-20 md:py-28 overflow-hidden" id="contact">
+  <svg class="doodle w-10 h-10 text-white/90 right-[10%] top-[12%] bob-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 12.5A8.5 8.5 0 1 1 11.5 4a7 7 0 0 0 8.5 8.5z"></path></svg>
+  <div class="star-dot twinkle" style="width:3px;height:3px;left:8%;top:18%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:2px;height:2px;left:16%;top:62%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle" style="width:2px;height:2px;left:28%;top:30%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:3px;height:3px;left:82%;top:20%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle" style="width:2px;height:2px;left:90%;top:55%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:2px;height:2px;left:70%;top:75%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle" style="width:3px;height:3px;left:50%;top:12%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:2px;height:2px;left:38%;top:82%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle" style="width:2px;height:2px;left:60%;top:40%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:2px;height:2px;left:5%;top:45%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle" style="width:3px;height:3px;left:95%;top:35%;" aria-hidden="true"></div>
+  <div class="star-dot twinkle-slow" style="width:2px;height:2px;left:44%;top:68%;" aria-hidden="true"></div>
+  <svg class="doodle w-5 h-5 text-[#8F76BE] left-[12%] top-[70%] wiggle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
+  <svg class="doodle w-4 h-4 text-[#F4A6C8]/80 right-[14%] bottom-[16%] bob" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  <div class="max-w-[900px] mx-auto px-5 sm:px-6 md:px-12 relative z-10">
+    <div class="reveal text-center max-w-2xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-white bg-transparent text-[11px] font-bold tracking-wider uppercase mb-5">
+        <span class="text-xs">✦</span><span>GET IN TOUCH</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold tracking-tight leading-snug">
+        Have a project in mind? Tell us about it.
+      </h2>
+    </div>
+
+    <form id="contactForm" class="reveal grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+      <div class="sm:col-span-1">
+        <label class="block text-xs font-medium mb-1.5 text-gray-300" for="cf-name">Name</label>
+        <input required id="cf-name" name="name" type="text" class="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/25 text-sm placeholder-gray-400 focus:outline-none focus:border-white" placeholder="Your name">
+      </div>
+      <div class="sm:col-span-1">
+        <label class="block text-xs font-medium mb-1.5 text-gray-300" for="cf-email">Email</label>
+        <input required id="cf-email" name="email" type="email" class="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/25 text-sm placeholder-gray-400 focus:outline-none focus:border-white" placeholder="you@email.com">
+      </div>
+      <div class="sm:col-span-2">
+        <label class="block text-xs font-medium mb-1.5 text-gray-300" for="cf-message">Message</label>
+        <textarea required id="cf-message" name="message" rows="4" class="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/25 text-sm placeholder-gray-400 focus:outline-none focus:border-white resize-none" placeholder="Tell us a bit about your project..."></textarea>
+      </div>
+      <div class="hidden" aria-hidden="true"><input type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off"></div>
+      <div class="sm:col-span-2 flex items-center justify-between flex-wrap gap-3">
+        <p id="formError" class="text-xs text-red-400 hidden">Please fill in every field with a valid email.</p>
+        <button type="submit" class="pop-cta ml-auto px-6 py-2.5 bg-white text-black border-[1.5px] border-white rounded-lg text-sm font-semibold retro-shadow">Send message</button>
+      </div>
+    </form>
+
+    <div class="reveal flex flex-wrap justify-center gap-x-8 gap-y-3 mt-12 text-sm text-gray-300">
+      <a id="contactEmail" href="mailto:hello@purpledev.com" class="hover:text-white transition">hello@purpledev.com</a>
+      <span class="hidden sm:inline text-gray-600">·</span>
+      <span id="contactLocation">India</span>
+      <span class="hidden sm:inline text-gray-600">·</span>
+      <a href="#" data-nav="#home" class="hover:text-white transition">Back to top ↑</a>
+    </div>
+    <div id="contactSocials" class="flex flex-wrap justify-center gap-3 mt-6"></div>
+  </div>
+</section>
+
+<!-- toast -->
+<div id="toast" class="bg-black text-white text-sm font-medium px-5 py-3 rounded-full shadow-lg"></div>
+
+<!-- back to top -->
+<button id="backToTop" aria-label="Back to top" class="fixed bottom-6 right-5 sm:right-8 w-11 h-11 rounded-full bg-black text-white border-[1.5px] border-black flex items-center justify-center z-40 retro-shadow">
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+</button>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- live content (loaded from /api/site, edited in /admin) ---------- */
+  var availMsg = "Available for new projects — starting next month ✦";
+  var platforms = {};
+  var projects = [];
+  var teamList = [];
+  var likes = {};
+  try { likes = JSON.parse(localStorage.getItem('pd-likes') || '{}') || {}; } catch(err){ likes = {}; }
+
+  function esc(v){
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  /* ---------- toast helper ---------- */
+  var toastEl = document.getElementById('toast');
+  var toastTimer;
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2600);
+  }
+
+  /* ---------- mobile menu ---------- */
+  var menuBtn = document.getElementById('menuBtn');
+  var mobileMenu = document.getElementById('mobileMenu');
+  var iconOpen = document.getElementById('menuIconOpen');
+  var iconClose = document.getElementById('menuIconClose');
+  function closeMenu(){
+    mobileMenu.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded','false');
+    iconOpen.classList.remove('hidden');
+    iconClose.classList.add('hidden');
+  }
+  function toggleMenu(){
+    var isOpen = mobileMenu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', isOpen ? 'true':'false');
+    iconOpen.classList.toggle('hidden', isOpen);
+    iconClose.classList.toggle('hidden', !isOpen);
+  }
+  menuBtn.addEventListener('click', toggleMenu);
+
+  /* ---------- nav links (smooth scroll + close mobile menu + active state) ---------- */
+  var navLinks = document.querySelectorAll('[data-nav]');
+  var sections = ['home','team','services','about','portfolio','pricing','contact'].map(function(id){return document.getElementById(id);});
+  var siteHeader = document.querySelector('header');
+  var scrollFixTimer;
+
+  // scroll so the section's top edge sits just under the sticky header (real header height, not a guess)
+  function scrollToTarget(target){
+    if(!target) return;
+    function targetTop(){
+      var h = siteHeader ? siteHeader.offsetHeight : 72;
+      return Math.max(0, target.getBoundingClientRect().top + window.pageYOffset - h);
+    }
+    window.scrollTo({top: targetTop(), behavior:'smooth'});
+    // once the smooth scroll has settled, correct any drift caused by late layout changes (fonts, images)
+    clearTimeout(scrollFixTimer);
+    scrollFixTimer = setTimeout(function(){
+      if(Math.abs(targetTop() - window.pageYOffset) > 3){
+        window.scrollTo({top: targetTop(), behavior:'instant'});
+      }
+    }, 900);
+  }
+  // don't fight the user if they start scrolling themselves
+  ['wheel','touchstart','keydown'].forEach(function(evt){
+    window.addEventListener(evt, function(){ clearTimeout(scrollFixTimer); }, {passive:true});
+  });
+
+  // data-nav="#x" wins over href="#" (e.g. the "Back to top" link)
+  function navHash(a){
+    var h = a.getAttribute('data-nav');
+    if(!h || h.charAt(0) !== '#') h = a.getAttribute('href');
+    return (h && h.length > 1 && h.charAt(0) === '#') ? h : '#home';
+  }
+
+  navLinks.forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var hash = navHash(a);
+      // close overlays first so the page is in its final layout before we measure
+      closeMenu();
+      var allProjectsEl = document.getElementById('all-projects');
+      if(allProjectsEl && !allProjectsEl.classList.contains('hidden')){
+        allProjectsEl.classList.add('hidden');
+      }
+      if(typeof closeModal === 'function') closeModal();
+      document.body.style.overflow = '';
+      scrollToTarget(document.querySelector(hash));
+      try{ history.replaceState(null, '', hash); }catch(err){}
+    });
+  });
+
+  function updateActiveNav(){
+    var scrollPos = window.scrollY + 110;
+    var current = sections[0];
+    sections.forEach(function(sec){
+      if(sec && sec.offsetHeight > 0 && sec.offsetTop <= scrollPos) current = sec;
+    });
+    document.querySelectorAll('.nav-link').forEach(function(link){
+      link.classList.toggle('active', current && link.getAttribute('href') === '#'+current.id);
+    });
+  }
+
+  /* ---------- back to top button ---------- */
+  var backToTop = document.getElementById('backToTop');
+  backToTop.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  window.addEventListener('scroll', function(){
+    backToTop.classList.toggle('show', window.scrollY > 500);
+    updateActiveNav();
+  });
+
+  /* ---------- scroll reveal ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.15});
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in-view'); });
+  }
+
+  /* ---------- availability badge ---------- */
+  document.getElementById('availBadge').addEventListener('click', function(){
+    showToast(availMsg);
+  });
+
+  /* ---------- service cards ---------- */
+  var serviceDetails = {
+    strategy: "Strategy & Planning: we'll help define the roadmap, prioritize features, and align your team before any pixels get pushed.",
+    research: "User Research: interviews, surveys and usability testing to make sure decisions are based on real user behavior, not guesses.",
+    web: "Web Design: responsive, accessible websites built to convert — from landing pages to full product sites.",
+    brand: "Brand Design: logos, color systems and visual identity that make your product instantly recognizable."
+  };
+  document.querySelectorAll('.service-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      var key = card.getAttribute('data-service');
+      showToast(serviceDetails[key] || "Thanks for your interest!");
+    });
+  });
+
+  /* ---------- portfolio + modal (data comes from the admin panel) ---------- */
+  var allGrid = document.getElementById('allProjectGrid');
+  var currentFilter = '';
+
+  function coverOf(p){
+    if(p.cover) return p.cover;
+    var img = (p.gallery || []).filter(function(m){ return m.type === 'image'; })[0];
+    return img ? img.url : '';
+  }
+  function ytThumb(url){
+    var m = /youtube(?:-nocookie)?\.com\/embed\/([\w-]+)/.exec(url || '');
+    return m ? 'https://i.ytimg.com/vi/' + m[1] + '/hqdefault.jpg' : '';
+  }
+
+  function buildProjectCard(p, i, order){
+    var card = document.createElement('button');
+    card.className = 'proj-card proj-card-in text-left border border-black rounded-2xl overflow-hidden bg-white group retro-shadow';
+    card.style.animationDelay = (Math.min(order||0, 8) * 0.06) + 's';
+    card.setAttribute('data-index', i);
+    var cover = coverOf(p);
+    var visual = cover
+      ? '<img src="'+esc(cover)+'" alt="'+esc(p.title)+'" loading="lazy" class="proj-img w-full h-full object-cover">'
+      : '<div class="proj-img w-full h-full flex items-center justify-center bg-[#E4DBF8] text-[#755BB4] font-display text-6xl">'+esc((p.title||'?').charAt(0).toUpperCase())+'</div>';
+    card.innerHTML =
+      '<div class="overflow-hidden aspect-[4/3]">' + visual + '</div>' +
+      '<div class="p-4 flex items-center justify-between gap-2">' +
+        '<div class="min-w-0">' +
+          '<span class="inline-block px-2.5 py-0.5 rounded-full border border-black text-[9.5px] font-bold uppercase tracking-wider mb-1.5">'+esc(p.category)+'</span>' +
+          '<h3 class="font-bold text-sm">'+esc(p.title)+'</h3>' +
+        '</div>' +
+        '<svg class="proj-arrow w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>' +
+      '</div>';
+    card.addEventListener('click', function(){ openModal(i); });
+    return card;
+  }
+
+  function renderProjects(filter, gridEl){
+    if(!gridEl) return;
+    currentFilter = filter || '';
+    gridEl.innerHTML = '';
+    var count = 0;
+    projects.forEach(function(p, i){
+      if(currentFilter && p.category !== currentFilter) return;
+      gridEl.appendChild(buildProjectCard(p, i, count));
+      count++;
+    });
+    if(!projects.length){
+      gridEl.innerHTML = '<p class="col-span-full text-center text-gray-500 py-16">No projects yet. Check back soon.</p>';
+    }
+    var countLabel = document.getElementById('allProjectCount');
+    if(countLabel){
+      countLabel.textContent = projects.length;
+      document.getElementById('allProjectLabel').textContent = projects.length === 1 ? 'project' : 'projects';
+    }
+  }
+
+  function buildFilters(){
+    var bar = document.getElementById('filterBar');
+    var cats = [];
+    projects.forEach(function(p){ if(cats.indexOf(p.category) < 0) cats.push(p.category); });
+    if(cats.length < 2){ bar.classList.add('hidden'); bar.classList.remove('flex'); bar.innerHTML = ''; return; }
+    bar.classList.remove('hidden'); bar.classList.add('flex');
+    bar.innerHTML = '<span class="text-xs font-semibold text-gray-500 mr-1">Filter:</span>' +
+      [''].concat(cats).map(function(c){
+        var on = c === '';
+        return '<button class="filter-btn-all px-4 py-1.5 rounded-full border border-black text-xs font-semibold'+(on?' active bg-black text-white':'')+'" data-filter="'+esc(c)+'">'+(on?'All':esc(c))+'</button>';
+      }).join('');
+    bar.querySelectorAll('.filter-btn-all').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        bar.querySelectorAll('.filter-btn-all').forEach(function(b){ b.classList.remove('active','bg-black','text-white'); });
+        btn.classList.add('active','bg-black','text-white');
+        renderProjects(btn.getAttribute('data-filter'), allGrid);
+      });
+    });
+  }
+
+  /* ---------- "all projects" page-like overlay ---------- */
+  var allProjectsSection = document.getElementById('all-projects');
+  var viewAllBtn = document.getElementById('viewAllProjectsBtn');
+  var backHomeBtn = document.getElementById('backToHomeBtn');
+
+  function showAllProjects(){
+    allProjectsSection.classList.remove('hidden');
+    allProjectsSection.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+    history.pushState(null, '', '#all-projects');
+  }
+  function hideAllProjects(){
+    allProjectsSection.classList.add('hidden');
+    document.body.style.overflow = '';
+    if(location.hash === '#all-projects'){
+      history.pushState(null, '', '#portfolio');
+    }
+  }
+  if(viewAllBtn) viewAllBtn.addEventListener('click', showAllProjects);
+  if(backHomeBtn) backHomeBtn.addEventListener('click', hideAllProjects);
+  if(location.hash === '#all-projects') showAllProjects();
+
+  // links inside the all-projects page that jump back to a homepage section
+  allProjectsSection.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var href = a.getAttribute('href');
+      if(href === '#all-projects') return;
+      e.preventDefault();
+      hideAllProjects();
+      var target = document.querySelector(href);
+      if(target){
+        setTimeout(function(){ scrollToTarget(target); }, 50);
+      }
+    });
+  });
+
+  /* ---------- project modal ---------- */
+  var modal = document.getElementById('projectModal');
+  var stage = document.getElementById('modalStage');
+  var thumbsEl = document.getElementById('modalThumbs');
+  var previewBtn = document.getElementById('modalPreviewBtn');
+  var previewNote = document.getElementById('modalPreviewNote');
+  var modalLike = document.getElementById('modalLike');
+  var modalHeart = document.getElementById('modalHeart');
+  var modalLikeCount = document.getElementById('modalLikeCount');
+  var currentProject = null;
+  var mediaIndex = 0;
+  var previewOn = false;
+
+  function mediaList(p){
+    var list = [];
+    if(p.cover) list.push({type:'image', url:p.cover});
+    (p.gallery || []).forEach(function(m){
+      if(m.type === 'image' && m.url === p.cover) return;
+      list.push(m);
+    });
+    return list;
+  }
+
+  function renderStage(){
+    var p = currentProject;
+    var list = mediaList(p);
+    if(previewOn){
+      stage.innerHTML = '<iframe src="'+esc(p.live_url)+'" title="Live preview of '+esc(p.title)+'" class="w-full h-full bg-white" loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" referrerpolicy="no-referrer"></iframe>';
+      thumbsEl.innerHTML = '';
+      return;
+    }
+    if(!list.length){
+      stage.innerHTML = '<div class="w-full h-full flex items-center justify-center font-display text-7xl text-[#755BB4]">'+esc((p.title||'?').charAt(0).toUpperCase())+'</div>';
+      thumbsEl.innerHTML = '';
+      return;
+    }
+    var m = list[mediaIndex] || list[0];
+    if(m.type === 'video'){
+      stage.innerHTML = '<video src="'+esc(m.url)+'" controls playsinline preload="metadata" class="w-full h-full bg-black"></video>';
+    } else if(m.type === 'embed'){
+      stage.innerHTML = '<iframe src="'+esc(m.url)+'" title="Project video" class="w-full h-full" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    } else {
+      stage.innerHTML = '<img src="'+esc(m.url)+'" alt="'+esc(p.title)+'" class="w-full h-full object-cover">';
+    }
+    if(list.length < 2){ thumbsEl.innerHTML = ''; return; }
+    thumbsEl.innerHTML = list.map(function(item, idx){
+      var inner;
+      if(item.type === 'image') inner = '<img src="'+esc(item.url)+'" alt="" class="w-full h-full object-cover">';
+      else if(item.type === 'embed' && ytThumb(item.url)) inner = '<img src="'+esc(ytThumb(item.url))+'" alt="" class="w-full h-full object-cover">';
+      else inner = '<span class="w-full h-full flex items-center justify-center bg-black text-white text-xs">&#9654;</span>';
+      return '<button type="button" data-i="'+idx+'" aria-label="Show item '+(idx+1)+' of '+list.length+'" class="shrink-0 w-16 h-12 rounded-lg overflow-hidden border '+(idx===mediaIndex?'border-black ring-2 ring-[#755BB4]':'border-gray-300 opacity-70 hover:opacity-100')+'">'+inner+'</button>';
+    }).join('');
+  }
+  thumbsEl.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-i]');
+    if(!b) return;
+    mediaIndex = Number(b.getAttribute('data-i'));
+    renderStage();
+  });
+
+  function setPreview(on){
+    previewOn = on;
+    previewBtn.textContent = on ? 'Back to gallery' : 'Live preview';
+    previewNote.classList.toggle('hidden', !on);
+    renderStage();
+  }
+  previewBtn.addEventListener('click', function(){ setPreview(!previewOn); });
+
+  function setLink(id, url){
+    var el = document.getElementById(id);
+    if(url){ el.href = url; el.classList.remove('hidden'); } else { el.classList.add('hidden'); }
+  }
+  function paintLike(){
+    var liked = !!likes[currentProject.id];
+    modalLikeCount.textContent = currentProject.likes;
+    modalHeart.setAttribute('fill', liked ? 'currentColor':'none');
+    modalLike.setAttribute('aria-pressed', liked ? 'true' : 'false');
+  }
+
+  function openModal(i){
+    var p = projects[i];
+    if(!p) return;
+    currentProject = p; mediaIndex = 0; previewOn = false;
+    document.getElementById('modalTag').textContent = p.category;
+    document.getElementById('modalMeta').textContent = [p.client, p.year].filter(Boolean).join(' · ');
+    document.getElementById('modalTitle').textContent = p.title;
+    var short = document.getElementById('modalShort'), desc = document.getElementById('modalDesc');
+    short.textContent = p.short_desc || ''; short.classList.toggle('hidden', !p.short_desc);
+    desc.textContent = p.description || ''; desc.classList.toggle('hidden', !p.description);
+    document.getElementById('modalTech').innerHTML = (p.tech || []).map(function(t){
+      return '<span class="px-2.5 py-0.5 rounded-full border border-black bg-[#F7F5FC] text-[11px] font-semibold">'+esc(t)+'</span>';
+    }).join('');
+    previewBtn.classList.toggle('hidden', !p.live_url);
+    previewBtn.textContent = 'Live preview';
+    previewNote.classList.add('hidden');
+    document.getElementById('modalPreviewOpen').href = p.live_url || '#';
+    setLink('modalLive', p.live_url);
+    setLink('modalGithub', p.github_url);
+    paintLike();
+    renderStage();
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    stage.innerHTML = ''; // stops any playing video
+    currentProject = null;
+    // the all-projects page keeps its own scroll lock
+    document.body.style.overflow = allProjectsSection.classList.contains('hidden') ? '' : 'hidden';
+  }
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').addEventListener('click', closeModal);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
+
+  modalLike.addEventListener('click', function(){
+    var p = currentProject;
+    if(!p) return;
+    var nowLiked = !likes[p.id];
+    likes[p.id] = nowLiked;
+    p.likes = Math.max(0, p.likes + (nowLiked ? 1 : -1));
+    try { localStorage.setItem('pd-likes', JSON.stringify(likes)); } catch(err){}
+    paintLike();
+    if(nowLiked){
+      modalHeart.classList.add('liked');
+      setTimeout(function(){ modalHeart.classList.remove('liked'); }, 350);
+    }
+    fetch('/api/projects/'+p.id+'/like', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({like: nowLiked})})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){ if(d && currentProject === p){ p.likes = d.likes; paintLike(); } })
+      .catch(function(){});
+  });
+
+  /* ---------- team marquee ---------- */
+  function teamCard(m, ghost){
+    var avatar = m.photo || ('https://api.dicebear.com/9.x/avataaars/svg?seed='+encodeURIComponent(m.name)+'-purpledev&backgroundColor=ffffff&radius=50');
+    var links = '';
+    [['linkedin', m.linkedin, 'LinkedIn'], ['github', m.github, 'GitHub']].forEach(function(l){
+      if(!l[1]) return;
+      links += '<a href="'+esc(l[1])+'" target="_blank" rel="noopener"'+(ghost?' tabindex="-1"':'')+' aria-label="'+esc(m.name)+' on '+l[2]+'" class="w-7 h-7 rounded-full border border-black bg-white flex items-center justify-center hover:bg-gray-100 transition">'+svgIcon(l[0],'w-3.5 h-3.5')+'</a>';
+    });
+    return '<div class="team-card shrink-0 w-[190px] sm:w-[230px] border border-black rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center retro-shadow" style="background:'+esc(m.color)+'"'+(ghost?' aria-hidden="true"':'')+'>' +
+      '<img src="'+esc(avatar)+'" alt="'+(ghost?'':esc(m.name))+'" class="team-avatar w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-black bg-white object-cover" />' +
+      '<h3 class="mt-4 text-sm sm:text-base font-bold text-slate-900">'+esc(m.name)+'</h3>' +
+      (m.role ? '<span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full border border-black bg-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wide">'+esc(m.role)+'</span>' : '') +
+      (m.subtitle ? '<p class="mt-1.5 text-[11px] sm:text-[12.5px] text-gray-600">'+esc(m.subtitle)+'</p>' : '') +
+      (links ? '<div class="mt-3 flex gap-2">'+links+'</div>' : '') +
+    '</div>';
+  }
+  /* ----- carousel: three identical copies of the card set sit side by side; we slide a transform and
+         quietly jump by exactly one copy so it can loop forever in both directions.
+         The arrows move exactly one member per press and always land on a card. ----- */
+  var teamTrack = document.getElementById('teamTrack');
+  var teamViewport = document.getElementById('teamViewport');
+  var TEAM_SPEED = 30;                      // px per second of the slow automatic drift
+  var teamReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasIO = 'IntersectionObserver' in window;
+  var car = { offset:0, half:0, unit:0, origin:0, last:0, raf:0, tween:null, hover:false, pauseUntil:0,
+              inView:!hasIO, started:!hasIO, drag:null, justDragged:false, w:0 };
+
+  function carApply(){ teamTrack.style.transform = 'translate3d(' + (-car.offset) + 'px,0,0)'; }
+  function carNormalize(){
+    var h = car.half; if(!h) return;
+    var d = 0;
+    if(car.offset >= 2*h) d = -h; else if(car.offset < h) d = h;
+    if(!d) return;
+    car.offset += d;
+    if(car.tween){ car.tween.from += d; car.tween.to += d; }
+    if(car.drag) car.drag.off += d;
+  }
+  function carTick(ts){
+    car.raf = 0;
+    var dt = Math.min(64, ts - (car.last || ts)); car.last = ts;
+    var tw = car.tween;
+    if(tw){
+      var t = Math.min(1, (ts - tw.start) / tw.dur);
+      car.offset = tw.from + (tw.to - tw.from) * (1 - Math.pow(1 - t, 3));
+      if(t >= 1){ car.tween = null; car.pauseUntil = ts + 2500; }
+    } else if(!car.drag && !car.hover && !teamReduce && ts > car.pauseUntil){
+      car.offset += TEAM_SPEED * dt / 1000;
+    }
+    carNormalize();
+    carApply();
+    if((car.inView || car.tween) && car.half) car.raf = requestAnimationFrame(carTick);
+  }
+  function carStart(){ if(!car.raf && (car.inView || car.tween) && car.half){ car.last = 0; car.raf = requestAnimationFrame(carTick); } }
+
+  // arrow buttons: exactly one member per press (rapid presses queue up one by one)
+  function carMove(dir){
+    if(!car.half) return;
+    var base = car.tween ? car.tween.to : car.offset;
+    var idx = Math.round((base - car.origin) / car.unit);       // the card we are on (or heading to)
+    var to = car.origin + (idx + dir) * car.unit;
+    car.tween = { from: car.offset, to: to, start: performance.now(), dur: teamReduce ? 1 : 380 };
+    carStart();
+  }
+  document.getElementById('teamPrev').addEventListener('click', function(){ carMove(-1); });
+  document.getElementById('teamNext').addEventListener('click', function(){ carMove(1); });
+
+  // hover / keyboard focus pauses the drift so people can read a card
+  teamViewport.addEventListener('pointerenter', function(e){ if(e.pointerType === 'mouse') car.hover = true; });
+  teamViewport.addEventListener('pointerleave', function(e){ if(e.pointerType === 'mouse') car.hover = false; });
+  teamViewport.addEventListener('focusin', function(e){ try{ if(e.target.matches(':focus-visible')) car.hover = true; }catch(err){} });   // keyboard focus only, so a tap never freezes it
+  teamViewport.addEventListener('focusout', function(){ car.hover = false; });
+  teamViewport.addEventListener('scroll', function(){ teamViewport.scrollLeft = 0; });   // focus must not scroll the clipped box
+
+  // drag / swipe
+  teamViewport.addEventListener('pointerdown', function(e){
+    if(e.pointerType === 'mouse' && e.button !== 0) return;
+    car.drag = { x: e.clientX, off: car.offset, moved: false };
+  });
+  teamViewport.addEventListener('pointermove', function(e){
+    var d = car.drag; if(!d) return;
+    var dx = e.clientX - d.x;
+    if(!d.moved && Math.abs(dx) > 6){
+      d.moved = true; car.tween = null;
+      teamViewport.classList.add('grabbing');
+      try{ teamViewport.setPointerCapture(e.pointerId); }catch(err){}
+    }
+    if(d.moved){ car.offset = d.off - dx; carNormalize(); carApply(); }
+  });
+  function carDragEnd(){
+    var d = car.drag; if(!d) return;
+    car.drag = null;
+    teamViewport.classList.remove('grabbing');
+    if(d.moved){ car.justDragged = true; setTimeout(function(){ car.justDragged = false; }, 60); }
+    car.pauseUntil = performance.now() + 1500;
+    carStart();
+  }
+  teamViewport.addEventListener('pointerup', carDragEnd);
+  teamViewport.addEventListener('pointercancel', carDragEnd);
+  teamViewport.addEventListener('click', function(e){ if(car.justDragged){ e.preventDefault(); e.stopPropagation(); } }, true);
+
+  // only animate while the section is on screen; the first time it appears it always starts at member 1
+  if(hasIO){
+    new IntersectionObserver(function(entries){
+      car.inView = entries[0].isIntersecting;
+      if(car.inView && !car.started && car.half){
+        car.started = true;
+        car.offset = car.origin; car.tween = null;
+        car.pauseUntil = performance.now() + 800;    // starts on member 1, then keeps scrolling
+        carApply();
+      }
+      if(car.inView) carStart();
+    }, { threshold: 0.15 }).observe(document.getElementById('teamWrap'));
+  }
+
+  var teamBucket = null;
+  function renderTeamSection(){
+    var section = document.getElementById('team');
+    var has = teamList.length > 0;
+    section.classList.toggle('hidden', !has);
+    document.querySelectorAll('a[href="#team"]').forEach(function(a){ a.classList.toggle('hidden', !has); });
+    if(car.raf){ cancelAnimationFrame(car.raf); car.raf = 0; }
+    if(!has){ teamTrack.innerHTML = ''; car.half = 0; return; }
+    var vw = window.innerWidth, small = vw < 640;
+    teamBucket = small; car.w = vw;
+    var cardW = small ? 190 : 230, gap = small ? 20 : 24, pad = small ? 20 : 24, unit = cardW + gap;
+    // repeat the set until one copy is wider than the screen, so there is never a gap
+    var reps = Math.max(1, Math.ceil((vw + cardW) / (teamList.length * unit)));
+    var copy = '', ghost = '';
+    for(var r = 0; r < reps; r++){ teamList.forEach(function(m){ copy += teamCard(m, r > 0); ghost += teamCard(m, true); }); }
+    teamTrack.innerHTML = copy + ghost + ghost;
+    car.unit = unit;
+    car.half = reps * teamList.length * unit;            // width of one copy (fixed card width + gap, so no measuring needed)
+    // offset that puts member 1 of the middle copy in view: centred on phones, left-aligned on wider screens
+    car.origin = pad + car.half - (small ? (vw - cardW) / 2 : pad);
+    car.offset = car.origin; car.tween = null; car.pauseUntil = performance.now() + 800;
+    carApply();
+    carStart();
+  }
+  var teamResizeTimer;
+  window.addEventListener('resize', function(){
+    if(!teamList.length || window.innerWidth === car.w) return;   // ignore mobile address-bar height changes
+    clearTimeout(teamResizeTimer);
+    teamResizeTimer = setTimeout(renderTeamSection, 150);
+  });
+
+  /* ---------- social links + site text ---------- */
+  function svgIcon(key, cls){
+    var p = platforms[key] || platforms.other;
+    if(!p) return '';
+    return '<svg class="'+cls+'" viewBox="0 0 24 24" '+(p.filled ? 'fill="currentColor"' : 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"')+' aria-hidden="true">'+p.svg+'</svg>';
+  }
+  function linkLabel(s){ return s.label || (platforms[s.platform] && platforms[s.platform].label) || 'Link'; }
+  function socialLink(s, cls){
+    var web = /^https?:/i.test(s.url);
+    return '<a aria-label="'+esc(linkLabel(s))+'" title="'+esc(linkLabel(s))+'" class="'+cls+'" href="'+esc(s.url)+'"'+(web?' target="_blank" rel="noopener"':'')+'>'+svgIcon(s.platform, s.platform === 'x' ? 'w-3.5 h-3.5' : 'w-4 h-4')+'</a>';
+  }
+  function renderSocials(list){
+    var header = document.getElementById('headerSocials');
+    header.innerHTML = list.slice(0, 3).map(function(s){
+      return socialLink(s, 'social-btn w-9 h-8 rounded-lg border border-black flex items-center justify-center text-slate-900 hover:bg-gray-50 transition');
+    }).join('');
+    header.style.display = list.length ? '' : 'none';
+    document.getElementById('contactSocials').innerHTML = list.map(function(s){
+      return socialLink(s, 'w-10 h-10 rounded-full border border-white/40 flex items-center justify-center text-white hover:bg-white hover:text-black transition');
+    }).join('');
+  }
+  function bindText(key, value){
+    document.querySelectorAll('[data-bind="'+key+'"]').forEach(function(el){ el.textContent = value; });
+  }
+
+  function loadSite(){
+    fetch('/api/site', {cache:'no-cache'})
+      .then(function(r){ if(!r.ok) throw new Error('bad status'); return r.json(); })
+      .then(function(data){
+        platforms = data.platforms || {};
+        var s = data.site || {};
+        ['brand_name','tagline','site_url_label','about_heading','about_description'].forEach(function(k){ if(s[k]) bindText(k, s[k]); });
+        if(s.brand_name) document.title = s.brand_name + ' — Product Designer';
+        if(s.availability_message) availMsg = s.availability_message;
+        var mail = document.getElementById('contactEmail');
+        if(s.contact_email){ mail.textContent = s.contact_email; mail.href = 'mailto:' + s.contact_email; }
+        else { mail.classList.add('hidden'); if(mail.nextElementSibling) mail.nextElementSibling.classList.add('hidden'); }
+        var loc = document.getElementById('contactLocation');
+        if(s.location){ loc.textContent = s.location; }
+        else { loc.classList.add('hidden'); if(loc.nextElementSibling) loc.nextElementSibling.classList.add('hidden'); }
+        renderSocials(data.socials || []);
+        teamList = data.team || [];
+        renderTeamSection();
+        renderPlans(data.plans || []);
+        renderFaqs(data.faqs || []);
+        projects = data.projects || [];
+        buildFilters();
+        renderProjects('', allGrid);
+        var none = projects.length === 0;
+        viewAllBtn.classList.toggle('hidden', none);
+        document.getElementById('noProjectsNote').classList.toggle('hidden', !none);
+      })
+      .catch(function(){ /* leave the page as-is if the API can't be reached */ if(!plansRendered) renderPlans([]); });
+  }
+
+  /* ---------- pricing: plans + offers come from the admin panel, prices are in Indian rupees ---------- */
+  var plansList = [];
+  var plansRendered = false;
+  var yearly = false;
+  var billingRow = document.getElementById('billingRow');
+  var billingToggle = document.getElementById('billingToggle');
+  var billingKnob = document.getElementById('billingKnob');
+  var plansGrid = document.getElementById('plansGrid');
+  var plansEmpty = document.getElementById('plansEmpty');
+
+  function inr(n){ return '\u20B9' + Number(n).toLocaleString('en-IN'); }
+
+  // what one card shows for the selected billing period (label always matches the number)
+  function priceView(p, wantYearly){
+    var m = p.price_monthly, y = p.price_yearly;
+    var v = { amount:null, unit:'', old:null, note:'', label:'' };
+    if(m == null && y == null){ v.label = p.price_label || 'Custom'; return v; }
+    var useYearly = wantYearly ? (y != null) : (m == null);
+    if(useYearly){
+      v.amount = y; v.unit = '/year'; v.old = p.old_price_yearly;
+      if(wantYearly){
+        v.note = '\u2248 ' + inr(Math.round(y / 12)) + '/month, billed yearly';
+        if(m != null && m * 12 > y) v.note += ' \u00B7 save ' + inr(m * 12 - y);
+      } else {
+        v.note = 'Yearly billing only';
+      }
+    } else {
+      v.amount = m; v.unit = '/month'; v.old = p.old_price_monthly;
+      if(wantYearly) v.note = 'Monthly billing only';
+    }
+    return v;
+  }
+
+  function planCard(p, i){
+    var offer = !!p.is_offer, featured = !!p.featured && !offer;
+    var hasPrice = p.price_monthly != null || p.price_yearly != null;
+    var badge = offer ? (p.badge || 'Special offer') : (featured ? (p.badge || 'Most popular') : (p.badge || ''));
+    var cls = 'relative flex flex-col rounded-2xl p-6 sm:p-7 ';
+    cls += offer ? 'offer-card border-[1.5px] border-black sm:scale-105 ' : (featured ? 'border-[1.5px] border-black shadow-md sm:scale-105 ' : 'border border-black ');
+    var badgeHtml = '';
+    if(badge){
+      badgeHtml = '<span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase flex items-center gap-1 whitespace-nowrap z-[2] ' +
+        (offer ? 'offer-badge text-black border border-black' : 'bg-black text-white') + '">' +
+        '<svg class="w-2.5 h-2.5 twinkle" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>' +
+        esc(badge) + '</span>';
+    }
+    var feats = (p.features || []).map(function(f){ return '<li>\u2713 ' + esc(f) + '</li>'; }).join('');
+    var btnLabel = p.button_text || (hasPrice ? 'Choose ' + p.name : 'Contact sales');
+    var btnCls = (offer || featured) ? 'pop-cta bg-black text-white' : 'bg-white';
+    if(offer) btnCls += ' shine-btn';
+    return '<div class="' + cls + '" style="background:' + esc(p.color || '#E4E1F8') + '">' +
+      (offer ? '<span class="offer-sheen" aria-hidden="true"></span>' : '') + badgeHtml +
+      '<h3 class="font-bold text-lg mb-1 relative z-[2]">' + esc(p.name) + '</h3>' +
+      (p.description ? '<p class="text-xs text-gray-700 mb-4 relative z-[2]">' + esc(p.description) + '</p>' : '<div class="mb-4"></div>') +
+      '<div class="mb-5 relative z-[2]" data-price-idx="' + i + '">' +
+        '<p class="flex items-baseline flex-wrap gap-x-2"><span class="old-price text-sm text-gray-500 line-through hidden"></span>' +
+        '<span class="price text-3xl font-bold"></span><span class="unit text-sm text-gray-600"></span></p>' +
+        '<p class="price-note text-[11px] text-gray-600 mt-1 min-h-[16px]"></p>' +
+      '</div>' +
+      (feats ? '<ul class="text-xs text-gray-800 space-y-2 mb-6 flex-1 relative z-[2]">' + feats + '</ul>' : '<div class="flex-1"></div>') +
+      '<button type="button" data-idx="' + i + '" data-plan="' + esc(p.name) + '" class="choose-plan relative z-[2] px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow ' + btnCls + '">' + esc(btnLabel) + '</button>' +
+    '</div>';
+  }
+
+  // update only the numbers, so the offer animations don't restart every time someone flips the switch
+  function paintPrices(){
+    plansGrid.querySelectorAll('[data-price-idx]').forEach(function(box){
+      var p = plansList[Number(box.getAttribute('data-price-idx'))]; if(!p) return;
+      var v = priceView(p, yearly);
+      var priceEl = box.querySelector('.price'), unitEl = box.querySelector('.unit'), oldEl = box.querySelector('.old-price');
+      priceEl.textContent = v.amount != null ? inr(v.amount) : v.label;
+      unitEl.textContent = v.amount != null ? v.unit : '';
+      var hasOld = v.amount != null && v.old != null;
+      oldEl.textContent = hasOld ? inr(v.old) : '';
+      oldEl.classList.toggle('hidden', !hasOld);
+      box.querySelector('.price-note').textContent = v.note;
+    });
+  }
+
+  function renderPlans(list){
+    plansRendered = true;
+    plansList = list || [];
+    var n = plansList.length;
+    plansEmpty.classList.toggle('hidden', n > 0);
+    plansGrid.classList.toggle('hidden', n === 0);
+    if(!n){ billingRow.classList.add('hidden'); return; }
+
+    // layout follows how many cards there are
+    plansGrid.className = 'grid grid-cols-1 gap-6 ' + (n === 1 ? 'max-w-sm mx-auto' : n === 2 ? 'sm:grid-cols-2 max-w-[700px] mx-auto' : n === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-3');
+    plansGrid.innerHTML = plansList.map(planCard).join('');
+
+    // the monthly/yearly switch only appears when it changes something
+    var both = plansList.filter(function(p){ return p.price_monthly != null && p.price_yearly != null; });
+    billingRow.classList.toggle('hidden', both.length === 0);
+    var saves = both.map(function(p){ return Math.round((1 - p.price_yearly / (p.price_monthly * 12)) * 100); }).filter(function(x){ return x > 0; });
+    var note = document.getElementById('saveNote');
+    if(saves.length){
+      var lo = Math.min.apply(null, saves), hi = Math.max.apply(null, saves);
+      note.textContent = '(save ' + (lo === hi ? '' : 'up to ') + hi + '%)';
+    } else { note.textContent = ''; }
+    if(!both.length) yearly = false;
+    syncToggle();
+    paintPrices();
+  }
+
+  function syncToggle(){
+    billingToggle.setAttribute('aria-pressed', yearly);
+    billingKnob.style.transform = yearly ? 'translateX(24px)' : 'translateX(0)';
+  }
+  billingToggle.addEventListener('click', function(){ yearly = !yearly; syncToggle(); paintPrices(); });
+
+  /* ---------- choose plan buttons (cards are drawn by script, so one listener on the grid) ---------- */
+  plansGrid.addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('.choose-plan') : null;
+    if(!btn) return;
+    var p = plansList[Number(btn.getAttribute('data-idx'))]; if(!p) return;
+    var v = priceView(p, yearly);
+    var cycle = v.amount != null ? (v.unit === '/year' ? ', billed yearly' : ', billed monthly') : '';
+    showToast('"' + p.name + '" selected \u2014 scroll down to send a message and we\'ll follow up.');
+    scrollToTarget(document.getElementById('contact'));
+    var msg = document.getElementById('cf-message');
+    if(msg && !msg.value){ msg.value = "Hi, we're interested in the " + p.name + (p.is_offer ? (/offer/i.test(p.name) ? '' : ' offer') : ' plan') + cycle + '. '; }
+  });
+
+  /* ---------- FAQ accordion (list comes from the admin panel) ---------- */
+  var faqWrap = document.getElementById('faqWrap');
+  var faqList = document.getElementById('faqList');
+  function renderFaqs(list){
+    faqWrap.classList.toggle('hidden', !list.length);
+    faqList.innerHTML = list.map(function(f){
+      return '<div class="border border-black rounded-xl overflow-hidden">' +
+        '<button class="acc-btn w-full flex items-center justify-between px-4 py-3 text-left text-sm font-semibold" aria-expanded="false">' +
+        esc(f.question) +
+        '<svg class="acc-chevron w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
+        '</button>' +
+        '<div class="acc-panel px-4 text-xs text-gray-700 leading-relaxed"><p class="pb-4">' + esc(f.answer) + '</p></div>' +
+        '</div>';
+    }).join('');
+  }
+  faqList.addEventListener('click', function(e){
+    var btn = e.target.closest('.acc-btn');
+    if(!btn) return;
+    var panel = btn.nextElementSibling;
+    var isOpen = panel.classList.contains('open');
+    faqList.querySelectorAll('.acc-panel').forEach(function(p){ p.classList.remove('open'); });
+    faqList.querySelectorAll('.acc-btn').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+    if(!isOpen){
+      panel.classList.add('open');
+      btn.setAttribute('aria-expanded','true');
+    }
+  });
+
+  /* ---------- contact form (saved to the admin inbox) ---------- */
+  var form = document.getElementById('contactForm');
+  var formError = document.getElementById('formError');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = document.getElementById('cf-name').value.trim();
+    var email = document.getElementById('cf-email').value.trim();
+    var message = document.getElementById('cf-message').value.trim();
+    var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if(!name || !emailOk || !message){
+      formError.classList.remove('hidden');
+      return;
+    }
+    formError.classList.add('hidden');
+    var btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    fetch('/api/contact', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({name:name, email:email, message:message, website: document.getElementById('cf-website').value})
+    })
+    .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(d){ return {ok:r.ok, d:d}; }); })
+    .then(function(res){
+      if(!res.ok) throw new Error(res.d.error || 'Something went wrong.');
+      showToast('Thanks '+name.split(' ')[0]+' — your message is sent. We\'ll reply within a day.');
+      form.reset();
+    })
+    .catch(function(err){ showToast(err.message || 'We couldn\'t send that. Please try again.'); })
+    .then(function(){ btn.disabled = false; });
+  });
+
+  updateActiveNav();
+  loadSite();
+})();
+</script>
+</body>
+</html>
