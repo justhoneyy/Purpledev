@@ -218,7 +218,7 @@
 <!-- ============ HEADER ============ -->
 <header class="w-full bg-white/90 backdrop-blur border-b border-gray-100/60 sticky top-0 z-50">
   <div class="max-w-[1240px] mx-auto px-5 sm:px-6 md:px-12 h-16 md:h-20 flex items-center justify-between">
-    <a class="text-xl md:text-[26px] font-bold tracking-tight text-black hover:opacity-90 transition" data-nav href="#home">purple dev</a>
+    <a class="text-xl md:text-[26px] font-bold tracking-tight text-black hover:opacity-90 transition" data-nav href="#home"><span data-bind="brand_name">purple dev</span></a>
 
     <nav class="hidden md:flex items-center space-x-4 lg:space-x-7 text-[13.5px] lg:text-[14.5px] font-medium text-gray-700 whitespace-nowrap">
       <a class="nav-link hover:text-black transition" data-nav href="#home">Home</a>
@@ -231,17 +231,7 @@
     </nav>
 
     <div class="flex items-center gap-2.5">
-      <div class="hidden sm:flex md:hidden lg:flex items-center space-x-2.5">
-        <a aria-label="X (Twitter)" class="social-btn w-9 h-8 rounded-lg border border-black flex items-center justify-center text-slate-900 hover:bg-gray-50 transition" href="https://x.com" target="_blank" rel="noopener">
-          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-        </a>
-        <a aria-label="Dribbble" class="social-btn w-9 h-8 rounded-lg border border-black flex items-center justify-center text-slate-900 hover:bg-gray-50 transition" href="https://dribbble.com" target="_blank" rel="noopener">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.93 4.93l2.12 2.12m9.9 9.9l2.12 2.12M4.93 19.07l2.12-2.12m9.9-9.9l2.12-2.12"></path></svg>
-        </a>
-        <a aria-label="Instagram" class="social-btn w-9 h-8 rounded-lg border border-black flex items-center justify-center text-slate-900 hover:bg-gray-50 transition" href="https://instagram.com" target="_blank" rel="noopener">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><rect height="20" rx="5" ry="5" width="20" x="2" y="2"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
-        </a>
-      </div>
+      <div id="headerSocials" class="hidden sm:flex md:hidden lg:flex items-center space-x-2.5" style="display:none"></div>
 
       <!-- mobile menu button -->
       <button id="menuBtn" aria-label="Open menu" aria-expanded="false" class="md:hidden w-10 h-9 rounded-lg border border-black flex items-center justify-center">
@@ -301,7 +291,7 @@
         </div>
 
         <h1 class="hero-rise text-[34px] sm:text-5xl md:text-[54px] font-bold text-black tracking-tight leading-[1.18] mb-5 md:mb-6" data-d="2">
-          We're purple dev,<br>
+          We're <span data-bind="brand_name">purple dev</span>,<br>
           a <span class="relative inline-block">
             product
             <svg class="absolute -bottom-2.5 left-0 w-[108%] h-4 text-[#755BB4] pointer-events-none" fill="none" preserveAspectRatio="none" viewBox="0 0 160 18">
@@ -310,7 +300,7 @@
           </span> design team.
         </h1>
 
-        <p class="hero-rise text-[15px] sm:text-[15.5px] leading-relaxed text-gray-700 max-w-md mb-8 md:mb-9 font-normal" data-d="3">
+        <p class="hero-rise text-[15px] sm:text-[15.5px] leading-relaxed text-gray-700 max-w-md mb-8 md:mb-9 font-normal" data-d="3" data-bind="tagline">
           We're a product design team based in India. We're very passionate about the work that we do.
         </p>
 
@@ -330,7 +320,7 @@
               <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#28C840]"></span>
             </div>
             <div class="flex-1 h-4 sm:h-5 rounded-full bg-white border border-black/10 flex items-center justify-center">
-              <span class="text-[8px] sm:text-[10px] text-gray-500 font-medium tracking-wide">purpledevs.qd.je</span>
+              <span class="text-[8px] sm:text-[10px] text-gray-500 font-medium tracking-wide" data-bind="site_url_label">purpledevs.qd.je</span>
             </div>
           </div>
           <!-- animated website-design canvas, in place of a video -->
@@ -396,7 +386,7 @@
 </section>
 
 <!-- ============ TEAM ============ -->
-<section class="relative bg-white py-16 sm:py-20 md:py-24 overflow-hidden border-b border-gray-100" id="team">
+<section class="hidden relative bg-white py-16 sm:py-20 md:py-24 overflow-hidden border-b border-gray-100" id="team">
   <svg class="doodle w-6 h-6 text-[#8F76BE] left-[6%] top-[10%] twinkle-slow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
   <svg class="doodle w-4 h-4 text-[#F4A6C8] right-[10%] top-[16%] drift" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
   <svg class="doodle w-8 h-8 text-[#755BB4]/70 left-[3%] bottom-[8%] wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" aria-hidden="true"><path d="M4 8h4M6 6v4"></path><path d="M17 15h4M19 13v4"></path></svg>
@@ -408,7 +398,7 @@
         <span class="text-xs">✦</span><span>OUR TEAM</span>
       </div>
       <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold text-slate-900 tracking-tight leading-snug">
-        The core team behind<br class="hidden sm:inline"> purple dev.
+        The core team behind<br class="hidden sm:inline"> <span data-bind="brand_name">purple dev</span>.
       </h2>
       <p class="mt-4 text-[13.5px] sm:text-[15px] text-gray-600 max-w-md mx-auto">
         A small crew of builders keeping the security tight and the models sharp.
@@ -421,65 +411,7 @@
     <div class="pointer-events-none absolute inset-y-0 left-0 w-14 sm:w-28 bg-gradient-to-r from-white to-transparent z-10"></div>
     <div class="pointer-events-none absolute inset-y-0 right-0 w-14 sm:w-28 bg-gradient-to-l from-white to-transparent z-10"></div>
 
-    <div class="team-track flex gap-5 sm:gap-6 px-5 sm:px-6">
-      <!-- set A -->
-      <div class="team-card shrink-0 w-[190px] sm:w-[230px] bg-[#E4E1F8] border border-black rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center retro-shadow">
-        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Bhawishya-purpledev&backgroundColor=ffffff&radius=50" alt="Bhawishya" class="team-avatar w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-black bg-white object-cover" />
-        <h3 class="mt-4 text-sm sm:text-base font-bold text-slate-900">Bhawishya</h3>
-        <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full border border-black bg-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wide">Cybersecurity</span>
-        <p class="mt-1.5 text-[11px] sm:text-[12.5px] text-gray-600">B.Tech CSE</p>
-      </div>
-
-      <div class="team-card shrink-0 w-[190px] sm:w-[230px] bg-[#EDF8E5] border border-black rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center retro-shadow">
-        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Abhinav-purpledev&backgroundColor=ffffff&radius=50" alt="Abhinav" class="team-avatar w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-black bg-white object-cover" />
-        <h3 class="mt-4 text-sm sm:text-base font-bold text-slate-900">Abhinav</h3>
-        <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full border border-black bg-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wide">Cybersecurity</span>
-        <p class="mt-1.5 text-[11px] sm:text-[12.5px] text-gray-600">B.Tech CSE</p>
-      </div>
-
-      <div class="team-card shrink-0 w-[190px] sm:w-[230px] bg-[#FBE4EE] border border-black rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center retro-shadow">
-        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Yuvraj-purpledev&backgroundColor=ffffff&radius=50" alt="Yuvraj" class="team-avatar w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-black bg-white object-cover" />
-        <h3 class="mt-4 text-sm sm:text-base font-bold text-slate-900">Yuvraj</h3>
-        <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full border border-black bg-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wide">AI &amp; ML</span>
-        <p class="mt-1.5 text-[11px] sm:text-[12.5px] text-gray-600">B.Tech CSE</p>
-      </div>
-
-      <div class="team-card shrink-0 w-[190px] sm:w-[230px] bg-[#E5F1FC] border border-black rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center retro-shadow">
-        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aditya-purpledev&backgroundColor=ffffff&radius=50" alt="Aditya" class="team-avatar w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-black bg-white object-cover" />
-        <h3 class="mt-4 text-sm sm:text-base font-bold text-slate-900">Aditya</h3>
-        <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full border border-black bg-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wide">AI &amp; ML</span>
-        <p class="mt-1.5 text-[11px] sm:text-[12.5px] text-gray-600">B.Tech CSE</p>
-      </div>
-
-      <!-- set B (duplicate, hidden from a11y tree, closes the loop) -->
-      <div class="team-card shrink-0 w-[190px] sm:w-[230px] bg-[#E4E1F8] border border-black rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center retro-shadow" aria-hidden="true">
-        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Bhawishya-purpledev&backgroundColor=ffffff&radius=50" alt="" class="team-avatar w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-black bg-white object-cover" />
-        <h3 class="mt-4 text-sm sm:text-base font-bold text-slate-900">Bhawishya</h3>
-        <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full border border-black bg-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wide">Cybersecurity</span>
-        <p class="mt-1.5 text-[11px] sm:text-[12.5px] text-gray-600">B.Tech CSE</p>
-      </div>
-
-      <div class="team-card shrink-0 w-[190px] sm:w-[230px] bg-[#EDF8E5] border border-black rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center retro-shadow" aria-hidden="true">
-        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Abhinav-purpledev&backgroundColor=ffffff&radius=50" alt="" class="team-avatar w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-black bg-white object-cover" />
-        <h3 class="mt-4 text-sm sm:text-base font-bold text-slate-900">Abhinav</h3>
-        <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full border border-black bg-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wide">Cybersecurity</span>
-        <p class="mt-1.5 text-[11px] sm:text-[12.5px] text-gray-600">B.Tech CSE</p>
-      </div>
-
-      <div class="team-card shrink-0 w-[190px] sm:w-[230px] bg-[#FBE4EE] border border-black rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center retro-shadow" aria-hidden="true">
-        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Yuvraj-purpledev&backgroundColor=ffffff&radius=50" alt="" class="team-avatar w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-black bg-white object-cover" />
-        <h3 class="mt-4 text-sm sm:text-base font-bold text-slate-900">Yuvraj</h3>
-        <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full border border-black bg-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wide">AI &amp; ML</span>
-        <p class="mt-1.5 text-[11px] sm:text-[12.5px] text-gray-600">B.Tech CSE</p>
-      </div>
-
-      <div class="team-card shrink-0 w-[190px] sm:w-[230px] bg-[#E5F1FC] border border-black rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center retro-shadow" aria-hidden="true">
-        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aditya-purpledev&backgroundColor=ffffff&radius=50" alt="" class="team-avatar w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-black bg-white object-cover" />
-        <h3 class="mt-4 text-sm sm:text-base font-bold text-slate-900">Aditya</h3>
-        <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full border border-black bg-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wide">AI &amp; ML</span>
-        <p class="mt-1.5 text-[11px] sm:text-[12.5px] text-gray-600">B.Tech CSE</p>
-      </div>
-    </div>
+    <div class="team-track flex gap-5 sm:gap-6 px-5 sm:px-6" id="teamTrack"></div>
   </div>
 </section>
 
@@ -621,6 +553,7 @@
         View all projects
         <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
       </button>
+      <p id="noProjectsNote" class="hidden text-base sm:text-lg text-gray-600 font-medium">New projects are landing soon ✦</p>
     </div>
   </div>
 </section>
@@ -635,7 +568,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         <span class="hidden sm:inline">Back to home</span>
       </button>
-      <span class="text-sm font-bold tracking-tight">purple dev — projects</span>
+      <span class="text-sm font-bold tracking-tight"><span data-bind="brand_name">purple dev</span> — projects</span>
       <a href="#contact" id="allProjectsTalkLink" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full border border-white/30 hover:border-white transition">
         Let's talk →
       </a>
@@ -656,7 +589,7 @@
           Every project,<br>filtered by what<br>you're curious about.
         </h1>
         <p class="text-[15px] text-gray-700 max-w-md leading-relaxed">
-          <span id="allProjectCount">6</span> case studies across web, app and brand work — pick a category or open one to read the story behind it.
+          <span id="allProjectCount">0</span> <span id="allProjectLabel">projects</span> to explore. Open one to see the photos, the live site and the story behind it.
         </p>
       </div>
     </div>
@@ -664,14 +597,7 @@
 
   <div class="max-w-[1200px] mx-auto px-5 sm:px-6 md:px-12 py-10 md:py-14">
 
-    <!-- filter buttons -->
-    <div class="flex flex-wrap items-center gap-2.5 mb-10">
-      <span class="text-xs font-semibold text-gray-500 mr-1">Filter:</span>
-      <button class="filter-btn-all active px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="all">All</button>
-      <button class="filter-btn-all px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="web">Web</button>
-      <button class="filter-btn-all px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="app">App</button>
-      <button class="filter-btn-all px-4 py-1.5 rounded-full border border-black text-xs font-semibold" data-filter="brand">Brand</button>
-    </div>
+    <div id="filterBar" class="hidden flex-wrap items-center gap-2.5 mb-10"></div>
 
     <div id="allProjectGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
       <!-- injected by JS: full list -->
@@ -692,21 +618,34 @@
 </section>
 
 <!-- project modal -->
-<div id="projectModal" class="fixed inset-0 z-[95] hidden items-center justify-center p-4">
+<div id="projectModal" class="fixed inset-0 z-[95] hidden items-center justify-center p-3 sm:p-4">
   <div id="modalOverlay" class="absolute inset-0 bg-black/50"></div>
-  <div class="relative bg-white border-[1.5px] border-black rounded-2xl max-w-lg w-full p-6 sm:p-8 max-h-[85vh] overflow-y-auto">
-    <button id="modalClose" aria-label="Close" class="absolute top-4 right-4 w-8 h-8 rounded-full border border-black flex items-center justify-center hover:bg-gray-50">
+  <div role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="relative bg-white border-[1.5px] border-black rounded-2xl max-w-2xl w-full p-4 sm:p-7 max-h-[92vh] overflow-y-auto">
+    <button id="modalClose" aria-label="Close" class="absolute top-3 right-3 sm:top-5 sm:right-5 z-20 w-8 h-8 rounded-full border border-black bg-white flex items-center justify-center hover:bg-gray-50">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
-    <img id="modalImg" class="w-full aspect-[16/10] object-cover rounded-xl border border-black mb-5" src="" alt="">
-    <span id="modalTag" class="inline-block px-3 py-1 rounded-full border border-black text-[10px] font-bold uppercase tracking-wider mb-3"></span>
-    <h3 id="modalTitle" class="text-xl font-bold mb-2"></h3>
-    <p id="modalDesc" class="text-[14px] text-gray-700 leading-relaxed mb-5"></p>
-    <div class="flex items-center gap-3">
-      <button id="modalLike" class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-black text-sm font-semibold retro-shadow">
+
+    <div id="modalStage" class="w-full aspect-[16/10] rounded-xl border border-black overflow-hidden bg-[#F7F5FC] mb-3"></div>
+    <p id="modalPreviewNote" class="hidden text-xs text-gray-500 mb-3">Some websites don't allow being shown inside other pages. If this looks blank, <a id="modalPreviewOpen" class="underline font-semibold text-black" target="_blank" rel="noopener" href="#">open it in a new tab</a>.</p>
+    <div id="modalThumbs" class="flex gap-2 overflow-x-auto pb-1 mb-4"></div>
+
+    <div class="flex flex-wrap items-center gap-2 mb-3">
+      <span id="modalTag" class="inline-block px-3 py-1 rounded-full border border-black text-[10px] font-bold uppercase tracking-wider"></span>
+      <span id="modalMeta" class="text-xs text-gray-500"></span>
+    </div>
+    <h3 id="modalTitle" class="text-xl sm:text-2xl font-bold mb-2"></h3>
+    <p id="modalShort" class="text-[14.5px] text-gray-800 leading-relaxed mb-3"></p>
+    <p id="modalDesc" class="text-[14px] text-gray-700 leading-relaxed whitespace-pre-line mb-4 break-words"></p>
+    <div id="modalTech" class="flex flex-wrap gap-1.5 mb-5"></div>
+
+    <div class="flex flex-wrap items-center gap-2.5">
+      <button id="modalLike" aria-label="Like this project" class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-black text-sm font-semibold retro-shadow">
         <svg id="modalHeart" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
-        <span id="modalLikeCount">12</span>
+        <span id="modalLikeCount">0</span>
       </button>
+      <button id="modalPreviewBtn" class="hidden px-4 py-2 rounded-lg border border-black bg-[#E4DBF8] text-sm font-semibold retro-shadow">Live preview</button>
+      <a id="modalLive" class="hidden px-4 py-2 rounded-lg border border-black bg-white text-sm font-semibold retro-shadow" target="_blank" rel="noopener" href="#">Visit live site</a>
+      <a id="modalGithub" class="hidden px-4 py-2 rounded-lg border border-black bg-white text-sm font-semibold retro-shadow" target="_blank" rel="noopener" href="#">GitHub</a>
       <a id="modalVisit" data-nav href="#contact" class="px-4 py-2 rounded-lg bg-black text-white text-sm font-semibold hover:bg-gray-800 transition">Discuss a project like this</a>
     </div>
   </div>
@@ -841,6 +780,7 @@
         <label class="block text-xs font-medium mb-1.5 text-gray-300" for="cf-message">Message</label>
         <textarea required id="cf-message" name="message" rows="4" class="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/25 text-sm placeholder-gray-400 focus:outline-none focus:border-white resize-none" placeholder="Tell us a bit about your project..."></textarea>
       </div>
+      <div class="hidden" aria-hidden="true"><input type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off"></div>
       <div class="sm:col-span-2 flex items-center justify-between flex-wrap gap-3">
         <p id="formError" class="text-xs text-red-400 hidden">Please fill in every field with a valid email.</p>
         <button type="submit" class="pop-cta ml-auto px-6 py-2.5 bg-white text-black border-[1.5px] border-white rounded-lg text-sm font-semibold retro-shadow">Send message</button>
@@ -848,12 +788,13 @@
     </form>
 
     <div class="reveal flex flex-wrap justify-center gap-x-8 gap-y-3 mt-12 text-sm text-gray-300">
-      <a href="mailto:hello@purpledev.com" class="hover:text-white transition">hello@purpledev.com</a>
+      <a id="contactEmail" href="mailto:hello@purpledev.com" class="hover:text-white transition">hello@purpledev.com</a>
       <span class="hidden sm:inline text-gray-600">·</span>
-      <span>India</span>
+      <span id="contactLocation">India</span>
       <span class="hidden sm:inline text-gray-600">·</span>
       <a href="#" data-nav="#home" class="hover:text-white transition">Back to top ↑</a>
     </div>
+    <div id="contactSocials" class="flex flex-wrap justify-center gap-3 mt-6"></div>
   </div>
 </section>
 
@@ -868,6 +809,20 @@
 <script>
 (function(){
   "use strict";
+
+  /* ---------- live content (loaded from /api/site, edited in /admin) ---------- */
+  var availMsg = "Available for new projects — starting next month ✦";
+  var platforms = {};
+  var projects = [];
+  var teamList = [];
+  var likes = {};
+  try { likes = JSON.parse(localStorage.getItem('pd-likes') || '{}') || {}; } catch(err){ likes = {}; }
+
+  function esc(v){
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
 
   /* ---------- toast helper ---------- */
   var toastEl = document.getElementById('toast');
@@ -953,7 +908,7 @@
     var scrollPos = window.scrollY + 110;
     var current = sections[0];
     sections.forEach(function(sec){
-      if(sec && sec.offsetTop <= scrollPos) current = sec;
+      if(sec && sec.offsetHeight > 0 && sec.offsetTop <= scrollPos) current = sec;
     });
     document.querySelectorAll('.nav-link').forEach(function(link){
       link.classList.toggle('active', current && link.getAttribute('href') === '#'+current.id);
@@ -1018,7 +973,7 @@
 
   /* ---------- availability badge ---------- */
   document.getElementById('availBadge').addEventListener('click', function(){
-    showToast("Available for new projects — starting next month ✦");
+    showToast(availMsg);
   });
 
   /* ---------- service cards ---------- */
@@ -1035,31 +990,35 @@
     });
   });
 
-  /* ---------- portfolio data + rendering ---------- */
-  var projects = [
-    {title:"Fintra Banking App", cat:"app", tag:"App", img:"https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80", desc:"A mobile-first banking experience focused on clarity for first-time investors, redesigned end-to-end across onboarding, transfers and insights."},
-    {title:"Loop Studio Website", cat:"web", tag:"Web", img:"https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&q=80", desc:"Marketing site for a creative studio, built around bold typography and a case-study-first navigation model."},
-    {title:"Nova Identity System", cat:"brand", tag:"Brand", img:"https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&q=80", desc:"Full brand identity for a climate-tech startup: logo, type system, and a flexible color palette used across print and digital."},
-    {title:"Orbit Dashboard", cat:"app", tag:"App", img:"https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80", desc:"An analytics dashboard redesign that cut time-to-insight by simplifying dense tables into scannable visual summaries."},
-    {title:"Marlin Ecommerce", cat:"web", tag:"Web", img:"https://images.unsplash.com/photo-1557821552-17105176677c?w=800&q=80", desc:"A conversion-focused ecommerce storefront with a streamlined checkout that reduced cart abandonment significantly."},
-    {title:"Halo Wellness Brand", cat:"brand", tag:"Brand", img:"https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80", desc:"Warm, approachable branding for a wellness app aimed at reducing the clinical feel typical of health products."}
-  ];
-  var likes = {};
+  /* ---------- portfolio + modal (data comes from the admin panel) ---------- */
   var allGrid = document.getElementById('allProjectGrid');
+  var currentFilter = '';
+
+  function coverOf(p){
+    if(p.cover) return p.cover;
+    var img = (p.gallery || []).filter(function(m){ return m.type === 'image'; })[0];
+    return img ? img.url : '';
+  }
+  function ytThumb(url){
+    var m = /youtube(?:-nocookie)?\.com\/embed\/([\w-]+)/.exec(url || '');
+    return m ? 'https://i.ytimg.com/vi/' + m[1] + '/hqdefault.jpg' : '';
+  }
 
   function buildProjectCard(p, i, order){
     var card = document.createElement('button');
     card.className = 'proj-card proj-card-in text-left border border-black rounded-2xl overflow-hidden bg-white group retro-shadow';
     card.style.animationDelay = (Math.min(order||0, 8) * 0.06) + 's';
     card.setAttribute('data-index', i);
+    var cover = coverOf(p);
+    var visual = cover
+      ? '<img src="'+esc(cover)+'" alt="'+esc(p.title)+'" loading="lazy" class="proj-img w-full h-full object-cover">'
+      : '<div class="proj-img w-full h-full flex items-center justify-center bg-[#E4DBF8] text-[#755BB4] font-display text-6xl">'+esc((p.title||'?').charAt(0).toUpperCase())+'</div>';
     card.innerHTML =
-      '<div class="overflow-hidden aspect-[4/3]">' +
-        '<img src="'+p.img+'" alt="'+p.title+'" class="proj-img w-full h-full object-cover">' +
-      '</div>' +
+      '<div class="overflow-hidden aspect-[4/3]">' + visual + '</div>' +
       '<div class="p-4 flex items-center justify-between gap-2">' +
-        '<div>' +
-          '<span class="inline-block px-2.5 py-0.5 rounded-full border border-black text-[9.5px] font-bold uppercase tracking-wider mb-1.5">'+p.tag+'</span>' +
-          '<h3 class="font-bold text-sm">'+p.title+'</h3>' +
+        '<div class="min-w-0">' +
+          '<span class="inline-block px-2.5 py-0.5 rounded-full border border-black text-[9.5px] font-bold uppercase tracking-wider mb-1.5">'+esc(p.category)+'</span>' +
+          '<h3 class="font-bold text-sm">'+esc(p.title)+'</h3>' +
         '</div>' +
         '<svg class="proj-arrow w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>' +
       '</div>';
@@ -1067,34 +1026,45 @@
     return card;
   }
 
-  function renderProjects(filter, gridEl, limit){
+  function renderProjects(filter, gridEl){
     if(!gridEl) return;
+    currentFilter = filter || '';
     gridEl.innerHTML = '';
     var count = 0;
     projects.forEach(function(p, i){
-      if(filter !== 'all' && p.cat !== filter) return;
-      if(limit && count >= limit) return;
+      if(currentFilter && p.category !== currentFilter) return;
       gridEl.appendChild(buildProjectCard(p, i, count));
       count++;
     });
+    if(!projects.length){
+      gridEl.innerHTML = '<p class="col-span-full text-center text-gray-500 py-16">No projects yet. Check back soon.</p>';
+    }
     var countLabel = document.getElementById('allProjectCount');
-    if(countLabel && gridEl.id === 'allProjectGrid') countLabel.textContent = count;
+    if(countLabel){
+      countLabel.textContent = projects.length;
+      document.getElementById('allProjectLabel').textContent = projects.length === 1 ? 'project' : 'projects';
+    }
   }
 
-  renderProjects('all', allGrid);
-
-  document.querySelectorAll('.filter-btn-all').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('.filter-btn-all').forEach(function(b){
-        b.classList.remove('active','bg-black','text-white');
+  function buildFilters(){
+    var bar = document.getElementById('filterBar');
+    var cats = [];
+    projects.forEach(function(p){ if(cats.indexOf(p.category) < 0) cats.push(p.category); });
+    if(cats.length < 2){ bar.classList.add('hidden'); bar.classList.remove('flex'); bar.innerHTML = ''; return; }
+    bar.classList.remove('hidden'); bar.classList.add('flex');
+    bar.innerHTML = '<span class="text-xs font-semibold text-gray-500 mr-1">Filter:</span>' +
+      [''].concat(cats).map(function(c){
+        var on = c === '';
+        return '<button class="filter-btn-all px-4 py-1.5 rounded-full border border-black text-xs font-semibold'+(on?' active bg-black text-white':'')+'" data-filter="'+esc(c)+'">'+(on?'All':esc(c))+'</button>';
+      }).join('');
+    bar.querySelectorAll('.filter-btn-all').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        bar.querySelectorAll('.filter-btn-all').forEach(function(b){ b.classList.remove('active','bg-black','text-white'); });
+        btn.classList.add('active','bg-black','text-white');
+        renderProjects(btn.getAttribute('data-filter'), allGrid);
       });
-      btn.classList.add('active','bg-black','text-white');
-      renderProjects(btn.getAttribute('data-filter'), allGrid);
     });
-  });
-  // style active filter initially
-  var initialAllFilter = document.querySelector('.filter-btn-all.active');
-  if(initialAllFilter) initialAllFilter.classList.add('bg-black','text-white');
+  }
 
   /* ---------- "all projects" page-like overlay ---------- */
   var allProjectsSection = document.getElementById('all-projects');
@@ -1134,26 +1104,104 @@
 
   /* ---------- project modal ---------- */
   var modal = document.getElementById('projectModal');
-  var modalImg = document.getElementById('modalImg');
-  var modalTag = document.getElementById('modalTag');
-  var modalTitle = document.getElementById('modalTitle');
-  var modalDesc = document.getElementById('modalDesc');
+  var stage = document.getElementById('modalStage');
+  var thumbsEl = document.getElementById('modalThumbs');
+  var previewBtn = document.getElementById('modalPreviewBtn');
+  var previewNote = document.getElementById('modalPreviewNote');
   var modalLike = document.getElementById('modalLike');
   var modalHeart = document.getElementById('modalHeart');
   var modalLikeCount = document.getElementById('modalLikeCount');
-  var currentProjectIndex = null;
+  var currentProject = null;
+  var mediaIndex = 0;
+  var previewOn = false;
+
+  function mediaList(p){
+    var list = [];
+    if(p.cover) list.push({type:'image', url:p.cover});
+    (p.gallery || []).forEach(function(m){
+      if(m.type === 'image' && m.url === p.cover) return;
+      list.push(m);
+    });
+    return list;
+  }
+
+  function renderStage(){
+    var p = currentProject;
+    var list = mediaList(p);
+    if(previewOn){
+      stage.innerHTML = '<iframe src="'+esc(p.live_url)+'" title="Live preview of '+esc(p.title)+'" class="w-full h-full bg-white" loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" referrerpolicy="no-referrer"></iframe>';
+      thumbsEl.innerHTML = '';
+      return;
+    }
+    if(!list.length){
+      stage.innerHTML = '<div class="w-full h-full flex items-center justify-center font-display text-7xl text-[#755BB4]">'+esc((p.title||'?').charAt(0).toUpperCase())+'</div>';
+      thumbsEl.innerHTML = '';
+      return;
+    }
+    var m = list[mediaIndex] || list[0];
+    if(m.type === 'video'){
+      stage.innerHTML = '<video src="'+esc(m.url)+'" controls playsinline preload="metadata" class="w-full h-full bg-black"></video>';
+    } else if(m.type === 'embed'){
+      stage.innerHTML = '<iframe src="'+esc(m.url)+'" title="Project video" class="w-full h-full" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    } else {
+      stage.innerHTML = '<img src="'+esc(m.url)+'" alt="'+esc(p.title)+'" class="w-full h-full object-cover">';
+    }
+    if(list.length < 2){ thumbsEl.innerHTML = ''; return; }
+    thumbsEl.innerHTML = list.map(function(item, idx){
+      var inner;
+      if(item.type === 'image') inner = '<img src="'+esc(item.url)+'" alt="" class="w-full h-full object-cover">';
+      else if(item.type === 'embed' && ytThumb(item.url)) inner = '<img src="'+esc(ytThumb(item.url))+'" alt="" class="w-full h-full object-cover">';
+      else inner = '<span class="w-full h-full flex items-center justify-center bg-black text-white text-xs">&#9654;</span>';
+      return '<button type="button" data-i="'+idx+'" aria-label="Show item '+(idx+1)+' of '+list.length+'" class="shrink-0 w-16 h-12 rounded-lg overflow-hidden border '+(idx===mediaIndex?'border-black ring-2 ring-[#755BB4]':'border-gray-300 opacity-70 hover:opacity-100')+'">'+inner+'</button>';
+    }).join('');
+  }
+  thumbsEl.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-i]');
+    if(!b) return;
+    mediaIndex = Number(b.getAttribute('data-i'));
+    renderStage();
+  });
+
+  function setPreview(on){
+    previewOn = on;
+    previewBtn.textContent = on ? 'Back to gallery' : 'Live preview';
+    previewNote.classList.toggle('hidden', !on);
+    renderStage();
+  }
+  previewBtn.addEventListener('click', function(){ setPreview(!previewOn); });
+
+  function setLink(id, url){
+    var el = document.getElementById(id);
+    if(url){ el.href = url; el.classList.remove('hidden'); } else { el.classList.add('hidden'); }
+  }
+  function paintLike(){
+    var liked = !!likes[currentProject.id];
+    modalLikeCount.textContent = currentProject.likes;
+    modalHeart.setAttribute('fill', liked ? 'currentColor':'none');
+    modalLike.setAttribute('aria-pressed', liked ? 'true' : 'false');
+  }
 
   function openModal(i){
-    currentProjectIndex = i;
     var p = projects[i];
-    modalImg.src = p.img; modalImg.alt = p.title;
-    modalTag.textContent = p.tag;
-    modalTitle.textContent = p.title;
-    modalDesc.textContent = p.desc;
-    var baseLikes = 8 + i*3;
-    var liked = !!likes[i];
-    modalLikeCount.textContent = baseLikes + (liked?1:0);
-    modalHeart.setAttribute('fill', liked ? 'currentColor':'none');
+    if(!p) return;
+    currentProject = p; mediaIndex = 0; previewOn = false;
+    document.getElementById('modalTag').textContent = p.category;
+    document.getElementById('modalMeta').textContent = [p.client, p.year].filter(Boolean).join(' · ');
+    document.getElementById('modalTitle').textContent = p.title;
+    var short = document.getElementById('modalShort'), desc = document.getElementById('modalDesc');
+    short.textContent = p.short_desc || ''; short.classList.toggle('hidden', !p.short_desc);
+    desc.textContent = p.description || ''; desc.classList.toggle('hidden', !p.description);
+    document.getElementById('modalTech').innerHTML = (p.tech || []).map(function(t){
+      return '<span class="px-2.5 py-0.5 rounded-full border border-black bg-[#F7F5FC] text-[11px] font-semibold">'+esc(t)+'</span>';
+    }).join('');
+    previewBtn.classList.toggle('hidden', !p.live_url);
+    previewBtn.textContent = 'Live preview';
+    previewNote.classList.add('hidden');
+    document.getElementById('modalPreviewOpen').href = p.live_url || '#';
+    setLink('modalLive', p.live_url);
+    setLink('modalGithub', p.github_url);
+    paintLike();
+    renderStage();
     modal.classList.remove('hidden');
     modal.classList.add('flex');
     document.body.style.overflow = 'hidden';
@@ -1161,23 +1209,125 @@
   function closeModal(){
     modal.classList.add('hidden');
     modal.classList.remove('flex');
-    document.body.style.overflow = '';
+    stage.innerHTML = ''; // stops any playing video
+    currentProject = null;
+    // the all-projects page keeps its own scroll lock
+    document.body.style.overflow = allProjectsSection.classList.contains('hidden') ? '' : 'hidden';
   }
   document.getElementById('modalClose').addEventListener('click', closeModal);
   document.getElementById('modalOverlay').addEventListener('click', closeModal);
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
 
   modalLike.addEventListener('click', function(){
-    var i = currentProjectIndex;
-    likes[i] = !likes[i];
-    var baseLikes = 8 + i*3;
-    modalLikeCount.textContent = baseLikes + (likes[i]?1:0);
-    modalHeart.setAttribute('fill', likes[i] ? 'currentColor':'none');
-    if(likes[i]){
+    var p = currentProject;
+    if(!p) return;
+    var nowLiked = !likes[p.id];
+    likes[p.id] = nowLiked;
+    p.likes = Math.max(0, p.likes + (nowLiked ? 1 : -1));
+    try { localStorage.setItem('pd-likes', JSON.stringify(likes)); } catch(err){}
+    paintLike();
+    if(nowLiked){
       modalHeart.classList.add('liked');
       setTimeout(function(){ modalHeart.classList.remove('liked'); }, 350);
     }
+    fetch('/api/projects/'+p.id+'/like', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({like: nowLiked})})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){ if(d && currentProject === p){ p.likes = d.likes; paintLike(); } })
+      .catch(function(){});
   });
+
+  /* ---------- team marquee ---------- */
+  function teamCard(m, ghost){
+    var avatar = m.photo || ('https://api.dicebear.com/9.x/avataaars/svg?seed='+encodeURIComponent(m.name)+'-purpledev&backgroundColor=ffffff&radius=50');
+    var links = '';
+    [['linkedin', m.linkedin, 'LinkedIn'], ['github', m.github, 'GitHub']].forEach(function(l){
+      if(!l[1]) return;
+      links += '<a href="'+esc(l[1])+'" target="_blank" rel="noopener"'+(ghost?' tabindex="-1"':'')+' aria-label="'+esc(m.name)+' on '+l[2]+'" class="w-7 h-7 rounded-full border border-black bg-white flex items-center justify-center hover:bg-gray-100 transition">'+svgIcon(l[0],'w-3.5 h-3.5')+'</a>';
+    });
+    return '<div class="team-card shrink-0 w-[190px] sm:w-[230px] border border-black rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center retro-shadow" style="background:'+esc(m.color)+'"'+(ghost?' aria-hidden="true"':'')+'>' +
+      '<img src="'+esc(avatar)+'" alt="'+(ghost?'':esc(m.name))+'" class="team-avatar w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-black bg-white object-cover" />' +
+      '<h3 class="mt-4 text-sm sm:text-base font-bold text-slate-900">'+esc(m.name)+'</h3>' +
+      (m.role ? '<span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full border border-black bg-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wide">'+esc(m.role)+'</span>' : '') +
+      (m.subtitle ? '<p class="mt-1.5 text-[11px] sm:text-[12.5px] text-gray-600">'+esc(m.subtitle)+'</p>' : '') +
+      (links ? '<div class="mt-3 flex gap-2">'+links+'</div>' : '') +
+    '</div>';
+  }
+  var teamBucket = null;
+  function renderTeamSection(){
+    var section = document.getElementById('team');
+    var track = document.getElementById('teamTrack');
+    var has = teamList.length > 0;
+    section.classList.toggle('hidden', !has);
+    document.querySelectorAll('a[href="#team"]').forEach(function(a){ a.classList.toggle('hidden', !has); });
+    if(!has){ track.innerHTML = ''; return; }
+    var small = window.innerWidth < 640;
+    teamBucket = small;
+    var cardW = small ? 190 : 230, gap = small ? 20 : 24;
+    // repeat the set until one half of the loop is wider than the screen, so the marquee never shows a gap
+    var reps = Math.max(1, Math.ceil((window.innerWidth + cardW) / (teamList.length * (cardW + gap))));
+    var half = '', ghost = '';
+    for(var r = 0; r < reps; r++){
+      teamList.forEach(function(m){ half += teamCard(m, r > 0); ghost += teamCard(m, true); });
+    }
+    track.innerHTML = half + ghost;
+    track.style.animationDuration = Math.max(24, teamList.length * reps * 8) + 's';
+  }
+  window.addEventListener('resize', function(){
+    if(teamList.length && (window.innerWidth < 640) !== teamBucket) renderTeamSection();
+  });
+
+  /* ---------- social links + site text ---------- */
+  function svgIcon(key, cls){
+    var p = platforms[key] || platforms.other;
+    if(!p) return '';
+    return '<svg class="'+cls+'" viewBox="0 0 24 24" '+(p.filled ? 'fill="currentColor"' : 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"')+' aria-hidden="true">'+p.svg+'</svg>';
+  }
+  function linkLabel(s){ return s.label || (platforms[s.platform] && platforms[s.platform].label) || 'Link'; }
+  function socialLink(s, cls){
+    var web = /^https?:/i.test(s.url);
+    return '<a aria-label="'+esc(linkLabel(s))+'" title="'+esc(linkLabel(s))+'" class="'+cls+'" href="'+esc(s.url)+'"'+(web?' target="_blank" rel="noopener"':'')+'>'+svgIcon(s.platform, s.platform === 'x' ? 'w-3.5 h-3.5' : 'w-4 h-4')+'</a>';
+  }
+  function renderSocials(list){
+    var header = document.getElementById('headerSocials');
+    header.innerHTML = list.slice(0, 3).map(function(s){
+      return socialLink(s, 'social-btn w-9 h-8 rounded-lg border border-black flex items-center justify-center text-slate-900 hover:bg-gray-50 transition');
+    }).join('');
+    header.style.display = list.length ? '' : 'none';
+    document.getElementById('contactSocials').innerHTML = list.map(function(s){
+      return socialLink(s, 'w-10 h-10 rounded-full border border-white/40 flex items-center justify-center text-white hover:bg-white hover:text-black transition');
+    }).join('');
+  }
+  function bindText(key, value){
+    document.querySelectorAll('[data-bind="'+key+'"]').forEach(function(el){ el.textContent = value; });
+  }
+
+  function loadSite(){
+    fetch('/api/site', {cache:'no-cache'})
+      .then(function(r){ if(!r.ok) throw new Error('bad status'); return r.json(); })
+      .then(function(data){
+        platforms = data.platforms || {};
+        var s = data.site || {};
+        ['brand_name','tagline','site_url_label'].forEach(function(k){ if(s[k]) bindText(k, s[k]); });
+        if(s.brand_name) document.title = s.brand_name + ' — Product Designer';
+        if(s.availability_message) availMsg = s.availability_message;
+        var mail = document.getElementById('contactEmail');
+        if(s.contact_email){ mail.textContent = s.contact_email; mail.href = 'mailto:' + s.contact_email; }
+        else { mail.classList.add('hidden'); if(mail.nextElementSibling) mail.nextElementSibling.classList.add('hidden'); }
+        var loc = document.getElementById('contactLocation');
+        if(s.location){ loc.textContent = s.location; }
+        else { loc.classList.add('hidden'); if(loc.nextElementSibling) loc.nextElementSibling.classList.add('hidden'); }
+        renderSocials(data.socials || []);
+        teamList = data.team || [];
+        renderTeamSection();
+        projects = data.projects || [];
+        buildFilters();
+        renderProjects('', allGrid);
+        var none = projects.length === 0;
+        viewAllBtn.classList.toggle('hidden', none);
+        document.getElementById('noProjectsNote').classList.toggle('hidden', !none);
+      })
+      .catch(function(){ /* leave the page as-is if the API can't be reached */ });
+  }
 
   /* ---------- pricing toggle ---------- */
   var billingToggle = document.getElementById('billingToggle');
@@ -1220,7 +1370,7 @@
     });
   });
 
-  /* ---------- contact form ---------- */
+  /* ---------- contact form (saved to the admin inbox) ---------- */
   var form = document.getElementById('contactForm');
   var formError = document.getElementById('formError');
   form.addEventListener('submit', function(e){
@@ -1234,18 +1384,24 @@
       return;
     }
     formError.classList.add('hidden');
-    showToast('Thanks '+name.split(' ')[0]+' — your message is sent. We\'ll reply within a day.');
-    form.reset();
-  });
-
-  /* ---------- social icon feedback (placeholder targets) ---------- */
-  document.querySelectorAll('.social-btn').forEach(function(btn){
-    btn.addEventListener('click', function(e){
-      if(btn.getAttribute('href') === '#') e.preventDefault();
-    });
+    var btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    fetch('/api/contact', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({name:name, email:email, message:message, website: document.getElementById('cf-website').value})
+    })
+    .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(d){ return {ok:r.ok, d:d}; }); })
+    .then(function(res){
+      if(!res.ok) throw new Error(res.d.error || 'Something went wrong.');
+      showToast('Thanks '+name.split(' ')[0]+' — your message is sent. We\'ll reply within a day.');
+      form.reset();
+    })
+    .catch(function(err){ showToast(err.message || 'We couldn\'t send that. Please try again.'); })
+    .then(function(){ btn.disabled = false; });
   });
 
   updateActiveNav();
+  loadSite();
 })();
 </script>
 </body>

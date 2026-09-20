@@ -1,0 +1,31 @@
+# Render Blueprint: creates the web service + PostgreSQL database in one go.
+# Render dashboard -> New -> Blueprint -> pick this repo.
+databases:
+  - name: purpledev-db
+    plan: free            # free databases expire after 30 days — see README for permanent options
+    databaseName: purpledev
+    user: purpledev
+
+services:
+  - type: web
+    name: purple-dev
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: purpledev-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        value: 1053775974665-btmnduh399edehuvqmrjkimjc228rtcd.apps.googleusercontent.com
+      - key: DEFAULT_ADMIN_EMAIL
+        value: smartmind2910@gmail.com
