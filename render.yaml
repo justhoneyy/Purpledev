@@ -26,6 +26,6 @@ services:
       - key: SESSION_SECRET
         generateValue: true
       - key: GOOGLE_CLIENT_ID
-        value: 1053775974665-btmnduh399edehuvqmrjkimjc228rtcd.apps.googleusercontent.com
+        value: 
       - key: DEFAULT_ADMIN_EMAIL
         value: smartmind2910@gmail.com
