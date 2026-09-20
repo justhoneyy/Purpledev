@@ -709,7 +709,8 @@ const ICONS = {
   tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
   menu: '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>',
   left: '<polyline points="15 18 9 12 15 6"/>',
-  right: '<polyline points="9 18 15 12 9 6"/>'
+  right: '<polyline points="9 18 15 12 9 6"/>',
+  help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
 };
 const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
 function platformIcon(key, cls = '') {
@@ -1003,7 +1004,7 @@ async function onCredential(resp) {
 async function logout() {
   try { await api('/auth/logout', { method: 'POST' }); } catch (_) {}
   if (window.google && google.accounts) google.accounts.id.disableAutoSelect();
-  state.projects = state.team = state.plans = state.settings = state.admins = state.messages = null;
+  state.projects = state.team = state.plans = state.faqs = state.settings = state.admins = state.messages = null;
   showLogin();
 }
 
@@ -1015,13 +1016,14 @@ const ROUTES = {
   projects: { label: 'Projects', nav: 'Projects', short: 'Projects', icon: 'folder', color: '#E5F1FC', eyebrow: 'Projects' },
   team: { label: 'Team', nav: 'Team', short: 'Team', icon: 'users', color: '#FBE4EE', eyebrow: 'Team' },
   pricing: { label: 'Pricing', nav: 'Pricing', short: 'Pricing', icon: 'tag', color: '#FFF3D6', eyebrow: 'Pricing' },
+  faq: { label: 'Common questions', nav: 'FAQ', short: 'FAQ', icon: 'help', color: '#FFE3D6', eyebrow: 'FAQ' },
   social: { label: 'Social links', nav: 'Social', short: 'Social', icon: 'share', color: '#EDF8E5', eyebrow: 'Social' },
   site: { label: 'Site content', nav: 'Content', short: 'Content', icon: 'sliders', color: '#EDEAF8', eyebrow: 'Content' },
   messages: { label: 'Messages', nav: 'Messages', short: 'Inbox', icon: 'inbox', color: '#E5F1FC', eyebrow: 'Inbox' },
   admins: { label: 'Admins and access', nav: 'Admins', short: 'Admins', icon: 'shield', color: '#FBE4EE', eyebrow: 'Access' }
 };
 const TAB_KEYS = ['dashboard', 'projects', 'team', 'messages'];
-const VIEWS = () => ({ dashboard: viewDashboard, projects: viewProjects, team: viewTeam, pricing: viewPricing, social: viewSocial, site: viewSite, messages: viewMessages, admins: viewAdmins });
+const VIEWS = () => ({ dashboard: viewDashboard, projects: viewProjects, team: viewTeam, pricing: viewPricing, faq: viewFaq, social: viewSocial, site: viewSite, messages: viewMessages, admins: viewAdmins });
 
 function renderNav(active) {
   const badge = state.unread ? (state.unread > 99 ? '99+' : String(state.unread)) : '';
@@ -1040,7 +1042,7 @@ function openMoreSheet() {
   const p = openPanel({
     kind: 'dialog', title: 'Menu',
     body: `<div class="me-card"><span class="avatar">${avatarInner(me)}</span><div><b>${esc(me.name || me.email.split('@')[0])}</b><span class="e">${esc(me.email)}</span></div></div>
-      <div class="more-list">${['pricing', 'social', 'site', 'admins'].map(link).join('')}<a href="/" target="_blank" rel="noopener">${icon('external')}<span>View live site</span></a></div>`,
+      <div class="more-list">${['pricing', 'faq', 'social', 'site', 'admins'].map(link).join('')}<a href="/" target="_blank" rel="noopener">${icon('external')}<span>View live site</span></a></div>`,
     footer: `<button class="btn danger" data-logout>${icon('logout', 'sm')}Sign out</button>`
   });
   p.el.addEventListener('click', (e) => {
@@ -2046,6 +2048,113 @@ function openPlanEditor(existing, preset = {}) {
 }
 
 /* ==========================================================================
+   FAQ (common questions, shown under Pricing on the homepage)
+   ========================================================================== */
+async function viewFaq() {
+  if (!state.faqs) state.faqs = await api('/admin/faqs');
+  renderFaq();
+}
+
+function faqRowHtml(f) {
+  return `<article class="tcard" data-id="${f.id}" draggable="true" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px">
+    <span class="grip" aria-hidden="true" style="margin-top:3px">${icon('grip')}</span>
+    <div style="flex:1;min-width:0">
+      <h3 style="margin:0 0 4px">${esc(f.question)}</h3>
+      <p class="sub" style="white-space:normal">${esc(f.answer)}</p>
+    </div>
+    <div class="acts" style="flex-direction:row;flex-shrink:0">
+      <button class="btn sm" data-act="edit">${icon('edit', 'sm')}Edit</button>
+      <button class="btn sm icon" data-act="delete" aria-label="Delete question" title="Delete">${icon('trash', 'sm')}</button>
+    </div>
+  </article>`;
+}
+
+function renderFaq() {
+  const view = $('#view');
+  const head = pageHead('Common questions', 'The FAQ accordion shown under Pricing on your homepage. Drag to reorder.',
+    `<button class="btn primary cta-glow shine-btn" data-act="add">${icon('plus')}Add question</button>`);
+  if (!state.faqs.length) {
+    view.innerHTML = head + `<div class="empty"><div class="art">${icon('help')}</div><h3>No questions yet</h3>
+      <p>Add the questions people ask before working with you. Once you add one, the FAQ section appears on your homepage.</p>
+      <button class="btn primary" data-act="add">${icon('plus')}Add a question</button></div>`;
+  } else {
+    view.innerHTML = head + `<div class="tgrid" id="faqGrid" style="grid-template-columns:1fr">${state.faqs.map(faqRowHtml).join('')}</div>`;
+    enableSort($('#faqGrid'), { axis: 'y', onDone: persistFaqOrder });
+  }
+  view.onclick = (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const card = b.closest('[data-id]');
+    const f = card && state.faqs.find((x) => String(x.id) === card.dataset.id);
+    const act = b.dataset.act;
+    if (act === 'add') openFaqEditor();
+    else if (act === 'edit' && f) openFaqEditor(f);
+    else if (act === 'delete' && f) deleteFaq(f);
+  };
+}
+
+async function persistFaqOrder(ids) {
+  const byId = new Map(state.faqs.map((f) => [String(f.id), f]));
+  state.faqs = ids.map((id) => byId.get(id)).filter(Boolean);
+  try { await api('/admin/faqs/reorder', { method: 'POST', body: { ids: ids.map(Number) } }); toast('Order saved.'); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteFaq(f) {
+  const ok = await confirmDialog({ title: 'Remove this question?', body: 'It’ll disappear from your homepage. This can’t be undone.', confirmText: 'Remove question', danger: true });
+  if (!ok) return;
+  try {
+    await api('/admin/faqs/' + f.id, { method: 'DELETE' });
+    state.faqs = state.faqs.filter((x) => x.id !== f.id);
+    toast('Question removed.');
+    renderFaq();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function openFaqEditor(existing) {
+  const isNew = !existing;
+  const f = existing ? clone(existing) : { question: '', answer: '' };
+
+  const panel = openPanel({
+    kind: 'dialog', width: '560px',
+    title: isNew ? 'Add question' : 'Edit question',
+    body: `<div class="form" style="gap:16px">
+      <div class="field"><label for="fq-q">Question</label><input class="input" id="fq-q" maxlength="200" autocomplete="off" placeholder="e.g. Can we switch plans later?"></div>
+      <div class="field"><label for="fq-a">Answer</label><textarea class="textarea" id="fq-a" rows="4" maxlength="600" placeholder="Keep it short and to the point."></textarea></div>
+    </div>`,
+    footer: `<button class="btn" data-cancel>Cancel</button><button class="btn primary" data-save>${isNew ? 'Add question' : 'Save changes'}</button>`
+  });
+  const q1 = panel.$;
+
+  const bind = (sel, key) => {
+    const el = q1(sel);
+    el.value = f[key] || '';
+    el.addEventListener('input', () => { f[key] = el.value; panel.dirty = true; el.classList.remove('err'); });
+  };
+  bind('#fq-q', 'question'); bind('#fq-a', 'answer');
+
+  async function save() {
+    if (!f.question.trim()) { const n = q1('#fq-q'); n.classList.add('err'); n.focus(); toast('Add a question first.', 'error'); return; }
+    if (!f.answer.trim()) { const n = q1('#fq-a'); n.classList.add('err'); n.focus(); toast('Add an answer first.', 'error'); return; }
+    const btn = q1('[data-save]');
+    btn.classList.add('busy'); btn.textContent = 'Saving…';
+    try {
+      const saved = isNew ? await api('/admin/faqs', { method: 'POST', body: f }) : await api('/admin/faqs/' + f.id, { method: 'PUT', body: f });
+      state.faqs = state.faqs || [];
+      if (isNew) state.faqs.push(saved); else state.faqs = state.faqs.map((x) => (x.id === saved.id ? saved : x));
+      panel.dirty = false;
+      await panel.close(true);
+      toast(isNew ? 'Question added.' : 'Changes saved.');
+      if (currentRoute() === 'faq') renderFaq();
+    } catch (err) { btn.classList.remove('busy'); btn.textContent = isNew ? 'Add question' : 'Save changes'; toast(err.message, 'error'); }
+  }
+  q1('[data-save]').addEventListener('click', save);
+  q1('[data-cancel]').addEventListener('click', () => panel.close());
+  panel.el.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } });
+  q1('#fq-q').focus();
+}
+
+/* ==========================================================================
    Social links
    ========================================================================== */
 let socialDraft = [];
@@ -2153,7 +2262,9 @@ const SITE_FIELDS = [
   { key: 'site_url_label', label: 'Address shown in the hero browser bar', hint: 'Just text for the little browser window illustration.', max: 60 },
   { key: 'contact_email', label: 'Contact email', hint: 'Shown at the bottom of your contact section.', max: 120 },
   { key: 'location', label: 'Location', hint: 'Shown next to your email, for example “India”.', max: 60 },
-  { key: 'availability_message', label: 'Availability message', hint: 'Pops up when a visitor clicks the rotating “available” badge.', max: 160 }
+  { key: 'availability_message', label: 'Availability message', hint: 'Pops up when a visitor clicks the rotating “available” badge.', max: 160 },
+  { key: 'about_heading', label: 'About heading', hint: 'The bold heading in the “About us” section.', max: 140 },
+  { key: 'about_description', label: 'About paragraph', hint: 'The paragraph under the About heading.', max: 400, area: true }
 ];
 let siteDraft = {};
 

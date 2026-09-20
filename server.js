@@ -103,9 +103,19 @@ const DEFAULT_SITE = {
   site_url_label: 'purpledevs.qd.je',
   contact_email: 'hello@purpledev.com',
   location: 'India',
-  availability_message: 'Available for new projects — starting next month ✦'
+  availability_message: 'Available for new projects — starting next month ✦',
+  about_heading: 'Product design, focused on the clean version of a hard problem.',
+  about_description: 'We work with founders and small teams to take fuzzy product ideas into interfaces people actually enjoy using — from early research through to shipped, polished screens. Based in India, working with clients worldwide.'
 };
-const SITE_LIMITS = { brand_name: 40, tagline: 300, site_url_label: 60, contact_email: 120, location: 60, availability_message: 160 };
+const SITE_LIMITS = {
+  brand_name: 40, tagline: 300, site_url_label: 60, contact_email: 120, location: 60, availability_message: 160,
+  about_heading: 140, about_description: 400
+};
+const DEFAULT_FAQS = [
+  { question: 'Can we switch plans later?', answer: 'Yes — upgrade or downgrade anytime, and changes apply from your next billing cycle.' },
+  { question: 'Do you work with startups?', answer: 'Regularly — the Starter plan is built for early-stage teams shipping their first version.' },
+  { question: "What's not included?", answer: 'Development and copywriting are handled separately, though we can recommend trusted partners.' }
+];
 const DEFAULT_SOCIALS = [
   { platform: 'x', label: '', url: 'https://x.com', enabled: true },
   { platform: 'dribbble', label: '', url: 'https://dribbble.com', enabled: true },
@@ -203,6 +213,13 @@ async function initDb() {
       key   TEXT PRIMARY KEY,
       value JSONB NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS faqs (
+      id         SERIAL PRIMARY KEY,
+      question   TEXT NOT NULL,
+      answer     TEXT NOT NULL DEFAULT '',
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
     CREATE TABLE IF NOT EXISTS messages (
       id         SERIAL PRIMARY KEY,
       name       TEXT NOT NULL,
@@ -248,6 +265,19 @@ async function seed() {
       }
     }
     await setSetting('seeded', { ...seeded2, plans: true });
+  }
+
+  // First run only: start the FAQ list with the three original questions.
+  const seeded3 = await getSetting('seeded', {});
+  if (!seeded3.faqs) {
+    const { rows } = await q('SELECT count(*)::int AS n FROM faqs');
+    if (rows[0].n === 0) {
+      for (let i = 0; i < DEFAULT_FAQS.length; i++) {
+        const f = DEFAULT_FAQS[i];
+        await q('INSERT INTO faqs (question, answer, sort_order) VALUES ($1,$2,$3)', [f.question, f.answer, i + 1]);
+      }
+    }
+    await setSetting('seeded', { ...seeded3, faqs: true });
   }
 }
 
@@ -449,6 +479,15 @@ function cleanSite(b) {
   return out;
 }
 
+function cleanFaq(b) {
+  b = b || {};
+  const question = str(b.question, 200);
+  const answer = str(b.answer, 600);
+  if (!question) throw bad('Add a question first.');
+  if (!answer) throw bad('Add an answer first.');
+  return { question, answer };
+}
+
 function cleanSocials(list) {
   if (!Array.isArray(list)) return [];
   const out = [];
@@ -554,7 +593,7 @@ app.get('/media/:id', async (req, res) => {
 
 /* ---------- public API ---------- */
 app.get('/api/site', async (req, res) => {
-  const [site, socials, team, plans, projects] = await Promise.all([
+  const [site, socials, team, plans, projects, faqs] = await Promise.all([
     getSite(),
     getSocials(),
     q('SELECT id, name, role, subtitle, photo, color, linkedin, github FROM team WHERE visible ORDER BY sort_order, id'),
@@ -562,7 +601,8 @@ app.get('/api/site', async (req, res) => {
               features, button_text, color, is_offer, badge, featured
          FROM plans WHERE visible ORDER BY sort_order, id`),
     q(`SELECT id, title, category, short_desc, description, cover, gallery, tech, live_url, github_url, client, year, likes
-         FROM projects WHERE status = 'published' ORDER BY sort_order, id DESC`)
+         FROM projects WHERE status = 'published' ORDER BY sort_order, id DESC`),
+    q('SELECT id, question, answer FROM faqs ORDER BY sort_order, id')
   ]);
   res.set('Cache-Control', 'no-cache');
   res.json({
@@ -571,7 +611,8 @@ app.get('/api/site', async (req, res) => {
     platforms: PLATFORMS,
     team: team.rows,
     plans: plans.rows,
-    projects: projects.rows
+    projects: projects.rows,
+    faqs: faqs.rows
   });
 });
 
@@ -808,6 +849,42 @@ admin.put('/settings', async (req, res) => {
   await setSetting('site', site);
   await setSetting('socials', socials);
   res.json({ site, socials });
+});
+
+/* --- FAQ (common questions, shown under Pricing) --- */
+const MAX_FAQS = 30;
+admin.get('/faqs', async (req, res) => {
+  res.json((await q('SELECT id, question, answer FROM faqs ORDER BY sort_order, id')).rows);
+});
+
+admin.post('/faqs', async (req, res) => {
+  const { rows: countRows } = await q('SELECT count(*)::int AS n FROM faqs');
+  if (countRows[0].n >= MAX_FAQS) throw bad(`You can have up to ${MAX_FAQS} questions.`);
+  const d = cleanFaq(req.body);
+  const { rows } = await q(
+    `INSERT INTO faqs (question, answer, sort_order)
+     VALUES ($1,$2,(SELECT COALESCE(MAX(sort_order), 0) + 1 FROM faqs)) RETURNING id, question, answer`,
+    [d.question, d.answer]);
+  res.status(201).json(rows[0]);
+});
+
+admin.post('/faqs/reorder', async (req, res) => {
+  const ids = (Array.isArray(req.body && req.body.ids) ? req.body.ids : []).map(Number).filter(Number.isInteger);
+  if (ids.length) await q('UPDATE faqs f SET sort_order = o.ord FROM unnest($1::int[]) WITH ORDINALITY AS o(id, ord) WHERE f.id = o.id', [ids]);
+  res.json({ ok: true });
+});
+
+admin.put('/faqs/:id', async (req, res) => {
+  const d = cleanFaq(req.body);
+  const { rows } = await q('UPDATE faqs SET question=$2, answer=$3 WHERE id=$1 RETURNING id, question, answer', [pid(req.params.id), d.question, d.answer]);
+  if (!rows[0]) throw new HttpError(404, 'Question not found.');
+  res.json(rows[0]);
+});
+
+admin.delete('/faqs/:id', async (req, res) => {
+  const r = await q('DELETE FROM faqs WHERE id = $1', [pid(req.params.id)]);
+  if (!r.rowCount) throw new HttpError(404, 'Question not found.');
+  res.json({ ok: true });
 });
 
 /* --- admins (owner only) --- */
