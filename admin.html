@@ -476,6 +476,55 @@ img, video { max-width: 100%; display: block; }
 .me-card b { display: block; font-size: 14px; overflow-wrap: anywhere; }
 .me-card span.e { font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; }
 
+/* pricing plans + offers */
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+.pcard { position: relative; background: var(--c, var(--lilac)); border: 1.5px solid var(--ink); border-radius: 18px; padding: 12px 16px 16px; display: flex; flex-direction: column; color: var(--ink); box-shadow: var(--hard); transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .15s; }
+.pcard:hover { transform: translateY(-4px) rotate(-.6deg); }
+.pcard.hidden-plan { opacity: .62; }
+.pcard.is-offer { animation: offerGlowA 2.4s ease-in-out infinite; }
+@keyframes offerGlowA { 0%, 100% { box-shadow: var(--hard), 0 0 0 0 rgba(244,166,200,.6); } 50% { box-shadow: var(--hard), 0 0 22px 5px rgba(244,166,200,.65); } }
+.pcard .top { display: flex; align-items: center; justify-content: space-between; min-height: 34px; gap: 6px; }
+.pcard .grip { color: rgba(0,0,0,.4); }
+.pcard .movers { flex-direction: row; }
+.pcard .switch { font-size: 12px; }
+.pcard h3 { font-size: 18px; font-weight: 700; margin-top: 8px; overflow-wrap: anywhere; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pcard .pdesc { margin-top: 4px; font-size: 12.5px; color: rgba(0,0,0,.65); min-height: 19px; }
+.pcard .prices { margin-top: 12px; display: grid; gap: 6px; }
+.pcard .prow { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; padding: 8px 10px; border: 1px solid var(--ink); border-radius: 10px; background: rgba(255,255,255,.7); }
+.pcard .prow small { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); width: 58px; }
+.pcard .prow b { font-size: 17px; }
+.pcard .prow s { color: var(--faint); font-size: 12.5px; }
+.pcard .prow em { font-style: normal; font-size: 12px; color: var(--muted); }
+.pcard .pfeat { margin-top: 10px; font-size: 12px; color: rgba(0,0,0,.65); flex: 1; }
+.pcard .acts { margin-top: 12px; display: flex; gap: 8px; }
+@media (max-width: 520px) { .pgrid { grid-template-columns: minmax(0, 1fr); } .pcard .top .switch span { display: none; } }
+
+/* plan editor + live card preview */
+.seg { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 99px; overflow: hidden; background: #fff; }
+.seg button { padding: 5px 14px; font-size: 12px; font-weight: 700; }
+.seg button.on { background: var(--ink); color: #fff; }
+.pvplan { position: relative; background: var(--c, var(--lilac)); border: 1px solid var(--ink); border-radius: 16px; padding: 18px 16px 16px; display: flex; flex-direction: column; box-shadow: var(--hard); }
+.pvplan.feat { border-width: 1.5px; }
+.pvplan.offer { animation: offerGlowA 2.4s ease-in-out infinite; }
+.pvplan .sheen { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.pvplan .sheen::after { content: ''; position: absolute; top: 0; left: -60%; width: 38%; height: 100%; background: linear-gradient(115deg, rgba(255,255,255,0), rgba(255,255,255,.8), rgba(255,255,255,0)); transform: skewX(-18deg); animation: sheenSweep 3.2s ease-in-out infinite; }
+@keyframes sheenSweep { 0% { left: -60%; } 45% { left: 130%; } 100% { left: 130%; } }
+.pvplan .pvbadge { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); white-space: nowrap; padding: 2px 11px; border-radius: 99px; background: var(--ink); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; z-index: 2; }
+.pvplan .pvbadge.o { background: linear-gradient(90deg, #F4A6C8, #E9C9FF, #F4A6C8); color: var(--ink); border: 1px solid var(--ink); }
+.pvplan h4 { font-size: 17px; font-weight: 700; }
+.pvplan .d { font-size: 12px; color: rgba(0,0,0,.7); margin: 3px 0 12px; min-height: 16px; }
+.pvplan .pr { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
+.pvplan .pr b { font-size: 26px; }
+.pvplan .pr s { font-size: 13px; color: var(--faint); }
+.pvplan .pr span { font-size: 12.5px; color: var(--muted); }
+.pvplan .nt { font-size: 11px; color: var(--muted); min-height: 16px; margin: 2px 0 10px; }
+.pvplan ul { list-style: none; padding: 0; display: grid; gap: 6px; font-size: 12px; margin-bottom: 14px; }
+.pvplan .fake-btn { align-self: flex-start; padding: 8px 16px; border: 1.5px solid var(--ink); border-radius: 9px; font-weight: 700; font-size: 12.5px; background: #fff; box-shadow: 2px 2px 0 var(--ink); }
+.pvplan.offer .fake-btn, .pvplan.feat .fake-btn { background: var(--ink); color: #fff; }
+.prefix-wrap { position: relative; }
+.prefix-wrap > b { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 14px; pointer-events: none; }
+.prefix-wrap > .input { padding-left: 30px; }
+
 /* toasts (centered pill, same as the main site) */
 #toasts { position: fixed; left: 0; right: 0; bottom: calc(var(--tab) + var(--sab) + 16px); z-index: 400; display: grid; gap: 10px; justify-items: center; pointer-events: none; padding: 0 14px; }
 .toast { position: relative; left: auto; pointer-events: auto; display: flex; align-items: center; gap: 10px; max-width: min(460px, 100%); padding: 12px 20px; border-radius: 99px; background: var(--ink); color: #fff; font-weight: 600; font-size: 13.5px; box-shadow: 0 12px 32px rgba(0,0,0,.25); animation: riseIn .35s cubic-bezier(.22,1,.36,1) both; }
@@ -620,7 +669,7 @@ const nextUid = () => 'u' + (++uid);
 
 const state = {
   me: null, platforms: {}, maxUploadMb: 50,
-  projects: null, team: null, settings: null, admins: null, messages: null,
+  projects: null, team: null, plans: null, settings: null, admins: null, messages: null,
   unread: 0, dirty: false, onSave: null, onDiscard: null
 };
 
@@ -657,6 +706,7 @@ const ICONS = {
   star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
   play: '<polygon points="5 3 19 12 5 21 5 3"/>',
   user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
   menu: '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>',
   left: '<polyline points="15 18 9 12 15 6"/>',
   right: '<polyline points="9 18 15 12 9 6"/>'
@@ -953,7 +1003,7 @@ async function onCredential(resp) {
 async function logout() {
   try { await api('/auth/logout', { method: 'POST' }); } catch (_) {}
   if (window.google && google.accounts) google.accounts.id.disableAutoSelect();
-  state.projects = state.team = state.settings = state.admins = state.messages = null;
+  state.projects = state.team = state.plans = state.settings = state.admins = state.messages = null;
   showLogin();
 }
 
@@ -964,13 +1014,14 @@ const ROUTES = {
   dashboard: { label: 'Dashboard', nav: 'Dashboard', short: 'Home', icon: 'grid', color: '#E4DBF8', eyebrow: 'Dashboard' },
   projects: { label: 'Projects', nav: 'Projects', short: 'Projects', icon: 'folder', color: '#E5F1FC', eyebrow: 'Projects' },
   team: { label: 'Team', nav: 'Team', short: 'Team', icon: 'users', color: '#FBE4EE', eyebrow: 'Team' },
+  pricing: { label: 'Pricing', nav: 'Pricing', short: 'Pricing', icon: 'tag', color: '#FFF3D6', eyebrow: 'Pricing' },
   social: { label: 'Social links', nav: 'Social', short: 'Social', icon: 'share', color: '#EDF8E5', eyebrow: 'Social' },
   site: { label: 'Site content', nav: 'Content', short: 'Content', icon: 'sliders', color: '#EDEAF8', eyebrow: 'Content' },
   messages: { label: 'Messages', nav: 'Messages', short: 'Inbox', icon: 'inbox', color: '#E5F1FC', eyebrow: 'Inbox' },
   admins: { label: 'Admins and access', nav: 'Admins', short: 'Admins', icon: 'shield', color: '#FBE4EE', eyebrow: 'Access' }
 };
 const TAB_KEYS = ['dashboard', 'projects', 'team', 'messages'];
-const VIEWS = () => ({ dashboard: viewDashboard, projects: viewProjects, team: viewTeam, social: viewSocial, site: viewSite, messages: viewMessages, admins: viewAdmins });
+const VIEWS = () => ({ dashboard: viewDashboard, projects: viewProjects, team: viewTeam, pricing: viewPricing, social: viewSocial, site: viewSite, messages: viewMessages, admins: viewAdmins });
 
 function renderNav(active) {
   const badge = state.unread ? (state.unread > 99 ? '99+' : String(state.unread)) : '';
@@ -989,7 +1040,7 @@ function openMoreSheet() {
   const p = openPanel({
     kind: 'dialog', title: 'Menu',
     body: `<div class="me-card"><span class="avatar">${avatarInner(me)}</span><div><b>${esc(me.name || me.email.split('@')[0])}</b><span class="e">${esc(me.email)}</span></div></div>
-      <div class="more-list">${['social', 'site', 'admins'].map(link).join('')}<a href="/" target="_blank" rel="noopener">${icon('external')}<span>View live site</span></a></div>`,
+      <div class="more-list">${['pricing', 'social', 'site', 'admins'].map(link).join('')}<a href="/" target="_blank" rel="noopener">${icon('external')}<span>View live site</span></a></div>`,
     footer: `<button class="btn danger" data-logout>${icon('logout', 'sm')}Sign out</button>`
   });
   p.el.addEventListener('click', (e) => {
@@ -1733,6 +1784,265 @@ function openTeamEditor(existing) {
   panel.el.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } });
   paintColors(); paint();
   q1('#tp-name').focus();
+}
+
+/* ==========================================================================
+   Pricing: plans and offers (prices are whole Indian rupees; yearly = total for the year)
+   ========================================================================== */
+const inr = (n) => '₹' + Number(n).toLocaleString('en-IN');
+const toNum = (v) => { const n = parseInt(String(v == null ? '' : v).replace(/\D/g, ''), 10); return Number.isFinite(n) && n > 0 ? n : null; };
+const numStr = (v) => (v == null ? '' : String(v));
+
+// same rules the public site uses, so the preview matches what visitors will see
+function priceView(p, wantYearly) {
+  const m = p.price_monthly, y = p.price_yearly;
+  const v = { amount: null, unit: '', old: null, note: '', label: '' };
+  if (m == null && y == null) { v.label = p.price_label || 'Custom'; return v; }
+  const useYearly = wantYearly ? y != null : m == null;
+  if (useYearly) {
+    v.amount = y; v.unit = '/year'; v.old = p.old_price_yearly;
+    if (wantYearly) {
+      v.note = `≈ ${inr(Math.round(y / 12))}/month, billed yearly`;
+      if (m != null && m * 12 > y) v.note += ` · save ${inr(m * 12 - y)}`;
+    } else v.note = 'Yearly billing only';
+  } else {
+    v.amount = m; v.unit = '/month'; v.old = p.old_price_monthly;
+    if (wantYearly) v.note = 'Monthly billing only';
+  }
+  return v;
+}
+
+function planPreviewHtml(p, yearly) {
+  const v = priceView(p, yearly);
+  const hasPrice = p.price_monthly != null || p.price_yearly != null;
+  const badge = p.is_offer ? (p.badge || 'Special offer') : (p.featured ? (p.badge || 'Most popular') : p.badge);
+  return `<div class="pvplan ${p.is_offer ? 'offer' : ''} ${!p.is_offer && p.featured ? 'feat' : ''}" style="--c:${esc(p.color)}">
+    ${p.is_offer ? '<span class="sheen"></span>' : ''}
+    ${badge ? `<span class="pvbadge ${p.is_offer ? 'o' : ''}">✦ ${esc(badge)}</span>` : ''}
+    <h4>${esc(p.name || 'Plan name')}</h4>
+    <p class="d">${esc(p.description)}</p>
+    <div class="pr">${v.amount != null && v.old != null ? `<s>${inr(v.old)}</s>` : ''}<b>${v.amount != null ? inr(v.amount) : esc(v.label)}</b><span>${v.amount != null ? v.unit : ''}</span></div>
+    <div class="nt">${esc(v.note)}</div>
+    <ul>${p.features.map((f) => `<li>✓ ${esc(f)}</li>`).join('')}</ul>
+    <span class="fake-btn">${esc(p.button_text || (hasPrice ? 'Choose ' + (p.name || 'plan') : 'Contact sales'))}</span>
+  </div>`;
+}
+
+async function viewPricing() {
+  if (!state.plans) state.plans = await api('/admin/plans');
+  renderPricing();
+}
+
+function planCardHtml(p) {
+  const hasPrice = p.price_monthly != null || p.price_yearly != null;
+  const row = (label, price, old) => `<div class="prow"><small>${label}</small>${price != null
+    ? `${old != null ? `<s>${inr(old)}</s>` : ''}<b>${inr(price)}</b><em>${label === 'Monthly' ? 'per month' : 'per year'}</em>`
+    : '<em>Not offered</em>'}</div>`;
+  return `<article class="pcard ${p.visible ? '' : 'hidden-plan'} ${p.is_offer ? 'is-offer' : ''}" data-id="${p.id}" draggable="true" style="--c:${esc(p.color)}">
+    <div class="top">
+      <span class="grip" aria-hidden="true">${icon('grip')}</span>
+      <div class="movers" style="flex-direction:row"><button type="button" data-act="up" aria-label="Move earlier">${icon('up', 'sm')}</button><button type="button" data-act="down" aria-label="Move later">${icon('down', 'sm')}</button></div>
+      <label class="switch" title="Show on your site"><input type="checkbox" data-act="vis" ${p.visible ? 'checked' : ''} aria-label="Show ${esc(p.name)} on your site"><i></i><span>Shown</span></label>
+    </div>
+    <h3>${esc(p.name)}
+      ${p.is_offer ? '<span class="pill warn">✦ Offer</span>' : (p.featured ? '<span class="pill">Highlighted</span>' : '')}
+      ${p.visible ? '' : '<span class="pill line">Hidden</span>'}</h3>
+    <p class="pdesc">${esc(p.description)}</p>
+    <div class="prices">${hasPrice
+      ? row('Monthly', p.price_monthly, p.old_price_monthly) + row('Yearly', p.price_yearly, p.old_price_yearly)
+      : `<div class="prow"><small>Price</small><b>${esc(p.price_label || 'Custom')}</b></div>`}</div>
+    <p class="pfeat">${p.features.length ? `${p.features.length} item${p.features.length === 1 ? '' : 's'} listed: ${esc(p.features.slice(0, 2).join(', '))}${p.features.length > 2 ? '…' : ''}` : 'Nothing listed yet'}</p>
+    <div class="acts">
+      <button class="btn sm" data-act="edit">${icon('edit', 'sm')}Edit</button>
+      <button class="btn sm icon" data-act="delete" aria-label="Delete ${esc(p.name)}" title="Delete">${icon('trash', 'sm')}</button>
+    </div>
+  </article>`;
+}
+
+function renderPricing() {
+  const view = $('#view');
+  const head = pageHead('Pricing', 'The plans and special offers in the Pricing section of your homepage. Prices are in Indian rupees (₹). Offers shine on your site so visitors notice them.',
+    `<button class="btn" data-act="add-offer">${icon('star')}Add offer</button><button class="btn primary cta-glow shine-btn" data-act="add">${icon('plus')}Add plan</button>`);
+  if (!state.plans.length) {
+    view.innerHTML = head + `<div class="empty"><div class="art">${icon('tag')}</div><h3>No plans yet</h3>
+      <p>Until you add one, the Pricing section on your homepage tells visitors to get in touch for a quote.</p>
+      <button class="btn primary" data-act="add">${icon('plus')}Add a plan</button></div>`;
+  } else {
+    view.innerHTML = head + `<div class="pgrid" id="pgrid">${state.plans.map(planCardHtml).join('')}</div>`;
+    enableSort($('#pgrid'), { axis: 'x', onDone: persistPlanOrder });
+  }
+  view.onclick = (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b || b.dataset.act === 'vis') return;
+    const card = b.closest('[data-id]');
+    const p = card && state.plans.find((x) => String(x.id) === card.dataset.id);
+    const act = b.dataset.act;
+    if (act === 'add') openPlanEditor();
+    else if (act === 'add-offer') openPlanEditor(null, { offer: true });
+    else if (act === 'edit' && p) openPlanEditor(p);
+    else if (act === 'delete' && p) deletePlan(p);
+    else if ((act === 'up' || act === 'down') && card) {
+      const sib = act === 'up' ? card.previousElementSibling : card.nextElementSibling;
+      if (sib) { card.parentElement.insertBefore(card, act === 'up' ? sib : sib.nextElementSibling); persistPlanOrder($$('[data-id]', card.parentElement).map((c) => c.dataset.id)); }
+    }
+  };
+  view.onchange = async (e) => {
+    const sw = e.target.closest('[data-act="vis"]');
+    if (!sw) return;
+    const p = state.plans.find((x) => String(x.id) === sw.closest('[data-id]').dataset.id);
+    try {
+      const saved = await api('/admin/plans/' + p.id, { method: 'PUT', body: { ...p, visible: sw.checked } });
+      Object.assign(p, saved);
+      toast(sw.checked ? `${p.name} is shown on your site.` : `${p.name} is hidden.`);
+      renderPricing();
+    } catch (err) { sw.checked = !sw.checked; toast(err.message, 'error'); }
+  };
+}
+
+async function persistPlanOrder(ids) {
+  const byId = new Map(state.plans.map((p) => [String(p.id), p]));
+  state.plans = ids.map((id) => byId.get(id)).filter(Boolean);
+  try { await api('/admin/plans/reorder', { method: 'POST', body: { ids: ids.map(Number) } }); toast('Order saved.'); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+async function deletePlan(p) {
+  const ok = await confirmDialog({ title: `Delete ${p.name}?`, body: 'It will disappear from your homepage. This can’t be undone.', confirmText: 'Delete', danger: true });
+  if (!ok) return;
+  try {
+    await api('/admin/plans/' + p.id, { method: 'DELETE' });
+    state.plans = state.plans.filter((x) => x.id !== p.id);
+    toast('Removed.');
+    renderPricing();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function openPlanEditor(existing, preset = {}) {
+  const isNew = !existing;
+  const t = existing
+    ? { ...clone(existing), price_monthly: numStr(existing.price_monthly), price_yearly: numStr(existing.price_yearly), old_price_monthly: numStr(existing.old_price_monthly), old_price_yearly: numStr(existing.old_price_yearly), features: (existing.features || []).slice() }
+    : { name: '', description: '', price_monthly: '', price_yearly: '', old_price_monthly: '', old_price_yearly: '', price_label: '', features: [], button_text: '', color: preset.offer ? '#FFF1D6' : '#E4E1F8', is_offer: !!preset.offer, badge: '', featured: false, visible: true };
+  const COLORS = ['#E4E1F8', '#EDF8E5', '#FBE4EE', '#E5F1FC', '#FFF1D6', '#FFE3D6'];
+  const mode = { yearly: false };
+  const noun = () => (t.is_offer ? 'offer' : 'plan');
+
+  const panel = openPanel({
+    kind: 'dialog', width: '940px',
+    title: isNew ? (t.is_offer ? 'Add an offer' : 'Add a plan') : 'Edit ' + noun(),
+    body: `<div class="editor">
+      <div class="form" style="gap:16px">
+        <label class="switch"><input type="checkbox" id="pl-offer"><i></i><span>This is an offer ✦ <span class="muted" style="font-weight:500">(the card shines on your site)</span></span></label>
+        <div class="two">
+          <div class="field"><label for="pl-name">Name</label><input class="input" id="pl-name" maxlength="60" autocomplete="off" placeholder="e.g. Starter, or Diwali offer"></div>
+          <div class="field"><label for="pl-badge">Badge on top <span class="muted" style="font-weight:500">(optional)</span></label><input class="input" id="pl-badge" maxlength="40" autocomplete="off" placeholder="e.g. Most popular"></div>
+        </div>
+        <div class="field"><label for="pl-desc">Description</label><textarea class="textarea" id="pl-desc" maxlength="200" rows="2" placeholder="One line about who this is for"></textarea><span class="hint" id="pl-desc-n"></span></div>
+
+        <div class="two">
+          <div class="field"><label for="pl-pm">Monthly price</label><div class="prefix-wrap"><b>₹</b><input class="input" id="pl-pm" inputmode="numeric" autocomplete="off" placeholder="e.g. 50000"></div></div>
+          <div class="field"><label for="pl-py">Yearly price <span class="muted" style="font-weight:500">(total for the year)</span></label><div class="prefix-wrap"><b>₹</b><input class="input" id="pl-py" inputmode="numeric" autocomplete="off" placeholder="e.g. 480000"></div></div>
+        </div>
+        <span class="hint" id="pl-calc"></span>
+        <div class="two" id="pl-old-row">
+          <div class="field"><label for="pl-om">Original monthly price <span class="muted" style="font-weight:500">(crossed out)</span></label><div class="prefix-wrap"><b>₹</b><input class="input" id="pl-om" inputmode="numeric" autocomplete="off" placeholder="price before the offer"></div></div>
+          <div class="field"><label for="pl-oy">Original yearly price <span class="muted" style="font-weight:500">(crossed out)</span></label><div class="prefix-wrap"><b>₹</b><input class="input" id="pl-oy" inputmode="numeric" autocomplete="off" placeholder="price before the offer"></div></div>
+        </div>
+        <div class="field" id="pl-label-row"><label for="pl-label">Text instead of a price <span class="muted" style="font-weight:500">(used when both prices are empty)</span></label><input class="input" id="pl-label" maxlength="30" autocomplete="off" placeholder="Custom"></div>
+
+        <div class="field"><label for="pl-feat">What’s included <span class="muted" style="font-weight:500">(one per line)</span></label><textarea class="textarea" id="pl-feat" rows="5" placeholder="1 active project&#10;2 revision rounds&#10;Figma source files"></textarea></div>
+        <div class="two">
+          <div class="field"><label for="pl-btn">Button text <span class="muted" style="font-weight:500">(optional)</span></label><input class="input" id="pl-btn" maxlength="30" autocomplete="off" placeholder="Choose Starter"></div>
+          <div class="field"><span class="lbl">Card color</span><div class="swatches" id="pl-colors" role="radiogroup" aria-label="Card color"></div></div>
+        </div>
+        <label class="switch" id="pl-feat-sw"><input type="checkbox" id="pl-featured"><i></i><span>Highlight this card <span class="muted" style="font-weight:500">(bigger, black button)</span></span></label>
+        <label class="switch"><input type="checkbox" id="pl-vis"><i></i><span>Show on my site</span></label>
+      </div>
+      <aside class="preview"><div class="row" style="justify-content:space-between"><div class="pv-label">Card on your site</div>
+        <div class="seg" role="group" aria-label="Preview billing"><button type="button" data-mode="m" class="on">Monthly</button><button type="button" data-mode="y">Yearly</button></div></div>
+        <div id="pl-card"></div></aside>
+    </div>`,
+    footer: `<button class="btn" data-cancel>Cancel</button><button class="btn primary" data-save>${isNew ? 'Add' : 'Save changes'}</button>`
+  });
+  const q1 = panel.$;
+
+  const bind = (sel, key, { digits = false } = {}) => {
+    const el = q1(sel);
+    el.value = t[key] || '';
+    el.addEventListener('input', () => {
+      if (digits) { const d = el.value.replace(/\D/g, ''); if (d !== el.value) el.value = d; }
+      t[key] = el.value; panel.dirty = true; el.classList.remove('err'); paint();
+    });
+  };
+  bind('#pl-name', 'name'); bind('#pl-badge', 'badge'); bind('#pl-desc', 'description'); bind('#pl-label', 'price_label'); bind('#pl-btn', 'button_text');
+  bind('#pl-pm', 'price_monthly', { digits: true }); bind('#pl-py', 'price_yearly', { digits: true });
+  bind('#pl-om', 'old_price_monthly', { digits: true }); bind('#pl-oy', 'old_price_yearly', { digits: true });
+  const feat = q1('#pl-feat');
+  feat.value = t.features.join('\n');
+  feat.addEventListener('input', () => { t.features = feat.value.split('\n').map((x) => x.trim()).filter(Boolean); panel.dirty = true; paint(); });
+  const flag = (sel, key) => { const el = q1(sel); el.checked = !!t[key]; el.addEventListener('change', () => { t[key] = el.checked; panel.dirty = true; paint(); }); };
+  flag('#pl-offer', 'is_offer'); flag('#pl-featured', 'featured'); flag('#pl-vis', 'visible');
+
+  function paintColors() {
+    const custom = !COLORS.includes(t.color.toUpperCase());
+    q1('#pl-colors').innerHTML = COLORS.map((c) => `<button type="button" class="swatch ${c.toUpperCase() === t.color.toUpperCase() ? 'on' : ''}" style="background:${c}" data-c="${c}" role="radio" aria-checked="${c.toUpperCase() === t.color.toUpperCase()}" aria-label="Color ${c}"></button>`).join('') +
+      `<input type="color" id="pl-custom" value="${esc(t.color)}" aria-label="Pick a custom color" title="Custom color" ${custom ? 'style="outline:2px solid var(--violet);outline-offset:3px"' : ''}>`;
+  }
+  q1('#pl-colors').addEventListener('click', (e) => { const b = e.target.closest('.swatch'); if (b) { t.color = b.dataset.c; panel.dirty = true; paintColors(); paint(); } });
+  q1('#pl-colors').addEventListener('input', (e) => {
+    if (e.target.id === 'pl-custom') { t.color = e.target.value; panel.dirty = true; paint(); q1('#pl-colors').querySelectorAll('.swatch').forEach((s) => s.classList.remove('on')); }
+  });
+  panel.el.addEventListener('click', (e) => {
+    const b = e.target.closest('.seg button');
+    if (!b) return;
+    mode.yearly = b.dataset.mode === 'y';
+    panel.$$('.seg button').forEach((x) => x.classList.toggle('on', x === b));
+    paint();
+  });
+
+  const current = () => ({
+    ...t, features: t.features,
+    price_monthly: toNum(t.price_monthly), price_yearly: toNum(t.price_yearly),
+    old_price_monthly: t.is_offer ? toNum(t.old_price_monthly) : null, old_price_yearly: t.is_offer ? toNum(t.old_price_yearly) : null
+  });
+  function paint() {
+    const p = current();
+    q1('#pl-old-row').hidden = !t.is_offer;
+    q1('#pl-feat-sw').hidden = t.is_offer;
+    q1('#pl-label-row').hidden = p.price_monthly != null || p.price_yearly != null;
+    q1('#pl-badge').placeholder = t.is_offer ? 'e.g. Diwali offer · 20% off' : 'e.g. Most popular';
+    q1('#pl-desc-n').textContent = `${t.description.length}/200`;
+    let calc = 'Leave a price empty if you don’t sell it that way. Empty on both shows the text below instead.';
+    if (p.price_monthly && p.price_yearly) {
+      const full = p.price_monthly * 12, pct = Math.round((1 - p.price_yearly / full) * 100);
+      calc = pct > 0
+        ? `Yearly works out to ${inr(Math.round(p.price_yearly / 12))}/month, which is ${pct}% less than paying monthly (${inr(full)} a year).`
+        : `Yearly works out to ${inr(Math.round(p.price_yearly / 12))}/month. That’s not cheaper than paying monthly (${inr(full)} a year).`;
+    }
+    q1('#pl-calc').textContent = calc;
+    q1('#pl-card').innerHTML = planPreviewHtml(p, mode.yearly);
+    q1('[data-save]').textContent = isNew ? 'Add' : 'Save changes';
+  }
+
+  async function save() {
+    if (!t.name.trim()) { const n = q1('#pl-name'); n.classList.add('err'); n.focus(); toast('Add a name first.', 'error'); return; }
+    const btn = q1('[data-save]');
+    btn.classList.add('busy'); btn.textContent = 'Saving…';
+    try {
+      const body = { ...t, price_monthly: t.price_monthly || null, price_yearly: t.price_yearly || null, old_price_monthly: t.old_price_monthly || null, old_price_yearly: t.old_price_yearly || null };
+      const saved = isNew ? await api('/admin/plans', { method: 'POST', body }) : await api('/admin/plans/' + t.id, { method: 'PUT', body });
+      state.plans = state.plans || [];
+      if (isNew) state.plans.push(saved); else state.plans = state.plans.map((x) => (x.id === saved.id ? saved : x));
+      panel.dirty = false;
+      await panel.close(true);
+      toast(isNew ? 'Added to your pricing.' : 'Changes saved.');
+      if (currentRoute() === 'pricing') renderPricing();
+    } catch (err) { btn.classList.remove('busy'); paint(); toast(err.message, 'error'); }
+  }
+  q1('[data-save]').addEventListener('click', save);
+  q1('[data-cancel]').addEventListener('click', () => panel.close());
+  panel.el.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } });
+  paintColors(); paint();
+  q1('#pl-name').focus();
 }
 
 /* ==========================================================================

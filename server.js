@@ -118,6 +118,17 @@ const DEFAULT_TEAM = [
   { name: 'Aditya', role: 'AI & ML', subtitle: 'B.Tech CSE', color: '#E5F1FC' }
 ];
 
+/* Pricing is in Indian rupees (whole numbers). The yearly price is the TOTAL for the year.
+   These are only the starting cards on first run; edit everything in Admin -> Pricing. */
+const DEFAULT_PLANS = [
+  { name: 'Starter', description: 'For a single focused screen or flow', price_monthly: 50000, price_yearly: 480000,
+    features: ['1 active project', '2 revision rounds', 'Figma source files'], color: '#E5F1FC' },
+  { name: 'Studio', description: 'For an ongoing product partnership', price_monthly: 120000, price_yearly: 1152000,
+    features: ['3 active projects', 'Unlimited revisions', 'Weekly check-ins'], color: '#E4E1F8', featured: true },
+  { name: 'Enterprise', description: 'For teams needing full-time design', price_label: 'Custom',
+    features: ['Unlimited projects', 'Dedicated designer', 'Priority support'], color: '#EDF8E5', button_text: 'Contact sales' }
+];
+
 /* ---------- database ---------- */
 async function initDb() {
   await q(`
@@ -169,6 +180,25 @@ async function initDb() {
       sort_order INTEGER NOT NULL DEFAULT 0,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
+    CREATE TABLE IF NOT EXISTS plans (
+      id                SERIAL PRIMARY KEY,
+      name              TEXT NOT NULL,
+      description       TEXT NOT NULL DEFAULT '',
+      price_monthly     INTEGER,
+      price_yearly      INTEGER,
+      old_price_monthly INTEGER,
+      old_price_yearly  INTEGER,
+      price_label       TEXT NOT NULL DEFAULT '',
+      features          JSONB NOT NULL DEFAULT '[]',
+      button_text       TEXT NOT NULL DEFAULT '',
+      color             TEXT NOT NULL DEFAULT '#E4E1F8',
+      is_offer          BOOLEAN NOT NULL DEFAULT FALSE,
+      badge             TEXT NOT NULL DEFAULT '',
+      featured          BOOLEAN NOT NULL DEFAULT FALSE,
+      visible           BOOLEAN NOT NULL DEFAULT TRUE,
+      sort_order        INTEGER NOT NULL DEFAULT 0,
+      created_at        TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
     CREATE TABLE IF NOT EXISTS settings (
       key   TEXT PRIMARY KEY,
       value JSONB NOT NULL
@@ -202,6 +232,22 @@ async function seed() {
       }
     }
     await setSetting('seeded', { ...seeded, team: true });
+  }
+
+  // First run only: start the pricing section with the three original cards (now in rupees).
+  const seeded2 = await getSetting('seeded', {});
+  if (!seeded2.plans) {
+    const { rows } = await q('SELECT count(*)::int AS n FROM plans');
+    if (rows[0].n === 0) {
+      for (let i = 0; i < DEFAULT_PLANS.length; i++) {
+        const d = DEFAULT_PLANS[i];
+        await q(`INSERT INTO plans (name, description, price_monthly, price_yearly, price_label, features, button_text, color, featured, badge, sort_order)
+                 VALUES ($1,$2,$3,$4,$5,$6::jsonb,$7,$8,$9,$10,$11)`,
+          [d.name, d.description, d.price_monthly || null, d.price_yearly || null, d.price_label || '', JSON.stringify(d.features),
+           d.button_text || '', d.color, !!d.featured, d.featured ? 'Most popular' : '', i + 1]);
+      }
+    }
+    await setSetting('seeded', { ...seeded2, plans: true });
   }
 }
 
@@ -358,6 +404,42 @@ function cleanTeam(b) {
   };
 }
 
+function cleanPrice(v, label) {
+  if (v === null || v === undefined || v === '') return null;
+  const n = Number(String(v).replace(/[₹,\s]/g, ''));
+  if (!Number.isFinite(n) || n < 0) throw bad(`${label} must be a number, like 4999.`);
+  if (n === 0) throw bad(`${label} can’t be 0. Leave it empty if there is no price.`);
+  if (n > 100000000) throw bad(`${label} is too large.`);
+  return Math.round(n);
+}
+
+function cleanPlan(b) {
+  b = b || {};
+  const name = str(b.name, 60);
+  if (!name) throw bad('Plan name is required.');
+  const is_offer = b.is_offer === true;
+  const price_monthly = cleanPrice(b.price_monthly, 'Monthly price');
+  const price_yearly = cleanPrice(b.price_yearly, 'Yearly price');
+  const old_price_monthly = is_offer ? cleanPrice(b.old_price_monthly, 'Original monthly price') : null;
+  const old_price_yearly = is_offer ? cleanPrice(b.old_price_yearly, 'Original yearly price') : null;
+  if (old_price_monthly && price_monthly && old_price_monthly <= price_monthly) throw bad('The original monthly price should be higher than the offer price.');
+  if (old_price_yearly && price_yearly && old_price_yearly <= price_yearly) throw bad('The original yearly price should be higher than the offer price.');
+  const features = (Array.isArray(b.features) ? b.features : []).map((f) => str(f, 100)).filter(Boolean).slice(0, 12);
+  return {
+    name,
+    description: str(b.description, 200),
+    price_monthly, price_yearly, old_price_monthly, old_price_yearly,
+    price_label: str(b.price_label, 30),
+    features,
+    button_text: str(b.button_text, 30),
+    color: /^#[0-9a-f]{6}$/i.test(b.color || '') ? b.color : '#E4E1F8',
+    is_offer,
+    badge: str(b.badge, 40),
+    featured: b.featured === true,
+    visible: b.visible !== false
+  };
+}
+
 function cleanSite(b) {
   b = b || {};
   const out = {};
@@ -472,10 +554,13 @@ app.get('/media/:id', async (req, res) => {
 
 /* ---------- public API ---------- */
 app.get('/api/site', async (req, res) => {
-  const [site, socials, team, projects] = await Promise.all([
+  const [site, socials, team, plans, projects] = await Promise.all([
     getSite(),
     getSocials(),
     q('SELECT id, name, role, subtitle, photo, color, linkedin, github FROM team WHERE visible ORDER BY sort_order, id'),
+    q(`SELECT id, name, description, price_monthly, price_yearly, old_price_monthly, old_price_yearly, price_label,
+              features, button_text, color, is_offer, badge, featured
+         FROM plans WHERE visible ORDER BY sort_order, id`),
     q(`SELECT id, title, category, short_desc, description, cover, gallery, tech, live_url, github_url, client, year, likes
          FROM projects WHERE status = 'published' ORDER BY sort_order, id DESC`)
   ]);
@@ -485,6 +570,7 @@ app.get('/api/site', async (req, res) => {
     socials: socials.filter((s) => s.enabled),
     platforms: PLATFORMS,
     team: team.rows,
+    plans: plans.rows,
     projects: projects.rows
   });
 });
@@ -665,6 +751,48 @@ admin.delete('/team/:id', async (req, res) => {
   const r = await q('DELETE FROM team WHERE id = $1', [pid(req.params.id)]);
   if (!r.rowCount) throw new HttpError(404, 'Team member not found.');
   cleanupSoon();
+  res.json({ ok: true });
+});
+
+/* --- pricing plans + offers --- */
+const PLAN_COLS = 'id, name, description, price_monthly, price_yearly, old_price_monthly, old_price_yearly, price_label, features, button_text, color, is_offer, badge, featured, visible, sort_order';
+const MAX_PLANS = 12;
+
+admin.get('/plans', async (req, res) => {
+  res.json((await q(`SELECT ${PLAN_COLS} FROM plans ORDER BY sort_order, id`)).rows);
+});
+
+admin.post('/plans', async (req, res) => {
+  const d = cleanPlan(req.body);
+  const n = (await q('SELECT count(*)::int AS n FROM plans')).rows[0].n;
+  if (n >= MAX_PLANS) throw bad(`You can have up to ${MAX_PLANS} plans and offers. Remove one first.`);
+  const { rows } = await q(
+    `INSERT INTO plans (name, description, price_monthly, price_yearly, old_price_monthly, old_price_yearly, price_label, features, button_text, color, is_offer, badge, featured, visible, sort_order)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9,$10,$11,$12,$13,$14,(SELECT COALESCE(MAX(sort_order), 0) + 1 FROM plans)) RETURNING ${PLAN_COLS}`,
+    [d.name, d.description, d.price_monthly, d.price_yearly, d.old_price_monthly, d.old_price_yearly, d.price_label, JSON.stringify(d.features), d.button_text, d.color, d.is_offer, d.badge, d.featured, d.visible]);
+  res.status(201).json(rows[0]);
+});
+
+admin.post('/plans/reorder', async (req, res) => {
+  const ids = (Array.isArray(req.body && req.body.ids) ? req.body.ids : []).map(Number).filter(Number.isInteger);
+  if (ids.length) await q('UPDATE plans p SET sort_order = o.ord FROM unnest($1::int[]) WITH ORDINALITY AS o(id, ord) WHERE p.id = o.id', [ids]);
+  res.json({ ok: true });
+});
+
+admin.put('/plans/:id', async (req, res) => {
+  const d = cleanPlan(req.body);
+  const { rows } = await q(
+    `UPDATE plans SET name=$2, description=$3, price_monthly=$4, price_yearly=$5, old_price_monthly=$6, old_price_yearly=$7, price_label=$8,
+       features=$9::jsonb, button_text=$10, color=$11, is_offer=$12, badge=$13, featured=$14, visible=$15
+     WHERE id=$1 RETURNING ${PLAN_COLS}`,
+    [pid(req.params.id), d.name, d.description, d.price_monthly, d.price_yearly, d.old_price_monthly, d.old_price_yearly, d.price_label, JSON.stringify(d.features), d.button_text, d.color, d.is_offer, d.badge, d.featured, d.visible]);
+  if (!rows[0]) throw new HttpError(404, 'Plan not found.');
+  res.json(rows[0]);
+});
+
+admin.delete('/plans/:id', async (req, res) => {
+  const r = await q('DELETE FROM plans WHERE id = $1', [pid(req.params.id)]);
+  if (!r.rowCount) throw new HttpError(404, 'Plan not found.');
   res.json({ ok: true });
 });
 

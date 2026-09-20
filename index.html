@@ -202,10 +202,40 @@
   }
   @keyframes shineSweep{ 0%{ left:-60%; } 45%{ left:130%; } 100%{ left:130%; } }
 
-  /* ---- team: slow infinite marquee, right to left ---- */
-  @keyframes teamScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
-  .team-track{ animation: teamScroll 38s linear infinite; width:max-content; }
-  .team-marquee-wrap:hover .team-track{ animation-play-state:paused; }
+  /* ---- team: slow drifting carousel (moved by script) with arrow buttons ---- */
+  .team-track{ width:max-content; will-change:transform; }
+  .team-viewport{ touch-action:pan-y; cursor:grab; -webkit-user-select:none; user-select:none; }
+  .team-viewport.grabbing{ cursor:grabbing; }
+  .team-viewport img{ -webkit-user-drag:none; pointer-events:none; }
+  .team-arrow{
+    position:absolute; top:50%; margin-top:-22px; width:44px; height:44px; border-radius:9999px;
+    background:#fff; color:#1a1a1a; border:1.5px solid #1a1a1a; box-shadow:2.5px 2.5px 0 #1a1a1a;
+    display:flex; align-items:center; justify-content:center; z-index:20;
+    transition:transform .15s ease-in-out, box-shadow .15s ease-in-out, background .15s;
+  }
+  .team-arrow.left{ left:10px; } .team-arrow.right{ right:10px; }
+  .team-arrow:hover{ background:var(--lilac); transform:translate(1.5px,1.5px); box-shadow:1px 1px 0 #1a1a1a; }
+  .team-arrow:active{ transform:translate(2.5px,2.5px); box-shadow:0 0 0 #1a1a1a; }
+  .team-arrow:focus-visible{ outline:2px solid var(--violet); outline-offset:3px; }
+  @media (min-width:640px){
+    .team-arrow{ width:50px; height:50px; margin-top:-25px; }
+    .team-arrow.left{ left:28px; } .team-arrow.right{ right:28px; }
+  }
+
+  /* ---- pricing offers: glow + light sweep so they stand out ---- */
+  @keyframes offerGlow{
+    0%,100%{ box-shadow:4px 4px 0 #1a1a1a, 0 0 0 0 rgba(244,166,200,.6); }
+    50%{ box-shadow:4px 4px 0 #1a1a1a, 0 0 26px 6px rgba(244,166,200,.65); }
+  }
+  .offer-card{ animation:offerGlow 2.4s ease-in-out infinite; }
+  .offer-sheen{ position:absolute; inset:0; overflow:hidden; border-radius:inherit; pointer-events:none; z-index:1; }
+  .offer-sheen::after{
+    content:''; position:absolute; top:0; left:-60%; width:38%; height:100%;
+    background:linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.8) 50%, rgba(255,255,255,0) 100%);
+    transform:skewX(-18deg); animation:shineSweep 3.2s ease-in-out infinite;
+  }
+  .offer-badge{ background:linear-gradient(90deg,#F4A6C8,#E9C9FF,#F4A6C8); background-size:200% 100%; animation:badgeShift 3s linear infinite; }
+  @keyframes badgeShift{ from{ background-position:0 0; } to{ background-position:200% 0; } }
   .team-card{ transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s ease; }
   .team-card:hover{ transform: translateY(-5px) rotate(-1deg); }
   .team-avatar{ transition: transform .4s cubic-bezier(.22,1,.36,1); }
@@ -406,12 +436,21 @@
     </div>
   </div>
 
-  <!-- edge-to-edge marquee -->
-  <div class="team-marquee-wrap relative">
+  <!-- edge-to-edge carousel: drifts slowly by itself, drag it, or use the arrows to jump -->
+  <div class="team-marquee-wrap relative" id="teamWrap">
     <div class="pointer-events-none absolute inset-y-0 left-0 w-14 sm:w-28 bg-gradient-to-r from-white to-transparent z-10"></div>
     <div class="pointer-events-none absolute inset-y-0 right-0 w-14 sm:w-28 bg-gradient-to-l from-white to-transparent z-10"></div>
 
-    <div class="team-track flex gap-5 sm:gap-6 px-5 sm:px-6" id="teamTrack"></div>
+    <button type="button" id="teamPrev" class="team-arrow left" aria-label="Show previous team members">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button type="button" id="teamNext" class="team-arrow right" aria-label="Show next team members">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+
+    <div class="team-viewport overflow-hidden py-3" id="teamViewport">
+      <div class="team-track flex gap-5 sm:gap-6 px-5 sm:px-6" id="teamTrack"></div>
+    </div>
   </div>
 </section>
 
@@ -668,46 +707,25 @@
       </h2>
     </div>
 
-    <div class="reveal flex items-center justify-center gap-3 mb-10">
-      <span class="text-sm font-medium">Monthly</span>
-      <button id="billingToggle" class="w-14 h-8 rounded-full border-[1.5px] border-black bg-white relative" aria-pressed="false" aria-label="Toggle yearly billing">
+    <!-- billing toggle: shown only when at least one plan has both a monthly and a yearly price -->
+    <div class="reveal hidden flex items-center justify-center gap-3 mb-10" id="billingRow">
+      <span class="text-sm font-medium" id="billMonthlyLbl">Monthly</span>
+      <button id="billingToggle" type="button" class="w-14 h-8 rounded-full border-[1.5px] border-black bg-white relative" aria-pressed="false" aria-label="Switch between monthly and yearly prices">
         <span id="billingKnob" class="absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-black"></span>
       </button>
-      <span class="text-sm font-medium">Yearly <span class="text-[11px] text-green-700 font-bold">(save 20%)</span></span>
+      <span class="text-sm font-medium" id="billYearlyLbl">Yearly <span id="saveNote" class="text-[11px] text-green-700 font-bold"></span></span>
     </div>
 
-    <div class="reveal grid grid-cols-1 sm:grid-cols-3 gap-6">
-      <div class="border border-black rounded-2xl p-6 sm:p-7 bg-[#E5F1FC] flex flex-col">
-        <h3 class="font-bold text-lg mb-1">Starter</h3>
-        <p class="text-xs text-gray-600 mb-4">For a single focused screen or flow</p>
-        <p class="mb-5"><span class="price text-3xl font-bold" data-monthly="600" data-yearly="480">$600</span><span class="text-sm text-gray-600">/mo</span></p>
-        <ul class="text-xs text-gray-700 space-y-2 mb-6 flex-1">
-          <li>✓ 1 active project</li><li>✓ 2 revision rounds</li><li>✓ Figma source files</li>
-        </ul>
-        <button data-plan="Starter" class="choose-plan px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow bg-white">Choose Starter</button>
+    <!-- plans + offers are rendered here from the admin panel (Admin → Pricing) -->
+    <div class="reveal" id="plansWrap">
+      <div id="plansGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-6" aria-live="polite">
+        <div class="h-[340px] rounded-2xl border border-black/15 bg-gray-50 animate-pulse"></div>
+        <div class="h-[340px] rounded-2xl border border-black/15 bg-gray-50 animate-pulse"></div>
+        <div class="h-[340px] rounded-2xl border border-black/15 bg-gray-50 animate-pulse hidden sm:block"></div>
       </div>
-      <div class="border-[1.5px] border-black rounded-2xl p-6 sm:p-7 bg-[#E4E1F8] flex flex-col relative sm:scale-105 shadow-md">
-        <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-black text-white text-[10px] font-bold uppercase flex items-center gap-1">
-          <svg class="w-2.5 h-2.5 twinkle" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>
-          Most popular
-        </span>
-        <h3 class="font-bold text-lg mb-1">Studio</h3>
-        <p class="text-xs text-gray-600 mb-4">For an ongoing product partnership</p>
-        <p class="mb-5"><span class="price text-3xl font-bold" data-monthly="1400" data-yearly="1120">$1,400</span><span class="text-sm text-gray-600">/mo</span></p>
-        <ul class="text-xs text-gray-700 space-y-2 mb-6 flex-1">
-          <li>✓ 3 active projects</li><li>✓ Unlimited revisions</li><li>✓ Weekly check-ins</li>
-        </ul>
-        <button data-plan="Studio" class="pop-cta choose-plan px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow bg-black text-white">Choose Studio</button>
-      </div>
-      <div class="border border-black rounded-2xl p-6 sm:p-7 bg-[#EDF8E5] flex flex-col">
-        <h3 class="font-bold text-lg mb-1">Enterprise</h3>
-        <p class="text-xs text-gray-600 mb-4">For teams needing full-time design</p>
-        <p class="mb-5"><span class="text-3xl font-bold">Custom</span></p>
-        <ul class="text-xs text-gray-700 space-y-2 mb-6 flex-1">
-          <li>✓ Unlimited projects</li><li>✓ Dedicated designer</li><li>✓ Priority support</li>
-        </ul>
-        <button data-plan="Enterprise" class="choose-plan px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow bg-white">Contact sales</button>
-      </div>
+      <p id="plansEmpty" class="hidden text-center text-sm text-gray-600 max-w-md mx-auto">
+        Every project is different, so we quote it after a quick chat. <a href="#contact" data-nav class="underline font-semibold text-black">Tell us what you need</a> and we'll send a price.
+      </p>
     </div>
 
     <!-- FAQ accordion -->
@@ -1252,28 +1270,122 @@
       (links ? '<div class="mt-3 flex gap-2">'+links+'</div>' : '') +
     '</div>';
   }
+  /* ----- carousel: three identical copies of the card set sit side by side; we slide a transform and
+         quietly jump by exactly one copy so it can loop forever in both directions ----- */
+  var teamTrack = document.getElementById('teamTrack');
+  var teamViewport = document.getElementById('teamViewport');
+  var TEAM_SPEED = 30;                      // px per second of the slow automatic drift
+  var teamReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var car = { offset:0, half:0, step:0, last:0, raf:0, tween:null, hover:false, pauseUntil:0, inView:true, drag:null, justDragged:false, w:0 };
+
+  function carApply(){ teamTrack.style.transform = 'translate3d(' + (-car.offset) + 'px,0,0)'; }
+  function carNormalize(){
+    var h = car.half; if(!h) return;
+    var d = 0;
+    if(car.offset >= 2*h) d = -h; else if(car.offset < h) d = h;
+    if(!d) return;
+    car.offset += d;
+    if(car.tween){ car.tween.from += d; car.tween.to += d; }
+    if(car.drag) car.drag.off += d;
+  }
+  function carTick(ts){
+    car.raf = 0;
+    var dt = Math.min(64, ts - (car.last || ts)); car.last = ts;
+    var tw = car.tween;
+    if(tw){
+      var t = Math.min(1, (ts - tw.start) / tw.dur);
+      car.offset = tw.from + (tw.to - tw.from) * (1 - Math.pow(1 - t, 3));
+      if(t >= 1){ car.tween = null; car.pauseUntil = ts + 2500; }
+    } else if(!car.drag && !car.hover && !teamReduce && ts > car.pauseUntil){
+      car.offset += TEAM_SPEED * dt / 1000;
+    }
+    carNormalize();
+    carApply();
+    if(car.inView && car.half) car.raf = requestAnimationFrame(carTick);
+  }
+  function carStart(){ if(!car.raf && car.inView && car.half){ car.last = 0; car.raf = requestAnimationFrame(carTick); } }
+
+  // arrow buttons: jump about one screenful of cards (pressing again keeps going)
+  function carMove(dir){
+    if(!car.half) return;
+    var from = car.offset;
+    var to = (car.tween ? car.tween.to : car.offset) + dir * car.step;
+    car.tween = { from: from, to: to, start: performance.now(), dur: teamReduce ? 1 : 520 };
+    carStart();
+  }
+  document.getElementById('teamPrev').addEventListener('click', function(){ carMove(-1); });
+  document.getElementById('teamNext').addEventListener('click', function(){ carMove(1); });
+
+  // hover / keyboard focus pauses the drift so people can read a card
+  teamViewport.addEventListener('pointerenter', function(e){ if(e.pointerType === 'mouse') car.hover = true; });
+  teamViewport.addEventListener('pointerleave', function(e){ if(e.pointerType === 'mouse') car.hover = false; });
+  teamViewport.addEventListener('focusin', function(){ car.hover = true; });
+  teamViewport.addEventListener('focusout', function(){ car.hover = false; });
+  teamViewport.addEventListener('scroll', function(){ teamViewport.scrollLeft = 0; });   // focus must not scroll the clipped box
+
+  // drag / swipe
+  teamViewport.addEventListener('pointerdown', function(e){
+    if(e.pointerType === 'mouse' && e.button !== 0) return;
+    car.drag = { x: e.clientX, off: car.offset, moved: false };
+  });
+  teamViewport.addEventListener('pointermove', function(e){
+    var d = car.drag; if(!d) return;
+    var dx = e.clientX - d.x;
+    if(!d.moved && Math.abs(dx) > 6){
+      d.moved = true; car.tween = null;
+      teamViewport.classList.add('grabbing');
+      try{ teamViewport.setPointerCapture(e.pointerId); }catch(err){}
+    }
+    if(d.moved){ car.offset = d.off - dx; carNormalize(); carApply(); }
+  });
+  function carDragEnd(){
+    var d = car.drag; if(!d) return;
+    car.drag = null;
+    teamViewport.classList.remove('grabbing');
+    if(d.moved){ car.justDragged = true; setTimeout(function(){ car.justDragged = false; }, 60); }
+    car.pauseUntil = performance.now() + 2500;
+    carStart();
+  }
+  teamViewport.addEventListener('pointerup', carDragEnd);
+  teamViewport.addEventListener('pointercancel', carDragEnd);
+  teamViewport.addEventListener('click', function(e){ if(car.justDragged){ e.preventDefault(); e.stopPropagation(); } }, true);
+
+  // only animate while the section is on screen
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(entries){
+      car.inView = entries[0].isIntersecting;
+      if(car.inView) carStart();
+    }, { rootMargin: '120px' }).observe(document.getElementById('teamWrap'));
+  }
   var teamBucket = null;
   function renderTeamSection(){
     var section = document.getElementById('team');
-    var track = document.getElementById('teamTrack');
     var has = teamList.length > 0;
     section.classList.toggle('hidden', !has);
     document.querySelectorAll('a[href="#team"]').forEach(function(a){ a.classList.toggle('hidden', !has); });
-    if(!has){ track.innerHTML = ''; return; }
+    if(car.raf){ cancelAnimationFrame(car.raf); car.raf = 0; }
+    if(!has){ teamTrack.innerHTML = ''; car.half = 0; return; }
     var small = window.innerWidth < 640;
-    teamBucket = small;
-    var cardW = small ? 190 : 230, gap = small ? 20 : 24;
-    // repeat the set until one half of the loop is wider than the screen, so the marquee never shows a gap
-    var reps = Math.max(1, Math.ceil((window.innerWidth + cardW) / (teamList.length * (cardW + gap))));
-    var half = '', ghost = '';
-    for(var r = 0; r < reps; r++){
-      teamList.forEach(function(m){ half += teamCard(m, r > 0); ghost += teamCard(m, true); });
-    }
-    track.innerHTML = half + ghost;
-    track.style.animationDuration = Math.max(24, teamList.length * reps * 8) + 's';
+    teamBucket = small; car.w = window.innerWidth;
+    var cardW = small ? 190 : 230, gap = small ? 20 : 24, unit = cardW + gap;
+    // repeat the set until one copy is wider than the screen, so there is never a gap
+    var reps = Math.max(1, Math.ceil((window.innerWidth + cardW) / (teamList.length * unit)));
+    var copy = '', ghost = '';
+    for(var r = 0; r < reps; r++){ teamList.forEach(function(m){ copy += teamCard(m, r > 0); ghost += teamCard(m, true); }); }
+    teamTrack.innerHTML = copy + ghost + ghost;
+    var kids = teamTrack.children, per = reps * teamList.length;
+    car.half = kids[per].offsetLeft - kids[0].offsetLeft;
+    if(!car.half) car.half = per * unit;
+    car.step = Math.max(2, Math.floor(window.innerWidth / unit)) * unit;   // a screenful of cards
+    car.offset = car.half; car.tween = null; car.pauseUntil = 0;
+    carApply();
+    carStart();
   }
+  var teamResizeTimer;
   window.addEventListener('resize', function(){
-    if(teamList.length && (window.innerWidth < 640) !== teamBucket) renderTeamSection();
+    if(!teamList.length || window.innerWidth === car.w) return;   // ignore mobile address-bar height changes
+    clearTimeout(teamResizeTimer);
+    teamResizeTimer = setTimeout(renderTeamSection, 150);
   });
 
   /* ---------- social links + site text ---------- */
@@ -1319,6 +1431,7 @@
         renderSocials(data.socials || []);
         teamList = data.team || [];
         renderTeamSection();
+        renderPlans(data.plans || []);
         projects = data.projects || [];
         buildFilters();
         renderProjects('', allGrid);
@@ -1326,33 +1439,131 @@
         viewAllBtn.classList.toggle('hidden', none);
         document.getElementById('noProjectsNote').classList.toggle('hidden', !none);
       })
-      .catch(function(){ /* leave the page as-is if the API can't be reached */ });
+      .catch(function(){ /* leave the page as-is if the API can't be reached */ if(!plansRendered) renderPlans([]); });
   }
 
-  /* ---------- pricing toggle ---------- */
+  /* ---------- pricing: plans + offers come from the admin panel, prices are in Indian rupees ---------- */
+  var plansList = [];
+  var plansRendered = false;
+  var yearly = false;
+  var billingRow = document.getElementById('billingRow');
   var billingToggle = document.getElementById('billingToggle');
   var billingKnob = document.getElementById('billingKnob');
-  var yearly = false;
-  billingToggle.addEventListener('click', function(){
-    yearly = !yearly;
+  var plansGrid = document.getElementById('plansGrid');
+  var plansEmpty = document.getElementById('plansEmpty');
+
+  function inr(n){ return '\u20B9' + Number(n).toLocaleString('en-IN'); }
+
+  // what one card shows for the selected billing period (label always matches the number)
+  function priceView(p, wantYearly){
+    var m = p.price_monthly, y = p.price_yearly;
+    var v = { amount:null, unit:'', old:null, note:'', label:'' };
+    if(m == null && y == null){ v.label = p.price_label || 'Custom'; return v; }
+    var useYearly = wantYearly ? (y != null) : (m == null);
+    if(useYearly){
+      v.amount = y; v.unit = '/year'; v.old = p.old_price_yearly;
+      if(wantYearly){
+        v.note = '\u2248 ' + inr(Math.round(y / 12)) + '/month, billed yearly';
+        if(m != null && m * 12 > y) v.note += ' \u00B7 save ' + inr(m * 12 - y);
+      } else {
+        v.note = 'Yearly billing only';
+      }
+    } else {
+      v.amount = m; v.unit = '/month'; v.old = p.old_price_monthly;
+      if(wantYearly) v.note = 'Monthly billing only';
+    }
+    return v;
+  }
+
+  function planCard(p, i){
+    var offer = !!p.is_offer, featured = !!p.featured && !offer;
+    var hasPrice = p.price_monthly != null || p.price_yearly != null;
+    var badge = offer ? (p.badge || 'Special offer') : (featured ? (p.badge || 'Most popular') : (p.badge || ''));
+    var cls = 'relative flex flex-col rounded-2xl p-6 sm:p-7 ';
+    cls += offer ? 'offer-card border-[1.5px] border-black sm:scale-105 ' : (featured ? 'border-[1.5px] border-black shadow-md sm:scale-105 ' : 'border border-black ');
+    var badgeHtml = '';
+    if(badge){
+      badgeHtml = '<span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase flex items-center gap-1 whitespace-nowrap z-[2] ' +
+        (offer ? 'offer-badge text-black border border-black' : 'bg-black text-white') + '">' +
+        '<svg class="w-2.5 h-2.5 twinkle" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"></path></svg>' +
+        esc(badge) + '</span>';
+    }
+    var feats = (p.features || []).map(function(f){ return '<li>\u2713 ' + esc(f) + '</li>'; }).join('');
+    var btnLabel = p.button_text || (hasPrice ? 'Choose ' + p.name : 'Contact sales');
+    var btnCls = (offer || featured) ? 'pop-cta bg-black text-white' : 'bg-white';
+    if(offer) btnCls += ' shine-btn';
+    return '<div class="' + cls + '" style="background:' + esc(p.color || '#E4E1F8') + '">' +
+      (offer ? '<span class="offer-sheen" aria-hidden="true"></span>' : '') + badgeHtml +
+      '<h3 class="font-bold text-lg mb-1 relative z-[2]">' + esc(p.name) + '</h3>' +
+      (p.description ? '<p class="text-xs text-gray-700 mb-4 relative z-[2]">' + esc(p.description) + '</p>' : '<div class="mb-4"></div>') +
+      '<div class="mb-5 relative z-[2]" data-price-idx="' + i + '">' +
+        '<p class="flex items-baseline flex-wrap gap-x-2"><span class="old-price text-sm text-gray-500 line-through hidden"></span>' +
+        '<span class="price text-3xl font-bold"></span><span class="unit text-sm text-gray-600"></span></p>' +
+        '<p class="price-note text-[11px] text-gray-600 mt-1 min-h-[16px]"></p>' +
+      '</div>' +
+      (feats ? '<ul class="text-xs text-gray-800 space-y-2 mb-6 flex-1 relative z-[2]">' + feats + '</ul>' : '<div class="flex-1"></div>') +
+      '<button type="button" data-idx="' + i + '" data-plan="' + esc(p.name) + '" class="choose-plan relative z-[2] px-5 py-2.5 rounded-lg border-[1.5px] border-black font-semibold text-sm retro-shadow ' + btnCls + '">' + esc(btnLabel) + '</button>' +
+    '</div>';
+  }
+
+  // update only the numbers, so the offer animations don't restart every time someone flips the switch
+  function paintPrices(){
+    plansGrid.querySelectorAll('[data-price-idx]').forEach(function(box){
+      var p = plansList[Number(box.getAttribute('data-price-idx'))]; if(!p) return;
+      var v = priceView(p, yearly);
+      var priceEl = box.querySelector('.price'), unitEl = box.querySelector('.unit'), oldEl = box.querySelector('.old-price');
+      priceEl.textContent = v.amount != null ? inr(v.amount) : v.label;
+      unitEl.textContent = v.amount != null ? v.unit : '';
+      var hasOld = v.amount != null && v.old != null;
+      oldEl.textContent = hasOld ? inr(v.old) : '';
+      oldEl.classList.toggle('hidden', !hasOld);
+      box.querySelector('.price-note').textContent = v.note;
+    });
+  }
+
+  function renderPlans(list){
+    plansRendered = true;
+    plansList = list || [];
+    var n = plansList.length;
+    plansEmpty.classList.toggle('hidden', n > 0);
+    plansGrid.classList.toggle('hidden', n === 0);
+    if(!n){ billingRow.classList.add('hidden'); return; }
+
+    // layout follows how many cards there are
+    plansGrid.className = 'grid grid-cols-1 gap-6 ' + (n === 1 ? 'max-w-sm mx-auto' : n === 2 ? 'sm:grid-cols-2 max-w-[700px] mx-auto' : n === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-3');
+    plansGrid.innerHTML = plansList.map(planCard).join('');
+
+    // the monthly/yearly switch only appears when it changes something
+    var both = plansList.filter(function(p){ return p.price_monthly != null && p.price_yearly != null; });
+    billingRow.classList.toggle('hidden', both.length === 0);
+    var saves = both.map(function(p){ return Math.round((1 - p.price_yearly / (p.price_monthly * 12)) * 100); }).filter(function(x){ return x > 0; });
+    var note = document.getElementById('saveNote');
+    if(saves.length){
+      var lo = Math.min.apply(null, saves), hi = Math.max.apply(null, saves);
+      note.textContent = '(save ' + (lo === hi ? '' : 'up to ') + hi + '%)';
+    } else { note.textContent = ''; }
+    if(!both.length) yearly = false;
+    syncToggle();
+    paintPrices();
+  }
+
+  function syncToggle(){
     billingToggle.setAttribute('aria-pressed', yearly);
     billingKnob.style.transform = yearly ? 'translateX(24px)' : 'translateX(0)';
-    document.querySelectorAll('.price').forEach(function(p){
-      var val = yearly ? p.getAttribute('data-yearly') : p.getAttribute('data-monthly');
-      p.textContent = '$' + Number(val).toLocaleString();
-    });
-  });
+  }
+  billingToggle.addEventListener('click', function(){ yearly = !yearly; syncToggle(); paintPrices(); });
 
-  /* ---------- choose plan buttons ---------- */
-  document.querySelectorAll('.choose-plan').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var plan = btn.getAttribute('data-plan');
-      showToast('"'+plan+'" selected — scroll down to send a message and we\'ll follow up.');
-      var target = document.getElementById('contact');
-      scrollToTarget(target);
-      var msg = document.getElementById('cf-message');
-      if(msg && !msg.value){ msg.value = "Hi, we're interested in the " + plan + " plan. "; }
-    });
+  /* ---------- choose plan buttons (cards are drawn by script, so one listener on the grid) ---------- */
+  plansGrid.addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('.choose-plan') : null;
+    if(!btn) return;
+    var p = plansList[Number(btn.getAttribute('data-idx'))]; if(!p) return;
+    var v = priceView(p, yearly);
+    var cycle = v.amount != null ? (v.unit === '/year' ? ', billed yearly' : ', billed monthly') : '';
+    showToast('"' + p.name + '" selected \u2014 scroll down to send a message and we\'ll follow up.');
+    scrollToTarget(document.getElementById('contact'));
+    var msg = document.getElementById('cf-message');
+    if(msg && !msg.value){ msg.value = "Hi, we're interested in the " + p.name + (p.is_offer ? (/offer/i.test(p.name) ? '' : ' offer') : ' plan') + cycle + '. '; }
   });
 
   /* ---------- FAQ accordion ---------- */

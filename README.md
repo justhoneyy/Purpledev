@@ -16,12 +16,15 @@ Open `https://your-site/admin` and sign in with Google.
 
 - **Projects**: add, edit, delete, reorder, hide as draft. Photos, videos (upload, YouTube, Vimeo or .mp4 link), live site link (with in-page preview), GitHub link, tech stack, client, year, category.
 - **Team**: add, edit, delete, reorder, show or hide. Photo, name, role, card colour, LinkedIn, GitHub.
+- **Pricing**: add, edit, delete, reorder, show or hide plans and special offers. Each one has a monthly price and a yearly price (total for the year), a description, an "included" list, a badge, button text and card colour. Prices are in Indian rupees. Turn on **offer** and the card shines on the site, with an optional crossed-out original price. The monthly/yearly switch on the site only appears when a plan has both prices.
 - **Social links**: 15 platforms, reorder, show or hide. First three appear in the header, all appear in the contact section.
 - **Site content**: brand name, hero paragraph, contact email, location, availability message.
 - **Messages**: everything sent through the contact form.
 - **Admins and access**: the owner (`smartmind2910@gmail.com`) can add or remove other admin emails.
 
 The old sample projects were removed from `index.html`. Only projects you add in the admin panel are shown.
+
+The team strip on the homepage drifts slowly by itself; visitors can also drag it or press the left/right arrows to jump through members. On first start the pricing section is filled with three starter cards (Starter, Studio, Enterprise) that you can edit or delete in **Pricing**.
 
 ## 1. Google sign-in setup (one time)
 
