@@ -208,19 +208,14 @@
   .team-viewport.grabbing{ cursor:grabbing; }
   .team-viewport img{ -webkit-user-drag:none; pointer-events:none; }
   .team-arrow{
-    position:absolute; top:50%; margin-top:-22px; width:44px; height:44px; border-radius:9999px;
+    width:48px; height:48px; border-radius:9999px; flex:none;
     background:#fff; color:#1a1a1a; border:1.5px solid #1a1a1a; box-shadow:2.5px 2.5px 0 #1a1a1a;
-    display:flex; align-items:center; justify-content:center; z-index:20;
+    display:flex; align-items:center; justify-content:center;
     transition:transform .15s ease-in-out, box-shadow .15s ease-in-out, background .15s;
   }
-  .team-arrow.left{ left:10px; } .team-arrow.right{ right:10px; }
   .team-arrow:hover{ background:var(--lilac); transform:translate(1.5px,1.5px); box-shadow:1px 1px 0 #1a1a1a; }
   .team-arrow:active{ transform:translate(2.5px,2.5px); box-shadow:0 0 0 #1a1a1a; }
   .team-arrow:focus-visible{ outline:2px solid var(--violet); outline-offset:3px; }
-  @media (min-width:640px){
-    .team-arrow{ width:50px; height:50px; margin-top:-25px; }
-    .team-arrow.left{ left:28px; } .team-arrow.right{ right:28px; }
-  }
 
   /* ---- pricing offers: glow + light sweep so they stand out ---- */
   @keyframes offerGlow{
@@ -441,16 +436,19 @@
     <div class="pointer-events-none absolute inset-y-0 left-0 w-14 sm:w-28 bg-gradient-to-r from-white to-transparent z-10"></div>
     <div class="pointer-events-none absolute inset-y-0 right-0 w-14 sm:w-28 bg-gradient-to-l from-white to-transparent z-10"></div>
 
-    <button type="button" id="teamPrev" class="team-arrow left" aria-label="Show previous team members">
-      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
-    </button>
-    <button type="button" id="teamNext" class="team-arrow right" aria-label="Show next team members">
-      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </button>
-
     <div class="team-viewport overflow-hidden py-3" id="teamViewport">
       <div class="team-track flex gap-5 sm:gap-6 px-5 sm:px-6" id="teamTrack"></div>
     </div>
+  </div>
+
+  <!-- arrows: one member per press -->
+  <div class="relative z-10 flex items-center justify-center gap-4 mt-6">
+    <button type="button" id="teamPrev" class="team-arrow" aria-label="Previous team member">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button type="button" id="teamNext" class="team-arrow" aria-label="Next team member">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
   </div>
 </section>
 
@@ -1271,12 +1269,15 @@
     '</div>';
   }
   /* ----- carousel: three identical copies of the card set sit side by side; we slide a transform and
-         quietly jump by exactly one copy so it can loop forever in both directions ----- */
+         quietly jump by exactly one copy so it can loop forever in both directions.
+         The arrows move exactly one member per press and always land on a card. ----- */
   var teamTrack = document.getElementById('teamTrack');
   var teamViewport = document.getElementById('teamViewport');
   var TEAM_SPEED = 30;                      // px per second of the slow automatic drift
   var teamReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var car = { offset:0, half:0, step:0, last:0, raf:0, tween:null, hover:false, pauseUntil:0, inView:true, drag:null, justDragged:false, w:0 };
+  var hasIO = 'IntersectionObserver' in window;
+  var car = { offset:0, half:0, unit:0, origin:0, last:0, raf:0, tween:null, hover:false, pauseUntil:0,
+              inView:!hasIO, started:!hasIO, drag:null, justDragged:false, w:0 };
 
   function carApply(){ teamTrack.style.transform = 'translate3d(' + (-car.offset) + 'px,0,0)'; }
   function carNormalize(){
@@ -1295,22 +1296,23 @@
     if(tw){
       var t = Math.min(1, (ts - tw.start) / tw.dur);
       car.offset = tw.from + (tw.to - tw.from) * (1 - Math.pow(1 - t, 3));
-      if(t >= 1){ car.tween = null; car.pauseUntil = ts + 2500; }
+      if(t >= 1){ car.tween = null; car.pauseUntil = ts + 8000; }
     } else if(!car.drag && !car.hover && !teamReduce && ts > car.pauseUntil){
       car.offset += TEAM_SPEED * dt / 1000;
     }
     carNormalize();
     carApply();
-    if(car.inView && car.half) car.raf = requestAnimationFrame(carTick);
+    if((car.inView || car.tween) && car.half) car.raf = requestAnimationFrame(carTick);
   }
-  function carStart(){ if(!car.raf && car.inView && car.half){ car.last = 0; car.raf = requestAnimationFrame(carTick); } }
+  function carStart(){ if(!car.raf && (car.inView || car.tween) && car.half){ car.last = 0; car.raf = requestAnimationFrame(carTick); } }
 
-  // arrow buttons: jump about one screenful of cards (pressing again keeps going)
+  // arrow buttons: exactly one member per press (rapid presses queue up one by one)
   function carMove(dir){
     if(!car.half) return;
-    var from = car.offset;
-    var to = (car.tween ? car.tween.to : car.offset) + dir * car.step;
-    car.tween = { from: from, to: to, start: performance.now(), dur: teamReduce ? 1 : 520 };
+    var base = car.tween ? car.tween.to : car.offset;
+    var idx = Math.round((base - car.origin) / car.unit);       // the card we are on (or heading to)
+    var to = car.origin + (idx + dir) * car.unit;
+    car.tween = { from: car.offset, to: to, start: performance.now(), dur: teamReduce ? 1 : 380 };
     carStart();
   }
   document.getElementById('teamPrev').addEventListener('click', function(){ carMove(-1); });
@@ -1343,20 +1345,27 @@
     car.drag = null;
     teamViewport.classList.remove('grabbing');
     if(d.moved){ car.justDragged = true; setTimeout(function(){ car.justDragged = false; }, 60); }
-    car.pauseUntil = performance.now() + 2500;
+    car.pauseUntil = performance.now() + 8000;
     carStart();
   }
   teamViewport.addEventListener('pointerup', carDragEnd);
   teamViewport.addEventListener('pointercancel', carDragEnd);
   teamViewport.addEventListener('click', function(e){ if(car.justDragged){ e.preventDefault(); e.stopPropagation(); } }, true);
 
-  // only animate while the section is on screen
-  if('IntersectionObserver' in window){
+  // only animate while the section is on screen; the first time it appears it always starts at member 1
+  if(hasIO){
     new IntersectionObserver(function(entries){
       car.inView = entries[0].isIntersecting;
+      if(car.inView && !car.started && car.half){
+        car.started = true;
+        car.offset = car.origin; car.tween = null;
+        car.pauseUntil = performance.now() + 4000;   // stay on member 1 for a moment before drifting
+        carApply();
+      }
       if(car.inView) carStart();
-    }, { rootMargin: '120px' }).observe(document.getElementById('teamWrap'));
+    }, { threshold: 0.15 }).observe(document.getElementById('teamWrap'));
   }
+
   var teamBucket = null;
   function renderTeamSection(){
     var section = document.getElementById('team');
@@ -1365,19 +1374,19 @@
     document.querySelectorAll('a[href="#team"]').forEach(function(a){ a.classList.toggle('hidden', !has); });
     if(car.raf){ cancelAnimationFrame(car.raf); car.raf = 0; }
     if(!has){ teamTrack.innerHTML = ''; car.half = 0; return; }
-    var small = window.innerWidth < 640;
-    teamBucket = small; car.w = window.innerWidth;
-    var cardW = small ? 190 : 230, gap = small ? 20 : 24, unit = cardW + gap;
+    var vw = window.innerWidth, small = vw < 640;
+    teamBucket = small; car.w = vw;
+    var cardW = small ? 190 : 230, gap = small ? 20 : 24, pad = small ? 20 : 24, unit = cardW + gap;
     // repeat the set until one copy is wider than the screen, so there is never a gap
-    var reps = Math.max(1, Math.ceil((window.innerWidth + cardW) / (teamList.length * unit)));
+    var reps = Math.max(1, Math.ceil((vw + cardW) / (teamList.length * unit)));
     var copy = '', ghost = '';
     for(var r = 0; r < reps; r++){ teamList.forEach(function(m){ copy += teamCard(m, r > 0); ghost += teamCard(m, true); }); }
     teamTrack.innerHTML = copy + ghost + ghost;
-    var kids = teamTrack.children, per = reps * teamList.length;
-    car.half = kids[per].offsetLeft - kids[0].offsetLeft;
-    if(!car.half) car.half = per * unit;
-    car.step = Math.max(2, Math.floor(window.innerWidth / unit)) * unit;   // a screenful of cards
-    car.offset = car.half; car.tween = null; car.pauseUntil = 0;
+    car.unit = unit;
+    car.half = reps * teamList.length * unit;            // width of one copy (fixed card width + gap, so no measuring needed)
+    // offset that puts member 1 of the middle copy in view: centred on phones, left-aligned on wider screens
+    car.origin = pad + car.half - (small ? (vw - cardW) / 2 : pad);
+    car.offset = car.origin; car.tween = null; car.pauseUntil = performance.now() + 4000;
     carApply();
     carStart();
   }
