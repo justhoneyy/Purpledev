@@ -563,6 +563,8 @@ app.get('/admin', (req, res) => {
   res.set({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow', 'X-Frame-Options': 'DENY' });
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
+/* scripts + styles for index.html and admin.html (scrambled bundles built from the private src/ folder) */
+app.use('/assets', express.static(path.join(__dirname, 'assets'), { maxAge: '30d', immutable: true, index: false }));
 app.get('/robots.txt', (req, res) => res.type('text/plain').send('User-agent: *\nDisallow: /admin\nDisallow: /api/\n'));
 app.get('/healthz', async (req, res) => { await q('SELECT 1'); res.send('ok'); });
 

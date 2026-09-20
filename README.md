@@ -4,8 +4,9 @@ A portfolio site with a private admin panel. Everything is in a few files:
 
 ```
 server.js      Express API, Google sign-in, PostgreSQL (tables are created automatically)
-index.html     the public site (loads its content from the API)
-admin.html     the admin panel, served only at /admin
+index.html     the public site: a tiny shell, its markup/styles/code live in assets/main.js
+admin.html     the admin panel shell, served only at /admin (code in assets/panel.js)
+assets/        main.js + panel.js: minified and scrambled site code (generated, don't edit by hand)
 package.json   dependencies
 render.yaml    one-click Render setup (web service + database)
 ```
