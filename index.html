@@ -1296,7 +1296,7 @@
     if(tw){
       var t = Math.min(1, (ts - tw.start) / tw.dur);
       car.offset = tw.from + (tw.to - tw.from) * (1 - Math.pow(1 - t, 3));
-      if(t >= 1){ car.tween = null; car.pauseUntil = ts + 8000; }
+      if(t >= 1){ car.tween = null; car.pauseUntil = ts + 2500; }
     } else if(!car.drag && !car.hover && !teamReduce && ts > car.pauseUntil){
       car.offset += TEAM_SPEED * dt / 1000;
     }
@@ -1321,7 +1321,7 @@
   // hover / keyboard focus pauses the drift so people can read a card
   teamViewport.addEventListener('pointerenter', function(e){ if(e.pointerType === 'mouse') car.hover = true; });
   teamViewport.addEventListener('pointerleave', function(e){ if(e.pointerType === 'mouse') car.hover = false; });
-  teamViewport.addEventListener('focusin', function(){ car.hover = true; });
+  teamViewport.addEventListener('focusin', function(e){ try{ if(e.target.matches(':focus-visible')) car.hover = true; }catch(err){} });   // keyboard focus only, so a tap never freezes it
   teamViewport.addEventListener('focusout', function(){ car.hover = false; });
   teamViewport.addEventListener('scroll', function(){ teamViewport.scrollLeft = 0; });   // focus must not scroll the clipped box
 
@@ -1345,7 +1345,7 @@
     car.drag = null;
     teamViewport.classList.remove('grabbing');
     if(d.moved){ car.justDragged = true; setTimeout(function(){ car.justDragged = false; }, 60); }
-    car.pauseUntil = performance.now() + 8000;
+    car.pauseUntil = performance.now() + 1500;
     carStart();
   }
   teamViewport.addEventListener('pointerup', carDragEnd);
@@ -1359,7 +1359,7 @@
       if(car.inView && !car.started && car.half){
         car.started = true;
         car.offset = car.origin; car.tween = null;
-        car.pauseUntil = performance.now() + 4000;   // stay on member 1 for a moment before drifting
+        car.pauseUntil = performance.now() + 800;    // starts on member 1, then keeps scrolling
         carApply();
       }
       if(car.inView) carStart();
@@ -1386,7 +1386,7 @@
     car.half = reps * teamList.length * unit;            // width of one copy (fixed card width + gap, so no measuring needed)
     // offset that puts member 1 of the middle copy in view: centred on phones, left-aligned on wider screens
     car.origin = pad + car.half - (small ? (vw - cardW) / 2 : pad);
-    car.offset = car.origin; car.tween = null; car.pauseUntil = performance.now() + 4000;
+    car.offset = car.origin; car.tween = null; car.pauseUntil = performance.now() + 800;
     carApply();
     carStart();
   }

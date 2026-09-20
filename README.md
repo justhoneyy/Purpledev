@@ -24,7 +24,7 @@ Open `https://your-site/admin` and sign in with Google.
 
 The old sample projects were removed from `index.html`. Only projects you add in the admin panel are shown.
 
-The team strip on the homepage drifts slowly by itself; visitors can also drag it or press the arrow buttons below it to step through members one at a time. It always starts at the first member. On first start the pricing section is filled with three starter cards (Starter, Studio, Enterprise) that you can edit or delete in **Pricing**.
+The team strip on the homepage keeps scrolling slowly and endlessly by itself; visitors can also drag it or press the arrow buttons below it to step through members one at a time. It always starts at the first member. On first start the pricing section is filled with three starter cards (Starter, Studio, Enterprise) that you can edit or delete in **Pricing**.
 
 ## 1. Google sign-in setup (one time)
 
