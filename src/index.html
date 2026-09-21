@@ -746,6 +746,19 @@
       </h2>
     </div>
 
+    <!-- Contact on WhatsApp (hidden until the admin panel has at least one WhatsApp contact) -->
+    <div id="waBlock" class="reveal hidden">
+      <div class="flex flex-col items-center max-w-2xl mx-auto mb-8">
+        <button type="button" id="waOpen" aria-haspopup="dialog" class="pop-cta inline-flex items-center gap-2.5 px-6 py-3 bg-[#25D366] text-black border-[1.5px] border-white rounded-lg text-sm font-semibold retro-shadow">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
+          <span>Contact on WhatsApp</span>
+        </button>
+        <div class="flex items-center gap-4 w-full max-w-[260px] mt-7 text-[11px] font-bold tracking-[0.25em] uppercase text-gray-400" aria-hidden="true">
+          <span class="h-px flex-1 bg-white/20"></span><span>Or</span><span class="h-px flex-1 bg-white/20"></span>
+        </div>
+      </div>
+    </div>
+
     <form id="contactForm" class="reveal grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
       <div class="sm:col-span-1">
         <label class="block text-xs font-medium mb-1.5 text-gray-300" for="cf-name">Name</label>
@@ -779,6 +792,21 @@
 
 <!-- toast -->
 <div id="toast" class="bg-black text-white text-sm font-medium px-5 py-3 rounded-full shadow-lg"></div>
+
+<!-- WhatsApp contact popup -->
+<div id="waModal" class="fixed inset-0 z-[96] hidden items-center justify-center p-4">
+  <div id="waOverlay" class="absolute inset-0 bg-black/50"></div>
+  <div role="dialog" aria-modal="true" aria-labelledby="waTitle" class="relative bg-white text-slate-900 border-[1.5px] border-black rounded-2xl w-full max-w-sm p-5 sm:p-7 max-h-[92vh] overflow-y-auto" style="box-shadow:4px 4px 0 #1a1a1a">
+    <button id="waClose" type="button" aria-label="Close" class="absolute top-3 right-3 w-8 h-8 rounded-full border border-black bg-white flex items-center justify-center hover:bg-gray-50">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    <div class="w-11 h-11 rounded-full border border-black bg-[#25D366] flex items-center justify-center mb-3">
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
+    </div>
+    <h3 id="waTitle" class="text-lg sm:text-xl font-bold pr-8">Message to our contact team</h3>
+    <div id="waList" class="flex flex-col gap-3 mt-5"></div>
+  </div>
+</div>
 
 <!-- back to top -->
 <button id="backToTop" aria-label="Back to top" class="fixed bottom-6 right-5 sm:right-8 w-11 h-11 rounded-full bg-black text-white border-[1.5px] border-black flex items-center justify-center z-40 retro-shadow">
@@ -1186,6 +1214,58 @@
       .catch(function(){});
   });
 
+  /* ---------- WhatsApp contact popup (contacts come from the admin panel) ---------- */
+  var WA_ICON = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z';
+  var waBlock = document.getElementById('waBlock');
+  var waModal = document.getElementById('waModal');
+  var waList = document.getElementById('waList');
+  var waClose = document.getElementById('waClose');
+  var waOpener = null;
+  function waDigits(p){ return String(p == null ? '' : p).replace(/\D/g, ''); }
+  function waPretty(p){
+    var m = /^\+91(\d{5})(\d{5})$/.exec(String(p || ''));
+    return m ? '+91 ' + m[1] + ' ' + m[2] : String(p || '');
+  }
+  function renderWhatsapp(list){
+    list = (list || []).filter(function(c){ return c && waDigits(c.phone).length >= 8; });
+    waBlock.classList.toggle('hidden', !list.length);
+    waList.innerHTML = list.map(function(c){
+      return '<a href="https://wa.me/'+waDigits(c.phone)+'" target="_blank" rel="noopener" class="wa-row flex items-center gap-3 px-4 py-3 rounded-xl border border-black bg-white hover:bg-[#EAFBF0] transition retro-shadow">' +
+        '<span class="w-10 h-10 shrink-0 rounded-full border border-black bg-[#25D366] flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="'+WA_ICON+'"></path></svg></span>' +
+        '<span class="min-w-0 flex-1 text-left"><span class="block text-sm font-bold truncate">'+esc(c.name)+'</span><span class="block text-xs text-gray-600">'+esc(waPretty(c.phone))+'</span></span>' +
+        '<span aria-hidden="true" class="text-lg leading-none">\u2192</span></a>';
+    }).join('');
+  }
+  function openWa(){
+    waOpener = document.activeElement;
+    waModal.classList.remove('hidden');
+    waModal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    waClose.focus({preventScroll:true});
+  }
+  function closeWa(){
+    if(waModal.classList.contains('hidden')) return;
+    waModal.classList.add('hidden');
+    waModal.classList.remove('flex');
+    document.body.style.overflow = '';
+    if(waOpener && waOpener.focus) waOpener.focus({preventScroll:true});
+  }
+  document.getElementById('waOpen').addEventListener('click', openWa);
+  waClose.addEventListener('click', closeWa);
+  document.getElementById('waOverlay').addEventListener('click', closeWa);
+  waList.addEventListener('click', function(e){ if(e.target.closest('a')) setTimeout(closeWa, 250); });
+  document.addEventListener('keydown', function(e){
+    if(waModal.classList.contains('hidden')) return;
+    if(e.key === 'Escape'){ closeWa(); return; }
+    if(e.key === 'Tab'){   // keep keyboard focus inside the popup
+      var f = waModal.querySelectorAll('a[href], button');
+      if(!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+  });
+
   /* ---------- team marquee ---------- */
   function teamCard(m, ghost){
     var avatar = m.photo || ('https://api.dicebear.com/9.x/avataaars/svg?seed='+encodeURIComponent(m.name)+'-purpledev&backgroundColor=ffffff&radius=50');
@@ -1372,6 +1452,7 @@
         if(s.location){ loc.textContent = s.location; }
         else { loc.classList.add('hidden'); if(loc.nextElementSibling) loc.nextElementSibling.classList.add('hidden'); }
         renderSocials(data.socials || []);
+        renderWhatsapp(data.whatsapp || []);
         teamList = data.team || [];
         renderTeamSection();
         renderPlans(data.plans || []);

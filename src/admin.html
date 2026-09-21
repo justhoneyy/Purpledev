@@ -202,6 +202,7 @@ img, video { max-width: 100%; display: block; }
   .brand { font-size: 26px; }
   .topnav { display: flex; }
 }
+@media (min-width: 1024px) and (max-width: 1279px) { .topnav { gap: 16px; font-size: 14px; } }
 
 /* bottom tab bar (phones + tablets) */
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 70; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: rgba(255,255,255,.96); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-top: 1.5px solid var(--ink); padding: 6px 6px calc(6px + var(--sab)); }
@@ -710,7 +711,8 @@ const ICONS = {
   menu: '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>',
   left: '<polyline points="15 18 9 12 15 6"/>',
   right: '<polyline points="9 18 15 12 9 6"/>',
-  help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
+  help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  chat: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>'
 };
 const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
 function platformIcon(key, cls = '') {
@@ -1004,7 +1006,7 @@ async function onCredential(resp) {
 async function logout() {
   try { await api('/auth/logout', { method: 'POST' }); } catch (_) {}
   if (window.google && google.accounts) google.accounts.id.disableAutoSelect();
-  state.projects = state.team = state.plans = state.faqs = state.settings = state.admins = state.messages = null;
+  state.projects = state.team = state.plans = state.faqs = state.whatsapp = state.settings = state.admins = state.messages = null;
   showLogin();
 }
 
@@ -1018,12 +1020,13 @@ const ROUTES = {
   pricing: { label: 'Pricing', nav: 'Pricing', short: 'Pricing', icon: 'tag', color: '#FFF3D6', eyebrow: 'Pricing' },
   faq: { label: 'Common questions', nav: 'FAQ', short: 'FAQ', icon: 'help', color: '#FFE3D6', eyebrow: 'FAQ' },
   social: { label: 'Social links', nav: 'Social', short: 'Social', icon: 'share', color: '#EDF8E5', eyebrow: 'Social' },
+  whatsapp: { label: 'WhatsApp contacts', nav: 'WhatsApp', short: 'WhatsApp', icon: 'chat', color: '#DDF6E6', eyebrow: 'WhatsApp' },
   site: { label: 'Site content', nav: 'Content', short: 'Content', icon: 'sliders', color: '#EDEAF8', eyebrow: 'Content' },
   messages: { label: 'Messages', nav: 'Messages', short: 'Inbox', icon: 'inbox', color: '#E5F1FC', eyebrow: 'Inbox' },
   admins: { label: 'Admins and access', nav: 'Admins', short: 'Admins', icon: 'shield', color: '#FBE4EE', eyebrow: 'Access' }
 };
 const TAB_KEYS = ['dashboard', 'projects', 'team', 'messages'];
-const VIEWS = () => ({ dashboard: viewDashboard, projects: viewProjects, team: viewTeam, pricing: viewPricing, faq: viewFaq, social: viewSocial, site: viewSite, messages: viewMessages, admins: viewAdmins });
+const VIEWS = () => ({ dashboard: viewDashboard, projects: viewProjects, team: viewTeam, pricing: viewPricing, faq: viewFaq, social: viewSocial, whatsapp: viewWhatsapp, site: viewSite, messages: viewMessages, admins: viewAdmins });
 
 function renderNav(active) {
   const badge = state.unread ? (state.unread > 99 ? '99+' : String(state.unread)) : '';
@@ -1042,7 +1045,7 @@ function openMoreSheet() {
   const p = openPanel({
     kind: 'dialog', title: 'Menu',
     body: `<div class="me-card"><span class="avatar">${avatarInner(me)}</span><div><b>${esc(me.name || me.email.split('@')[0])}</b><span class="e">${esc(me.email)}</span></div></div>
-      <div class="more-list">${['pricing', 'faq', 'social', 'site', 'admins'].map(link).join('')}<a href="/" target="_blank" rel="noopener">${icon('external')}<span>View live site</span></a></div>`,
+      <div class="more-list">${['pricing', 'faq', 'social', 'whatsapp', 'site', 'admins'].map(link).join('')}<a href="/" target="_blank" rel="noopener">${icon('external')}<span>View live site</span></a></div>`,
     footer: `<button class="btn danger" data-logout>${icon('logout', 'sm')}Sign out</button>`
   });
   p.el.addEventListener('click', (e) => {
@@ -2152,6 +2155,122 @@ function openFaqEditor(existing) {
   q1('[data-cancel]').addEventListener('click', () => panel.close());
   panel.el.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } });
   q1('#fq-q').focus();
+}
+
+/* ==========================================================================
+   WhatsApp contacts (the "Contact on WhatsApp" popup in the contact section)
+   ========================================================================== */
+async function viewWhatsapp() {
+  if (!state.whatsapp) state.whatsapp = await api('/admin/whatsapp');
+  renderWhatsapp();
+}
+
+// show +91XXXXXXXXXX as "+91 XXXXX XXXXX"; anything else as saved
+const prettyPhone = (p) => { const m = /^\+91(\d{5})(\d{5})$/.exec(p || ''); return m ? `+91 ${m[1]} ${m[2]}` : (p || ''); };
+
+function waRowHtml(c) {
+  return `<article class="tcard" data-id="${c.id}" draggable="true" style="display:flex;flex-direction:row;align-items:center;gap:12px;padding:14px 16px;text-align:left">
+    <span class="grip" aria-hidden="true">${icon('grip')}</span>
+    <div style="flex:1;min-width:0">
+      <h3 style="margin:0 0 4px">${esc(c.name)}</h3>
+      <p class="sub" style="white-space:normal">${esc(prettyPhone(c.phone))}</p>
+    </div>
+    <div class="acts" style="flex-direction:row;flex-shrink:0">
+      <button class="btn sm" data-act="edit">${icon('edit', 'sm')}Edit</button>
+      <button class="btn sm icon" data-act="delete" aria-label="Delete contact" title="Delete">${icon('trash', 'sm')}</button>
+    </div>
+  </article>`;
+}
+
+function renderWhatsapp() {
+  const view = $('#view');
+  const head = pageHead('WhatsApp contacts', 'Shown in the “Contact on WhatsApp” popup in your contact section. Drag to reorder.',
+    `<button class="btn primary cta-glow shine-btn" data-act="add">${icon('plus')}Add contact</button>`);
+  if (!state.whatsapp.length) {
+    view.innerHTML = head + `<div class="empty"><div class="art">${icon('chat')}</div><h3>No WhatsApp contacts yet</h3>
+      <p>Add the people visitors can message. Once you add one, the “Contact on WhatsApp” button appears in your contact section.</p>
+      <button class="btn primary" data-act="add">${icon('plus')}Add a contact</button></div>`;
+  } else {
+    view.innerHTML = head + `<div class="tgrid" id="waGrid" style="grid-template-columns:1fr">${state.whatsapp.map(waRowHtml).join('')}</div>`;
+    enableSort($('#waGrid'), { axis: 'y', onDone: persistWhatsappOrder });
+  }
+  view.onclick = (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const card = b.closest('[data-id]');
+    const c = card && state.whatsapp.find((x) => String(x.id) === card.dataset.id);
+    const act = b.dataset.act;
+    if (act === 'add') openWhatsappEditor();
+    else if (act === 'edit' && c) openWhatsappEditor(c);
+    else if (act === 'delete' && c) deleteWhatsapp(c);
+  };
+}
+
+async function persistWhatsappOrder(ids) {
+  const byId = new Map(state.whatsapp.map((c) => [String(c.id), c]));
+  state.whatsapp = ids.map((id) => byId.get(id)).filter(Boolean);
+  try { await api('/admin/whatsapp/reorder', { method: 'POST', body: { ids: ids.map(Number) } }); toast('Order saved.'); }
+  catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteWhatsapp(c) {
+  const ok = await confirmDialog({ title: 'Remove this contact?', body: `${c.name} will disappear from the WhatsApp popup on your homepage. This can’t be undone.`, confirmText: 'Remove contact', danger: true });
+  if (!ok) return;
+  try {
+    await api('/admin/whatsapp/' + c.id, { method: 'DELETE' });
+    state.whatsapp = state.whatsapp.filter((x) => x.id !== c.id);
+    toast('Contact removed.');
+    renderWhatsapp();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function openWhatsappEditor(existing) {
+  const isNew = !existing;
+  const c = existing ? clone(existing) : { name: '', phone: '+91 ' };
+
+  const panel = openPanel({
+    kind: 'dialog', width: '520px',
+    title: isNew ? 'Add WhatsApp contact' : 'Edit WhatsApp contact',
+    body: `<div class="form" style="gap:16px">
+      <div class="field"><label for="wa-name">Name</label><input class="input" id="wa-name" maxlength="60" autocomplete="off" placeholder="e.g. Abhinav"></div>
+      <div class="field"><label for="wa-phone">WhatsApp number</label><input class="input" id="wa-phone" type="tel" inputmode="tel" maxlength="40" autocomplete="off" placeholder="+91 98765 43210"><span class="hint">Include the country code (+91 for India). Visitors who tap this contact open a WhatsApp chat with this number.</span></div>
+    </div>`,
+    footer: `<button class="btn" data-cancel>Cancel</button><button class="btn primary" data-save>${isNew ? 'Add contact' : 'Save changes'}</button>`
+  });
+  const q1 = panel.$;
+
+  const bind = (sel, key) => {
+    const el = q1(sel);
+    el.value = c[key] || '';
+    el.addEventListener('input', () => { c[key] = el.value; panel.dirty = true; el.classList.remove('err'); });
+  };
+  bind('#wa-name', 'name'); bind('#wa-phone', 'phone');
+
+  async function save() {
+    if (!c.name.trim()) { const n = q1('#wa-name'); n.classList.add('err'); n.focus(); toast('Add a name first.', 'error'); return; }
+    const digits = c.phone.replace(/\D/g, '');
+    if (digits.length < 8 || digits.length > 15 || (digits.length === 10 && !/^\s*(\+|00)/.test(c.phone))) {
+      const n = q1('#wa-phone'); n.classList.add('err'); n.focus(); toast('Enter the full number with country code, e.g. +919718708978.', 'error'); return;
+    }
+    const btn = q1('[data-save]');
+    btn.classList.add('busy'); btn.textContent = 'Saving…';
+    try {
+      const saved = isNew ? await api('/admin/whatsapp', { method: 'POST', body: c }) : await api('/admin/whatsapp/' + c.id, { method: 'PUT', body: c });
+      state.whatsapp = state.whatsapp || [];
+      if (isNew) state.whatsapp.push(saved); else state.whatsapp = state.whatsapp.map((x) => (x.id === saved.id ? saved : x));
+      panel.dirty = false;
+      await panel.close(true);
+      toast(isNew ? 'Contact added.' : 'Changes saved.');
+      if (currentRoute() === 'whatsapp') renderWhatsapp();
+    } catch (err) { btn.classList.remove('busy'); btn.textContent = isNew ? 'Add contact' : 'Save changes'; toast(err.message, 'error'); }
+  }
+  q1('[data-save]').addEventListener('click', save);
+  q1('[data-cancel]').addEventListener('click', () => panel.close());
+  panel.el.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
+    else if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); save(); }
+  });
+  q1('#wa-name').focus();
 }
 
 /* ==========================================================================
