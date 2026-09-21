@@ -18,6 +18,7 @@ Open `https://your-site/admin` and sign in with Google.
 - **Projects**: add, edit, delete, reorder, hide as draft. Photos, videos (upload, YouTube, Vimeo or .mp4 link), live site link (with in-page preview), GitHub link, tech stack, client, year, category.
 - **Team**: add, edit, delete, reorder, show or hide. Photo, name, role, card colour, LinkedIn, GitHub.
 - **Pricing**: add, edit, delete, reorder, show or hide plans and special offers. Each one has a monthly price and a yearly price (total for the year), a description, an "included" list, a badge, button text and card colour. Prices are in Indian rupees. Turn on **offer** and the card shines on the site, with an optional crossed-out original price. The monthly/yearly switch on the site only appears when a plan has both prices.
+- **WhatsApp contacts**: the names and numbers shown in the "Contact on WhatsApp" popup in the contact section (button sits above the message form). Add, edit, delete and reorder; enter each number with its country code, e.g. `+919718708978`. With no contacts, the button hides itself.
 - **Social links**: 15 platforms, reorder, show or hide. First three appear in the header, all appear in the contact section.
 - **Site content**: brand name, hero paragraph, contact email, location, availability message.
 - **Messages**: everything sent through the contact form.

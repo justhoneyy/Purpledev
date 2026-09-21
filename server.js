@@ -116,6 +116,10 @@ const DEFAULT_FAQS = [
   { question: 'Do you work with startups?', answer: 'Regularly — the Starter plan is built for early-stage teams shipping their first version.' },
   { question: "What's not included?", answer: 'Development and copywriting are handled separately, though we can recommend trusted partners.' }
 ];
+const DEFAULT_WHATSAPP = [
+  { name: 'Abhinav', phone: '+919718708978' },
+  { name: 'Bhawishya', phone: '+917838797588' }
+];
 const DEFAULT_SOCIALS = [
   { platform: 'x', label: '', url: 'https://x.com', enabled: true },
   { platform: 'dribbble', label: '', url: 'https://dribbble.com', enabled: true },
@@ -220,6 +224,13 @@ async function initDb() {
       sort_order INTEGER NOT NULL DEFAULT 0,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
+    CREATE TABLE IF NOT EXISTS whatsapp_contacts (
+      id         SERIAL PRIMARY KEY,
+      name       TEXT NOT NULL,
+      phone      TEXT NOT NULL,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
     CREATE TABLE IF NOT EXISTS messages (
       id         SERIAL PRIMARY KEY,
       name       TEXT NOT NULL,
@@ -278,6 +289,19 @@ async function seed() {
       }
     }
     await setSetting('seeded', { ...seeded3, faqs: true });
+  }
+
+  // First run only: start the WhatsApp contact list with the two team numbers.
+  const seeded4 = await getSetting('seeded', {});
+  if (!seeded4.whatsapp) {
+    const { rows } = await q('SELECT count(*)::int AS n FROM whatsapp_contacts');
+    if (rows[0].n === 0) {
+      for (let i = 0; i < DEFAULT_WHATSAPP.length; i++) {
+        const c = DEFAULT_WHATSAPP[i];
+        await q('INSERT INTO whatsapp_contacts (name, phone, sort_order) VALUES ($1,$2,$3)', [c.name, c.phone, i + 1]);
+      }
+    }
+    await setSetting('seeded', { ...seeded4, whatsapp: true });
   }
 }
 
@@ -488,6 +512,20 @@ function cleanFaq(b) {
   return { question, answer };
 }
 
+// WhatsApp needs the full international number (country code + number). Stored as +<digits>.
+function cleanWhatsapp(b) {
+  b = b || {};
+  const name = str(b.name, 60);
+  const raw = str(b.phone, 40);
+  const digits = raw.replace(/\D/g, '').replace(/^00/, '');
+  const hasCode = /^\s*(\+|00)/.test(raw);
+  if (!name) throw bad('Add a name first.');
+  if (!digits) throw bad('Add a WhatsApp number first.');
+  // a bare 10-digit number has no country code, and WhatsApp links need one
+  if (digits.length < 8 || digits.length > 15 || (!hasCode && digits.length === 10)) throw bad('Enter the full number with country code, e.g. +919718708978.');
+  return { name, phone: '+' + digits };
+}
+
 function cleanSocials(list) {
   if (!Array.isArray(list)) return [];
   const out = [];
@@ -595,7 +633,7 @@ app.get('/media/:id', async (req, res) => {
 
 /* ---------- public API ---------- */
 app.get('/api/site', async (req, res) => {
-  const [site, socials, team, plans, projects, faqs] = await Promise.all([
+  const [site, socials, team, plans, projects, faqs, whatsapp] = await Promise.all([
     getSite(),
     getSocials(),
     q('SELECT id, name, role, subtitle, photo, color, linkedin, github FROM team WHERE visible ORDER BY sort_order, id'),
@@ -604,7 +642,8 @@ app.get('/api/site', async (req, res) => {
          FROM plans WHERE visible ORDER BY sort_order, id`),
     q(`SELECT id, title, category, short_desc, description, cover, gallery, tech, live_url, github_url, client, year, likes
          FROM projects WHERE status = 'published' ORDER BY sort_order, id DESC`),
-    q('SELECT id, question, answer FROM faqs ORDER BY sort_order, id')
+    q('SELECT id, question, answer FROM faqs ORDER BY sort_order, id'),
+    q('SELECT id, name, phone FROM whatsapp_contacts ORDER BY sort_order, id')
   ]);
   res.set('Cache-Control', 'no-cache');
   res.json({
@@ -614,7 +653,8 @@ app.get('/api/site', async (req, res) => {
     team: team.rows,
     plans: plans.rows,
     projects: projects.rows,
-    faqs: faqs.rows
+    faqs: faqs.rows,
+    whatsapp: whatsapp.rows
   });
 });
 
@@ -886,6 +926,42 @@ admin.put('/faqs/:id', async (req, res) => {
 admin.delete('/faqs/:id', async (req, res) => {
   const r = await q('DELETE FROM faqs WHERE id = $1', [pid(req.params.id)]);
   if (!r.rowCount) throw new HttpError(404, 'Question not found.');
+  res.json({ ok: true });
+});
+
+/* --- WhatsApp contacts (shown in the "Contact on WhatsApp" popup in the contact section) --- */
+const MAX_WHATSAPP = 20;
+admin.get('/whatsapp', async (req, res) => {
+  res.json((await q('SELECT id, name, phone FROM whatsapp_contacts ORDER BY sort_order, id')).rows);
+});
+
+admin.post('/whatsapp', async (req, res) => {
+  const { rows: countRows } = await q('SELECT count(*)::int AS n FROM whatsapp_contacts');
+  if (countRows[0].n >= MAX_WHATSAPP) throw bad(`You can have up to ${MAX_WHATSAPP} WhatsApp contacts.`);
+  const d = cleanWhatsapp(req.body);
+  const { rows } = await q(
+    `INSERT INTO whatsapp_contacts (name, phone, sort_order)
+     VALUES ($1,$2,(SELECT COALESCE(MAX(sort_order), 0) + 1 FROM whatsapp_contacts)) RETURNING id, name, phone`,
+    [d.name, d.phone]);
+  res.status(201).json(rows[0]);
+});
+
+admin.post('/whatsapp/reorder', async (req, res) => {
+  const ids = (Array.isArray(req.body && req.body.ids) ? req.body.ids : []).map(Number).filter(Number.isInteger);
+  if (ids.length) await q('UPDATE whatsapp_contacts w SET sort_order = o.ord FROM unnest($1::int[]) WITH ORDINALITY AS o(id, ord) WHERE w.id = o.id', [ids]);
+  res.json({ ok: true });
+});
+
+admin.put('/whatsapp/:id', async (req, res) => {
+  const d = cleanWhatsapp(req.body);
+  const { rows } = await q('UPDATE whatsapp_contacts SET name=$2, phone=$3 WHERE id=$1 RETURNING id, name, phone', [pid(req.params.id), d.name, d.phone]);
+  if (!rows[0]) throw new HttpError(404, 'Contact not found.');
+  res.json(rows[0]);
+});
+
+admin.delete('/whatsapp/:id', async (req, res) => {
+  const r = await q('DELETE FROM whatsapp_contacts WHERE id = $1', [pid(req.params.id)]);
+  if (!r.rowCount) throw new HttpError(404, 'Contact not found.');
   res.json({ ok: true });
 });
 
