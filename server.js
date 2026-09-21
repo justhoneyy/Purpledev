@@ -593,13 +593,36 @@ app.use('/api', (req, res, next) => {
 app.use('/api', express.json({ limit: '1mb' }));
 
 /* ---------- pages ---------- */
+/* index.html and admin.html load their script as /assets/<file>.js?v=<hash>. The hash is worked out here from the real
+   script file, so an old or half-uploaded copy of the page can never keep loading an old cached script. */
+const assetVersions = new Map();
+function assetVersion(url) {
+  const full = path.join(__dirname, url);
+  const st = fs.statSync(full);
+  const key = st.mtimeMs + ':' + st.size;
+  const hit = assetVersions.get(url);
+  if (hit && hit.key === key) return hit.v;
+  const v = crypto.createHash('sha1').update(fs.readFileSync(full)).digest('hex').slice(0, 8);
+  assetVersions.set(url, { key, v });
+  return v;
+}
+function sendPage(res, file) {
+  const full = path.join(__dirname, file);
+  try {
+    const html = fs.readFileSync(full, 'utf8').replace(/(\/assets\/[\w.-]+\.js)\?v=[0-9a-f]+/g, (m, url) => {
+      try { return url + '?v=' + assetVersion(url); } catch (_) { return m; }
+    });
+    res.type('html').send(html);
+  } catch (_) { res.sendFile(full); }
+}
+
 app.get('/', (req, res) => {
   res.set('Cache-Control', 'no-cache');
-  res.sendFile(path.join(__dirname, 'index.html'));
+  sendPage(res, 'index.html');
 });
 app.get('/admin', (req, res) => {
   res.set({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow', 'X-Frame-Options': 'DENY' });
-  res.sendFile(path.join(__dirname, 'admin.html'));
+  sendPage(res, 'admin.html');
 });
 /* scripts + styles for index.html and admin.html (scrambled bundles built from the private src/ folder) */
 app.use('/assets', express.static(path.join(__dirname, 'assets'), { maxAge: '30d', immutable: true, index: false }));

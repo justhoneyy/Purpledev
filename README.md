@@ -66,6 +66,10 @@ Then open `https://YOUR-APP.onrender.com/admin`.
 - **Uploads live in PostgreSQL** because Render's disk is wiped on every deploy. Images are shrunk in the browser before upload. Use YouTube or Vimeo links for long videos.
 - Files nobody uses any more are cleaned up automatically after 24 hours.
 
+## Check that an update is really live
+1. Open `https://YOUR-SITE/api/site`. If you see `"whatsapp":[` in the text, the new `server.js` is running. If not, Render is still running the old code: check Render -> your service -> Events / Logs for a failed deploy.
+2. Open `/admin`. If the Menu has no **WhatsApp contacts**, `assets/panel.js` in your repo is still the old one (or it was uploaded into a sub-folder). The files must sit at the top level of the repo, next to `server.js`.
+
 ## Run locally
 
 ```bash
