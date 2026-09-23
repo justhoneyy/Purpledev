@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-/* ---------- optional local .env (Render uses real environment variables) ---------- */
+/* ---------- optional local .env (Render and Vercel use real environment variables) ---------- */
 try {
   const raw = fs.readFileSync(path.join(__dirname, '.env'), 'utf8');
   for (const line of raw.split(/\r?\n/)) {
@@ -25,6 +25,7 @@ const { OAuth2Client } = require('google-auth-library');
 /* ---------- configuration ---------- */
 const PORT = Number(process.env.PORT) || 3000;
 const IS_PROD = process.env.NODE_ENV === 'production';
+const IS_VERCEL = !!process.env.VERCEL; // serverless: export the app, don't listen on a port
 const GOOGLE_CLIENT_ID = (process.env.GOOGLE_CLIENT_ID ||
   '1053775974665-btmnduh399edehuvqmrjkimjc228rtcd.apps.googleusercontent.com').trim();
 const OWNER_EMAIL = (process.env.DEFAULT_ADMIN_EMAIL || 'smartmind2910@gmail.com').trim().toLowerCase();
@@ -39,20 +40,26 @@ if (!SESSION_SECRET) {
   console.warn('[warn] SESSION_SECRET is not set — using a temporary one. Admins will be signed out on every restart.');
 }
 
-if (!process.env.DATABASE_URL) {
+/* DATABASE_URL is trimmed and stripped of stray quotes. Vercel's Neon/Postgres integrations also set POSTGRES_URL, so that works too. */
+const DB_URL = (process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL || '')
+  .trim().replace(/^["']|["']$/g, '');
+
+if (!DB_URL) {
   console.error('DATABASE_URL is not set. Add your PostgreSQL connection string (see README.md).');
-  process.exit(1);
+  if (!IS_VERCEL) process.exit(1); // on Vercel keep the function alive so pages can still load and the log stays readable
 }
 
-const isLocalDb = /localhost|127\.0\.0\.1/.test(process.env.DATABASE_URL);
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+const isLocalDb = /localhost|127\.0\.0\.1/.test(DB_URL);
+const pool = DB_URL ? new Pool({
+  connectionString: DB_URL,
   ssl: isLocalDb || process.env.PGSSL === 'disable' ? false : { rejectUnauthorized: false },
-  max: 10,
+  max: IS_VERCEL ? 3 : 10, // serverless instances are many and short-lived; keep each one small
   idleTimeoutMillis: 30000
-});
-pool.on('error', (e) => console.error('[pg] idle client error', e.message));
-const q = (text, params) => pool.query(text, params);
+}) : null;
+if (pool) pool.on('error', (e) => console.error('[pg] idle client error', e.message));
+const q = (text, params) => (pool
+  ? pool.query(text, params)
+  : Promise.reject(new HttpError(503, 'Database is not configured: set DATABASE_URL in Vercel (Settings > Environment Variables) and redeploy.')));
 
 /* ---------- small helpers ---------- */
 class HttpError extends Error {
@@ -606,27 +613,61 @@ function assetVersion(url) {
   assetVersions.set(url, { key, v });
   return v;
 }
-function sendPage(res, file) {
+/* Public address of the site, used for the canonical link, sitemap.xml and robots.txt.
+   Set SITE_URL (e.g. https://www.yourdomain.com) in the environment to pin it; otherwise it follows the address the visitor used. */
+function siteOrigin(req) {
+  const fixed = (process.env.SITE_URL || '').trim().replace(/\/+$/, '');
+  if (/^https?:\/\/[a-z0-9.-]+(:\d+)?$/i.test(fixed)) return fixed;
+  const host = String(req.headers.host || '').toLowerCase();
+  return /^[a-z0-9.-]+(:\d+)?$/.test(host) ? `${req.protocol}://${host}` : '';
+}
+function sendPage(req, res, file) {
   const full = path.join(__dirname, file);
   try {
+    const origin = siteOrigin(req);
     const html = fs.readFileSync(full, 'utf8').replace(/(\/assets\/[\w.-]+\.js)\?v=[0-9a-f]+/g, (m, url) => {
       try { return url + '?v=' + assetVersion(url); } catch (_) { return m; }
-    });
+    }).replace(/%SITE_URL%/g, origin);
     res.type('html').send(html);
   } catch (_) { res.sendFile(full); }
 }
 
 app.get('/', (req, res) => {
   res.set('Cache-Control', 'no-cache');
-  sendPage(res, 'index.html');
+  sendPage(req, res, 'index.html');
 });
 app.get('/admin', (req, res) => {
   res.set({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow', 'X-Frame-Options': 'DENY' });
-  sendPage(res, 'admin.html');
+  sendPage(req, res, 'admin.html');
 });
 /* scripts + styles for index.html and admin.html (scrambled bundles built from the private src/ folder) */
 app.use('/assets', express.static(path.join(__dirname, 'assets'), { maxAge: '30d', immutable: true, index: false }));
-app.get('/robots.txt', (req, res) => res.type('text/plain').send('User-agent: *\nDisallow: /admin\nDisallow: /api/\n'));
+app.get('/robots.txt', (req, res) => {
+  const o = siteOrigin(req);
+  res.type('text/plain').send('User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n' + (o ? `\nSitemap: ${o}/sitemap.xml\n` : ''));
+});
+app.get('/sitemap.xml', (req, res) => {
+  const o = siteOrigin(req);
+  res.set('Cache-Control', 'public, max-age=3600').type('application/xml').send(
+    '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    `  <url><loc>${o}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n</urlset>\n`);
+});
+/* Google Search Console ownership check (HTML file method): must be reachable at the site root */
+const GOOGLE_VERIFY_FILE = 'google3dbd527b59f8b531.html';
+app.get('/' + GOOGLE_VERIFY_FILE, (req, res) => res.type('html').send('google-site-verification: ' + GOOGLE_VERIFY_FILE));
+
+/* Creates the tables and seeds defaults once per server start (per cold start on Vercel).
+   Every route that touches the database waits for this first. */
+let readyPromise = null;
+function ensureReady() {
+  if (!readyPromise) {
+    readyPromise = (async () => { await initDb(); await seed(); })()
+      .catch((e) => { readyPromise = null; throw e; }); // failed? try again on the next request
+  }
+  return readyPromise;
+}
+app.use(['/healthz', '/media', '/api'], (req, res, next) => { ensureReady().then(() => next(), next); });
+
 app.get('/healthz', async (req, res) => { await q('SELECT 1'); res.send('ok'); });
 
 /* ---------- uploaded files (images / videos stored in PostgreSQL) ---------- */
@@ -1037,7 +1078,7 @@ app.use((req, res) => {
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   if (err.type === 'entity.too.large') return res.status(413).json({ error: `That file is too large (limit ${MAX_UPLOAD_MB} MB).` });
   if (err.type === 'entity.parse.failed') return res.status(400).json({ error: 'Invalid request body.' });
-  if (err.status && err.status < 500) return res.status(err.status).json({ error: err.expose ? err.message : 'Bad request.' });
+  if (err.status && (err.status < 500 || err.status === 503)) return res.status(err.status).json({ error: err.expose ? err.message : 'Bad request.' });
   console.error('[error]', err);
   res.status(500).json({ error: 'Something went wrong on the server. Please try again.' });
 });
@@ -1045,18 +1086,22 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 /* ---------- start ---------- */
 async function boot() {
   for (let attempt = 1; ; attempt++) {
-    try { await initDb(); break; }
+    try { await ensureReady(); break; }
     catch (e) {
       if (attempt >= 10) throw e;
       console.warn(`[db] not ready (${e.message}). Retrying in 3s… (${attempt}/10)`);
       await sleep(3000);
     }
   }
-  await seed();
   setInterval(cleanupSoon, 6 * 60 * 60 * 1000).unref();
   const server = app.listen(PORT, '0.0.0.0', () => console.log(`purple dev is running on port ${PORT} (admin: /admin, owner: ${OWNER_EMAIL})`));
   const shutdown = () => server.close(() => pool.end().then(() => process.exit(0)));
   process.on('SIGTERM', shutdown);
   process.on('SIGINT', shutdown);
 }
-boot().catch((e) => { console.error('Startup failed:', e); process.exit(1); });
+
+if (IS_VERCEL) {
+  module.exports = app; // Vercel calls this as the request handler
+} else {
+  boot().catch((e) => { console.error('Startup failed:', e); process.exit(1); });
+}
